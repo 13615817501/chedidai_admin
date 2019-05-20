@@ -1,0 +1,68 @@
+.listadmin{
+    margin-top: 20px;
+}
+.search-box{
+    padding-top: 20px;
+    & > span{
+    	display: inline-block;
+        margin-top: 10px;
+    }
+}
+.search-box strong{
+	color: #2d8cf0;
+}
+//图片上传的统一样式
+.demo-upload-list{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    margin-right: 4px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.demo-upload-list img{
+    width: 100%;
+    height: 100%;
+}
+.demo-upload-list-cover{
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+}
+.demo-upload-list:hover .demo-upload-list-cover{
+    display: block;
+}
+.demo-upload-list-cover i{
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin: 0 2px;
+}
+.search-box{
+    overflow: hidden;
+}
+input:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px white inset!important;
+}
+.common-id{
+    padding-top: 20px;
+    & /deep/ .hoverBlue strong{
+        color: #2d8cf0;
+    }
+    .listadmin /deep/ .info-row  td{
+        background-color: #FCF2E9 !important;
+        color: #666 !important;
+    }
+}
