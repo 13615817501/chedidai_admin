@@ -29,8 +29,8 @@
         <Modal width="500" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
             <div class="modify-modal"> 
                 <div class="item-div">
-                    <span class="item-comm required">产品名称：</span><Input class="item-input" v-model="modify.name" placeholder="请输入..." />
-                    <span class="item-comm required">产品类型名称：</span><Input class="item-input" v-model="modify.shortName" placeholder="请输入..." />
+                    <span class="item-comm required">产品组名称：</span><Input class="item-input" v-model="modify.name" placeholder="请输入..." />
+                    <span class="item-comm required">产品组简写：</span><Input class="item-input" v-model="modify.shortName" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
                     <span class="item-comm required">公司代码：</span><Input class="item-input" v-model="modify.companyCode" placeholder="请输入..." />

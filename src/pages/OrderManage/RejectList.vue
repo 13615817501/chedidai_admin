@@ -6,8 +6,26 @@
 	    </Breadcrumb>
         <div class="search-box">
             <span>
-                产品名称: 
-                <Input v-model="search.name" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                申请时间: 
+                <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
+            </span>
+            <span>
+                &nbsp;&nbsp;订单号: 
+                <Input v-model="search.orderNumber" clearable placeholder="请输入订单号" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;产品: 
+                <Select v-model="search.prodId" placeholder="输入后选择匹配产品" clearable remote filterable :remote-method='remoteMethod' style="width: 150px">
+                    <Option v-for="(option, index) in prodList" :value="option.id" :label="option.name" :key="option.id"></Option>
+                </Select>
+            </span>
+            <span>
+                &nbsp;&nbsp;手机号码: 
+                <Input v-model="search.mobile" clearable placeholder="请输入手机号码" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;姓名: 
+                <Input v-model.trim="search.name" clearable placeholder="请输入姓名" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
@@ -47,20 +65,20 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            prodList:[], //产品列表集合
 			search:{
+                timeType:1,
+                timeInterval:'',
+                orderNumber:'',
+                prodId:'',
                 mobile:'',
                 name:'',
-                type: '',
 			    pageNum: 1,
 			    pageSize:15
 			},
             labelEnum:[], //产品标签 
             isInterestHeadEnum:[], //是否利息前置
             calInterestWayEnum:[], //计算利息方式
-            remoteSetting: {
-                remote: true,
-                remoteMethod: this.remoteMethod
-            },
             modify: {
                 name: '',
                 label: '',
@@ -79,61 +97,52 @@ export default {
 			table_loading: false, //默认先显示加载
 			certifyList:[],
             columns: [{
-                    title: '操作',
-                    key: 'action',
-                    width: 150,
-                    align: 'center',
-                    fixed: "left",
+                    title: '订单号',
+                    key: 'orderNumber',
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    display: params.row.status=='2'?  'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '下线该产品';
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '通过'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    display: params.row.status=='3'?  'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '上线该产品';
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '拒绝'),
+                            h('strong', params.row.orderNumber)
+                        ]);
+                    }
+                },{
+                    title: '用户姓名',
+                    key: 'orderNumber',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.userName)
                         ]);
                     }
                 }, {
-					title: '门店',
-					key: 'storeName',
+					title: '手机号码',
+					key: 'userMobile',
 					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.storeName)
+							h('strong', params.row.userMobile)
 						]);
 					}
-				}, {
-                    title: '预约日期',
+				},{
+                    title: '门店名称',
+                    key: 'storeName',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                },{
+                    title: '产品名称',
+                    key: 'prodName  ',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.prodName)
+                        ]);
+                    }
+                }, {
+                    title: '申请时间',
                     key: 'createTime',
                     minWidth: 160,
                     render: (h, params) => {
@@ -142,56 +151,51 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '客户名称',
-                    key: 'userName',
-                    minWidth: 90,
+                    title: '门店审核人员',
+                    key: 'checkOfflinePassStaff',
+                    minWidth: 120,
                      render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userName)
+                            h('strong', params.row.checkOfflinePassStaff)
+                        ]);
+                    }
+                },{
+                    title: '门店审核时间',
+                    key: 'checkOfflinePassTime',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.checkOfflinePassTime)
                         ]);
                     }
                 }, {
-					title: '客户手机',
-					key: 'userMobile',
+					title: '初审人员',
+					key: 'checkPassStaff',
 					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.userMobile)
+							h('strong', params.row.checkPassStaff)
 						]);
 					}
 				}, {
-					title: '产品',
-					key: 'prodName',
-					minWidth: 90,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.prodName)
-						]);
-					}
-				}, {
-                    title: '订单详情',
-                    key: 'action',
-                    width: 150,
-                    align: 'center',
+                    title: '初审时间',
+                    key: 'checkPassTime',
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        
-                                    }
-                                }
-                            }, '详情'),
+                            h('strong', params.row.checkPassTime)
                         ]);
                     }
-                }
+                }, {
+					title: '拒绝理由',
+					key: 'reason',
+					minWidth: 150,
+					render: (h, params) => {
+						return h('div', [
+							h('strong', params.row.reason)
+						]);
+					}
+				}
 			]
 		}
 	},
@@ -203,9 +207,18 @@ export default {
         ...mapState(['adjustHeight']) 
     },
 	activated(){
-        this.getInitialList(this.search);
+        this.getInitialList(util.searchList(this.search,'timeInterval'));
 	},
 	methods: {
+        remoteMethod(query) { //远程请求
+            if (query != '') {
+                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
+                    this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
+                })
+            } else {
+                this.prodList = [];
+            }
+        },
 		getInitialList(formData){ 
             this.table_loading = true;
 		    this.$axios.get('/fx?api=gate.order.admin.refuseList',{params:formData}).then(res => {
@@ -220,11 +233,11 @@ export default {
 		},
         pageChange(page){
 			this.search.pageNum = page;
-            this.getInitialList(this.search);
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
         	this.search.pageNum = 1;
-			this.getInitialList(this.search);
+			this.getInitialList(util.searchList(this.search,'timeInterval'));
 		},
         addBtn(){
             this.myTitle = '新增';
@@ -242,7 +255,6 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            debugger;
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
                 return this.$Message.error("带 * 为必填项"); 
             }

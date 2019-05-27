@@ -7,7 +7,7 @@
         <div class="search-box">
             <span>
                 产品名称: 
-                <Input v-model="search.name" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                <Input v-model="search.name" clearable placeholder="请输入产品名称" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
             <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
@@ -25,7 +25,7 @@
                     <span class="item-comm required">产品类型简写：</span><Input class="item-input" v-model="modify.shortName" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm">标签：</span><Select clearable v-model="modify.label" class="item-input" placeholder="请选择">
+                    <span class="item-comm required">标签：</span><Select clearable v-model="modify.label" class="item-input" placeholder="请选择">
                         <Option v-for="item in labelEnum" :value="item.key" :key="item.key">{{item.value}}</Option>
                         </Select>
                     <span class="item-comm required">还款方式：</span><Select v-model="modify.repayment" class="item-input" placeholder="请选择">
@@ -36,10 +36,10 @@
                 </div>
                 <div class="add-comm">
                     <span class="item-comm required">合同期数：</span><Select v-model="modify.periods" class="item-input" placeholder="请选择">
-                            <Option :value="1">3期</Option>
-                            <Option :value="2">6期</Option>
-                            <Option :value="3">12期</Option>
-                            <Option :value="4">24期</Option>
+                            <Option :value="3">3期</Option>
+                            <Option :value="6">6期</Option>
+                            <Option :value="12">12期</Option>
+                            <Option :value="24">24期</Option>
                         </Select>  
                     <span class="item-comm required">债权类型：</span><Select v-model="modify.debtType" class="item-input" placeholder="请选择">
                             <Option value="1">质押</Option>
@@ -48,7 +48,7 @@
                         </Select>     
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">年利率：</span><Input class="item-input" v-model="modify.annualRate" placeholder="如0.16%写16" />
+                    <span class="item-comm required">年利率(%)：</span><Input class="item-input" v-model="modify.annualRate" placeholder="请输入..." />
                     <span class="item-comm required">计算公式：</span><Input class="item-input" v-model="modify.calculate" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
@@ -59,39 +59,39 @@
                         </Select>
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">保费费率：</span><Input class="item-input" v-model="modify.insurePersent" placeholder="请输入..." />
-                    <span class="item-comm required">居间服务费费率：</span><Input class="item-input" v-model="modify.intermediateServicePersent" placeholder="请输入..." />
+                    <span class="item-comm required">保费费率(元)：</span><Input class="item-input" v-model="modify.insurePersent" placeholder="请输入..." />
+                    <span class="item-comm required">居间服务费费率(%)：</span><Input class="item-input" v-model="modify.intermediateServicePersent" placeholder="请输入..." />
                 </div>  
                 <div class="item-div">
-                    <span class="item-comm required">账户管理费费率：</span><Input class="item-input" v-model="modify.accountServicePersent" placeholder="请输入..." />
-                    <span class="item-comm required">平台管理费费率：</span><Input class="item-input" v-model="modify.platformServicePersent" placeholder="请输入..." />
+                    <span class="item-comm required">账户管理费费率(%)：</span><Input class="item-input" v-model="modify.accountServicePersent" placeholder="请输入..." />
+                    <span class="item-comm required">平台管理费费率(%)：</span><Input class="item-input" v-model="modify.platformServicePersent" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">综合服务费费率：</span><Input class="item-input" v-model="modify.compositeServicePersent" placeholder="请输入..." />
-                    <span class="item-comm required">保证金费率：</span><Input class="item-input" v-model="modify.cashDepositPersent" placeholder="请输入..." />
+                    <span class="item-comm required">综合服务费费率(%)：</span><Input class="item-input" v-model="modify.compositeServicePersent" placeholder="请输入..." />
+                    <span class="item-comm required">保证金费率(%)：</span><Input class="item-input" v-model="modify.cashDepositPersent" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">GPS及安装费用：</span><Input class="item-input" v-model="modify.gpsInstallExpenses" placeholder="请输入..." />
-                    <span class="item-comm required">流量费：</span><Input class="item-input" v-model="modify.flowExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">GPS及安装费用(元)：</span><Input class="item-input" v-model="modify.gpsInstallExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">流量费(元)：</span><Input class="item-input" v-model="modify.flowExpenses" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">上牌及抵押等费用：</span><Input class="item-input" v-model="modify.plateMortgageExpenses" placeholder="请输入..." />
-                    <span class="item-comm required">家访费用：</span><Input class="item-input" v-model="modify.homeVisitExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">上牌及抵押等费用(元)：</span><Input class="item-input" v-model="modify.plateMortgageExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">家访费用(元)：</span><Input class="item-input" v-model="modify.homeVisitExpenses" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">杂费：</span><Input class="item-input" v-model="modify.incidentalExpenses" placeholder="请输入..." />
-                    <span class="item-comm required">年检押金：</span><Input class="item-input" v-model="modify.annualInspectionExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">杂费(元)：</span><Input class="item-input" v-model="modify.incidentalExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">年检押金(元)：</span><Input class="item-input" v-model="modify.annualInspectionExpenses" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">违章押金：</span><Input class="item-input" v-model="modify.breakRuleExpenses" placeholder="请输入..." />
-                    <span class="item-comm required">进件费：</span><Input class="item-input" v-model="modify.transExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">违章押金(元)：</span><Input class="item-input" v-model="modify.breakRuleExpenses" placeholder="请输入..." />
+                    <span class="item-comm required">进件费(元)：</span><Input class="item-input" v-model="modify.transExpenses" placeholder="请输入..." />
                 </div> 
                 <div class="item-div">
-                    <span class="item-comm required">内返最低值：</span><Input class="item-input" v-model="modify.storeCommissionPersent" placeholder="请输入..." />
-                    <span class="item-comm required">最高可贷额度：</span><Input class="item-input" v-model="modify.hiestAmount" placeholder="请输入..." />
+                    <span class="item-comm required">内返最低值(元)：</span><Input class="item-input" v-model="modify.storeCommissionPersent" placeholder="请输入..." />
+                    <span class="item-comm required">最高可贷额度(元)：</span><Input class="item-input" v-model="modify.hiestAmount" placeholder="请输入..." />
                 </div> 
                 <div class="item-div">
-                    <span class="item-comm required">最低可贷额度：</span><Input class="item-input" v-model="modify.loestAmount" placeholder="请输入..." />
+                    <span class="item-comm required">最低可贷额度(元)：</span><Input class="item-input" v-model="modify.loestAmount" placeholder="请输入..." />
                     <ImgUpload @changePicUrl="changePicUrl" :myPicUrl="picUrl" :type="4" class="span-upload">产品图片：</ImgUpload>
                 </div> 
                 <div class="item-div">
@@ -184,7 +184,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 220,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -253,7 +253,22 @@ export default {
                                         })()
                                     }
                                 }
-                            }, '修改')
+                            }, '修改'),
+                            h('Button', {
+                                props: {
+                                    type: 'warning',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ContractManage',query:{prodId:params.row.id,pageNum:this.search.pageNum,name:'ProductList'}});
+                                    }
+                                }
+                            }, '合同管理')
                         ]);
                     }
                 }, {
@@ -312,7 +327,7 @@ export default {
                         ]);
                     }
                 }, {
-					title: '月费率',
+					title: '状态',
 					key: 'statusValue',
 					minWidth: 120,
 					render: (h, params) => {

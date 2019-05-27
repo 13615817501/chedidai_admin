@@ -2,16 +2,16 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>产品管理</BreadcrumbItem>
-	        <BreadcrumbItem>门店产品列表</BreadcrumbItem>
+	        <BreadcrumbItem>门店产品</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
             <span>
                 门店名称: 
-                <Input v-model="search.storeName" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                <Input v-model="search.storeName" clearable placeholder="请输入门店名称" style="width: 120px"></Input>
             </span>
             <span>
                 &nbsp;&nbsp;产品名称: 
-                <Input v-model="search.prodName" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                <Input v-model="search.prodName" clearable placeholder="请输入产品名称" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
            <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
@@ -204,7 +204,7 @@ export default {
                         ]);
                     }
                 },  {
-                    title: '服务费',
+                    title: '服务费（元）',
                     key: 'serviceValue',
                     minWidth: 160,
                     render: (h, params) => {

@@ -54,6 +54,14 @@
                     }else{
                         formData.status = 1;
                     }
+                }else if(this.modalTipTitle=='上架该合同类目' || this.modalTipTitle=='下架该合同类目'){
+                    formUrl = '/fx?api=gate.prod.admin.mdfContractItem';  //这里还需要修改
+                    formData.id = this.item.id;
+                    if(this.modalTipTitle=='下架该合同类目'){
+                        formData.status = 0;
+                    }else{
+                        formData.status = 1;
+                    }
                 }else if(this.modalTipTitle=='禁用该客户' || this.modalTipTitle=='启用该客户'){
                     formUrl = '/fx?api=gate.user.admin.disOrEnable';  //这里还需要修改
                     formData.id = this.item.id;
@@ -66,10 +74,31 @@
                     formUrl = '/fx?api=gate.order.admin.checkOfflinePass';  //这里还需要修改
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='通过该审核订单'){
-                    formUrl = '/fx?api=gate.order.admin.checkPass';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.checkPass';
                     formData.orderId = this.item.orderId;
-                }else if(this.modalTipTitle=='退回该审核订单'){
-                    formUrl = '/fx?api=gate.order.admin.checkBack';  //这里还需要修改
+                }else if(this.modalTipTitle=='通过该复审订单'){
+                    formUrl = '/fx?api=gate.order.admin.checkAgain';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='删除该产品合同条目'){
+                    formUrl = '/fx?api=gate.prod.admin.delContProdMapping';  //这里还需要修改
+                    formData.id = this.item.id;
+                }else if(this.modalTipTitle=='通过该签署合同'){
+                    formUrl = '/fx?api=gate.order.admin.signContract';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='GPS安装确认'){
+                    formUrl = '/fx?api=gate.order.admin.installedGps';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='抵押完成确认'){
+                    formUrl = '/fx?api=gate.order.admin.mortgaged';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='通过该待复审订单'){
+                    formUrl = '/fx?api=gate.order.admin.checkAgain';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='通过首款完成'){
+                    formUrl = '/fx?api=gate.order.admin.loanFirst';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='通过尾款完成'){
+                    formUrl = '/fx?api=gate.order.admin.loan';  //这里还需要修改
                     formData.orderId = this.item.orderId;
                 }
                 this.modal_loading = true;

@@ -40,13 +40,17 @@
 			confirmBtn(){
 				let formData = {
                     orderId: this.orderId,
-                    content: this.activeState
 	            };
 	            let myUrl = '';
 	            switch (this.title) {
 	            	case '待审核拒绝':
 	            		myUrl = '/fx?api=gate.order.admin.refuse';
+	            		formData.content = this.activeState!='其他'?this.activeState:this.otherInput;
 	            		break;	
+	            	case '待门店处理拒绝':
+	            		myUrl = '/fx?api=gate.order.admin.checkOfflineRefuse';
+	            		formData.msg = this.activeState!='其他'?this.activeState:this.otherInput;
+	            		break;		
 	            }
 	            
 	            this.$axios.post(myUrl,formData).then(res => {

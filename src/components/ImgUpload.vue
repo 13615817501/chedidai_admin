@@ -170,8 +170,10 @@ export default {
 						this.myUploadTxt = '图片';
 					}
 					if(this.txt=='多选'){
-                        this.uploadList.push(myUrl);
-                        this.uploadList2.push(ranUrl);
+						// myUrl = client.signatureUrl(myUrl);
+						// console.log(myUrl);
+                        this.uploadList.push(myUrl);   //绝对地址
+                        this.uploadList2.push(ranUrl); //相对地址
 					}else{
 						this.$emit('changePicUrl', ranUrl,myUrl);
 					}

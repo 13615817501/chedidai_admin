@@ -6,16 +6,26 @@
 	    </Breadcrumb>
         <div class="search-box">
             <span>
-                产品名称: 
-                <Input v-model="search.name" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                申请时间: 
+                <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
             </span>
             <span>
                 &nbsp;&nbsp;订单号: 
-                <Input v-model="search.orderNumber" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                <Input v-model="search.orderNumber" clearable placeholder="请输入订单号" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;产品: 
+                <Select v-model="search.prodId" placeholder="输入后选择匹配产品" clearable remote filterable :remote-method='remoteMethod' style="width: 150px">
+                    <Option v-for="(option, index) in prodList" :value="option.id" :label="option.name" :key="option.id"></Option>
+                </Select>
             </span>
             <span>
                 &nbsp;&nbsp;手机号: 
-                <Input v-model="search.mobile" clearable placeholder="请输入姓名" style="width: 120px"></Input>
+                <Input v-model="search.mobile" clearable placeholder="请输入手机号" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;用户姓名: 
+                <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
@@ -30,11 +40,13 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn" @cancel="cancel"></ChooseReason> 
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
+import ChooseReason from '@/components/ChooseReason' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
@@ -47,12 +59,19 @@ export default {
             modalTipTitle:'禁用该员工',
             tipModal:false,
             myTitle:'新增产品',
+            title:'待门店处理拒绝',
+            passModal: false,
+            ModalContent:[],
             item:{},
-            id:'',
+            orderId:'',
+            prodList:[], //产品列表集合
 			search:{
-                mobile:'',
-                name:'',
+                timeType:1,
+                timeInterval:'',
                 orderNumber: '',
+                prodId:'',
+                mobile: '',
+                name: '',
 			    pageNum: 1,
 			    pageSize:15
 			},
@@ -93,57 +112,75 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '拒绝该门店处理订单';
-                                        this.item = params.row;
+                                        this.passModal = true;
+                                        this.title = '待门店处理拒绝';
+                                        this.orderId = params.row.orderId;
                                     }
                                 }
                             }, '拒绝'),
                         ]);
                     }
                 }, {
-					title: '门店',
-					key: 'storeName',
+                    title: '订单号',
+                    key: 'orderNumber',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.orderNumber)
+                        ]);
+                    }
+                }, {
+					title: '用户姓名',
+					key: 'userName',
 					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.storeName)
+							h('strong', params.row.userName)
 						]);
 					}
 				}, {
-                    title: '预约日期',
-                    key: 'createTime',
+                    title: '手机号码',
+                    key: 'userMobile',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.createTime)
+                            h('strong', params.row.userMobile)
                         ]);
                     }
                 }, {
-                    title: '客户名称',
-                    key: 'userName',
+                    title: '门店名',
+                    key: 'storeName ',
                     minWidth: 90,
                      render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userName)
+                            h('strong', params.row.storeName)
                         ]);
                     }
                 }, {
-					title: '客户手机',
-					key: 'userMobile',
+					title: '产品名称',
+					key: 'prodName',
 					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.userMobile)
+							h('strong', params.row.prodName)
 						]);
 					}
 				}, {
-					title: '产品',
-					key: 'prodName',
+                    title: '退回原因',
+                    key: 'reason',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.reason)
+                        ]);
+                    }
+                }, {
+					title: '申请时间',
+					key: 'createTime',
 					minWidth: 90,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.prodName)
+							h('strong', params.row.createTime)
 						]);
 					}
 				}, {
@@ -163,7 +200,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'WaitStoreDetail',query:{userId:params.row.userId,autoId:params.row.autoId}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitStoreList'}});
                                     }
                                 }
                             }, '详情'),
@@ -175,15 +212,44 @@ export default {
 	},
     components:{
         CommonTipModal,
-        ImgUpload
+        ImgUpload,
+        ChooseReason
     }, 
 	computed:{
         ...mapState(['adjustHeight']) 
     },
 	activated(){
-        this.getInitialList(this.search);
+        this.getInitialList(util.searchList(this.search,'timeInterval'));
+        this.getRefuseReasonList();
 	},
+    watch:{
+       '$route'(to,from){
+           if(from.name=='WaitStoreDetail'){
+               this.search.pageNum = this.$route.query.pageNum;
+               this.getInitialList(util.searchList(this.search,'timeInterval'));
+           }
+       }
+    },
 	methods: {
+        getRefuseReasonList(){
+            this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {
+                if(res!=500){
+                    this.ModalContent = [];
+                    res.hub.forEach( (item, index) => {
+                        this.ModalContent.push(item.v);
+                    });
+                }
+            })
+        },
+        remoteMethod(query) { //远程请求
+            if (query != '') {
+                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
+                    this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
+                })
+            } else {
+                this.prodList = [];
+            }
+        },
 		getInitialList(formData){ 
             this.table_loading = true;
 		    this.$axios.get('/fx?api=gate.order.admin.waitCheckOfflineList',{params:formData}).then(res => {
@@ -198,38 +264,29 @@ export default {
 		},
         pageChange(page){
 			this.search.pageNum = page;
-            this.getInitialList(this.search);
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
         	this.search.pageNum = 1;
-			this.getInitialList(this.search);
+			this.getInitialList(util.searchList(this.search,'timeInterval'));
 		},
-        confirmBtn(){
-            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
-                return this.$Message.error("带 * 为必填项"); 
+        confirmBtn(num){
+            if(num!=500){
+                this.$Message.success('操作成功');
+               this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
-            let formData = {...this.modify};
-            let  myUrl = '/fx?api=gate.addOrUpdate.product';
-            if(this.myTitle == '修改'){
-                formData.id = this.id;
-            }
-            this.$axios.post(myUrl,formData).then(res => {
-                if(res!=500){
-                    this.$Message.success("操作成功"); 
-                    this.modifyModal = false;
-                    this.getInitialList(this.search);    
-                }
-            })
+            this.passModal = false;
         },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
+            this.passModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
             if (num != 500) {
                 this.$Message.success('操作成功');
-                this.getInitialList(this.search);
+                this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         }
 	}

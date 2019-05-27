@@ -143,7 +143,7 @@ export default {
     },
     watch: {
         '$route'(to, from) {
-            if(from.name == "CustomDetail" || to.name == "CustomDetail" || to.name == "OrderDetail" || from.name == "OrderDetail" || from.name == "WaitStoreDetail" || to.name == "WaitStoreDetail"){ //返回的时候不设置tab
+            if(from.name == "CustomDetail" || to.name == "CustomDetail" || to.name == "OrderDetail" || from.name == "OrderDetail" || from.name == "ProcessDetail" || to.name == "ProcessDetail" || from.name == "ContractManage" || to.name == "ContractManage" || from.name == "LoanDetail" || to.name == "LoanDetail"){ //返回的时候不设置tab
                 return;
             }
             this.myTabColorPath = to.name;

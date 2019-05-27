@@ -4,6 +4,17 @@
 	        <BreadcrumbItem>客户管理</BreadcrumbItem>
 	        <BreadcrumbItem>客户列表</BreadcrumbItem>
 	    </Breadcrumb>
+        <div class="search-box">
+            <span>
+                &nbsp;&nbsp;手机号: 
+                <Input v-model="search.mobile" clearable placeholder="请输入手机号" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;姓名: 
+                <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+            </span>
+            <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+        </div> 
 	    <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
@@ -37,6 +48,8 @@ export default {
             id:'',
             activeState: null,
             search:{
+                mobile:'',
+                name:'',
                 pageNum:1,
                 pageSize:15
             },

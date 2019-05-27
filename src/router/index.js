@@ -96,6 +96,11 @@ var router = new Router({
 	                name: 'DeductOrder',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/DeductOrder`),
+	            },{
+	                path: '/LoanManage/LoanDetail',
+	                name: 'LoanDetail',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/LoanDetail`),
 	            }, {
 	                path: '/LoanManage/FirstOrder',
 	                name: 'FirstOrder',
@@ -137,6 +142,11 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/WaitConfirmList`),
 	            },  {
+	                path: '/OrderManage/ProcessDetail',
+	                name: 'ProcessDetail',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/ProcessDetail`),
+	            },{
 	                path: '/OrderManage/WaitStoreDetail',
 	                name: 'WaitStoreDetail',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -166,6 +176,11 @@ var router = new Router({
 	                name: 'ContractItemList',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/ProductManage/ContractItemList`),
+	            },{
+	                path: '/ProductManage/ContractManage',
+	                name: 'ContractManage',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/ProductManage/ContractManage`),
 	            }, {
 	                path: '/ProductManage/ContractList',
 	                name: 'ContractList',

@@ -46,14 +46,14 @@
 	                </div>
 	                <div class="item-div">
 	                    <span class="item-comm required">档案编号：</span><Input class="item-input" v-model="modify.archivesNumber" placeholder="请输入..." />
-	                    <span class="item-comm required">核载人数：</span><Input class="item-input" v-model="modify.passenger" placeholder="请输入..." />
+	                    <span class="item-comm required">核载人数(人)：</span><Input class="item-input" v-model="modify.passenger" placeholder="请输入..." />
 	                </div>
 	                <div class="item-div">
-	                    <span class="item-comm required">总质量：</span><Input class="item-input" v-model="modify.weightTotal" placeholder="请输入..." />
-	                    <span class="item-comm required">整备质量：</span><Input class="item-input" v-model="modify.weightWhole" placeholder="请输入..." />
+	                    <span class="item-comm required">总质量(kg)：</span><Input class="item-input" v-model="modify.weightTotal" placeholder="请输入..." />
+	                    <span class="item-comm required">整备质量(kg)：</span><Input class="item-input" v-model="modify.weightWhole" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
-	                    <span class="item-comm required">外部尺寸：</span><Input class="item-input" v-model="modify.size" placeholder="请输入..." />
+	                    <span class="item-comm required">外部尺寸(mm)：</span><Input class="item-input" v-model="modify.size" placeholder="请输入..." />
 	                    <span class="item-comm required">备注：</span><Input class="item-input" v-model="modify.remark" placeholder="请输入..." />
 	                </div>
 	                <div class="item-div">
@@ -78,38 +78,38 @@
 	                </div> 
 	                <div class="item-div">
 	                    <span class="item-comm required">燃油种类：</span><Input class="item-input" v-model="modify.oilType" placeholder="请输入..." />
-	                    <span class="item-comm required">排量/功率：</span><Input class="item-input" v-model="modify.work" placeholder="请输入..." />
+	                    <span class="item-comm required">排量/功率(kw)：</span><Input class="item-input" v-model="modify.work" placeholder="请输入..." />
 	                </div> 
 	                <div class="item-div">
 	                    <span class="item-comm required">制造工厂：</span><Input class="item-input" v-model="modify.madeFactory" placeholder="请输入..." />
 	                    <span class="item-comm required">转向形式：</span><Input class="item-input" v-model="modify.turnType" placeholder="请输入..." />
 	                </div> 
 	                <div class="item-div">
-	                    <span class="item-comm required">轮距：</span><Input class="item-input" v-model="modify.wheelDistance" placeholder="请输入..." />
-	                    <span class="item-comm required">轮胎数：</span><Input class="item-input" v-model="modify.wheelCount" placeholder="请输入..." />
+	                    <span class="item-comm required">轮距(mm)：</span><Input class="item-input" v-model="modify.wheelDistance" placeholder="请输入..." />
+	                    <span class="item-comm required">轮胎数(个)：</span><Input class="item-input" v-model="modify.wheelCount" placeholder="请输入..." />
 	                </div>
 	                <div class="item-div">
 	                    <span class="item-comm required">轮胎规格：</span><Input class="item-input" v-model="modify.wheelNormal" placeholder="请输入..." />
-	                    <span class="item-comm required">钢板弹簧片数：</span><Input class="item-input" v-model="modify.steelCount" placeholder="请输入..." />
+	                    <span class="item-comm required">钢板弹簧数(片)：</span><Input class="item-input" v-model="modify.steelCount" placeholder="请输入..." />
 	                </div> 
 	                  <div class="item-div">
-	                    <span class="item-comm required">轴距：</span><Input class="item-input" v-model="modify.wheelbase" placeholder="请输入..." />
+	                    <span class="item-comm required">轴距(mm)：</span><Input class="item-input" v-model="modify.wheelbase" placeholder="请输入..." />
 	                    <span class="item-comm required">轴数：</span><Input class="item-input" v-model="modify.axesCount" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
-	                    <span class="item-comm required">外廊尺寸：</span><Input class="item-input" v-model="modify.verandaSize" placeholder="请输入..." />
-	                    <span class="item-comm required">货厢内部尺寸：</span><Input class="item-input" v-model="modify.innerSize" placeholder="请输入..." />
+	                    <span class="item-comm required">外廊尺寸(mm)：</span><Input class="item-input" v-model="modify.verandaSize" placeholder="请输入..." />
+	                    <span class="item-comm required">货厢内部尺寸(mm)：</span><Input class="item-input" v-model="modify.innerSize" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
-	                    <span class="item-comm required">总质量：</span><Input class="item-input" v-model="modify.totalWeight" placeholder="请输入..." />
-	                    <span class="item-comm required">核定载重量：</span><Input class="item-input" v-model="modify.approvedLoad" placeholder="请输入..." />
+	                    <span class="item-comm required">总质量(kg)：</span><Input class="item-input" v-model="modify.totalWeight" placeholder="请输入..." />
+	                    <span class="item-comm required">核定载重量(kg)：</span><Input class="item-input" v-model="modify.approvedLoad" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
-	                    <span class="item-comm required">核定载客：</span><Input class="item-input" v-model="modify.customer" placeholder="请输入..." />
-	                    <span class="item-comm required">准牵引总质量：</span><Input class="item-input" v-model="modify.tractionWeight" placeholder="请输入..." />
+	                    <span class="item-comm required">核定载客(人)：</span><Input class="item-input" v-model="modify.customer" placeholder="请输入..." />
+	                    <span class="item-comm required">准牵引总质量(kg)：</span><Input class="item-input" v-model="modify.tractionWeight" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
-	                    <span class="item-comm required">驾驶室载客：</span><Input class="item-input" v-model="modify.driverCustomer" placeholder="请输入..." />
+	                    <span class="item-comm required">驾驶室载客(人)：</span><Input class="item-input" v-model="modify.driverCustomer" placeholder="请输入..." />
 	                    <span class="item-comm required">使用性质：</span><Input class="item-input" v-model="modify.useNature" placeholder="请输入..." />
 	                </div>  
 	                <div class="item-div">
@@ -150,14 +150,14 @@
             </div>
             <div class="item-div">
                 <span class="item-comm required">发动机号：</span><Input class="item-input" v-model="modify2.enginner" placeholder="请输入..." />
-                <span class="item-comm required">车驾号：</span><Input class="item-input" v-model="modify2.frame" placeholder="请输入..." />
+                <span class="item-comm required">车架号：</span><Input class="item-input" v-model="modify2.frame" placeholder="请输入..." />
             </div> 
             <div class="item-div">
                 <span class="item-comm required">车辆型号：</span><Input class="item-input" v-model="modify2.model" placeholder="请输入..." />
                 <span class="item-comm required">登记日期：</span><DatePicker v-model="modify2.registerDate" type="date" placeholder="年检相关" class="item-input"></DatePicker>
             </div> 
             <div class="item-div">
-                <span class="item-comm required">行驶里程：</span><Input class="item-input" v-model="modify2.mile" placeholder="公里数" />
+                <span class="item-comm required">行驶里程(万)：</span><Input class="item-input" v-model="modify2.mile" placeholder="公里数" />
                 <span class="item-comm required">车身颜色：</span><Input class="item-input" v-model="modify2.color" placeholder="请输入..." />
             </div> 
             <div class="item-div">
@@ -203,11 +203,11 @@
                 <span class="item-comm required">燃料编号：</span><Input class="item-input" v-model="modify2.fuelNumber" placeholder="请输入..." />
             </div>
             <div class="item-div">
-                <span class="item-comm required">排量：</span><Input class="item-input" v-model="modify2.displace" placeholder="请输入..." />
-                <span class="item-comm required">缸数：</span><Input class="item-input" v-model="modify2.cylinder" placeholder="请输入..." />
+                <span class="item-comm required">排量(ml)：</span><Input class="item-input" v-model="modify2.displace" placeholder="请输入..." />
+                <span class="item-comm required">缸数(缸)：</span><Input class="item-input" v-model="modify2.cylinder" placeholder="请输入..." />
             </div>
             <div class="item-div">
-                <span class="item-comm required">发动机功率：</span><Input class="item-input" v-model="modify2.power" placeholder="请输入..." />
+                <span class="item-comm required">发动机功率(kw)：</span><Input class="item-input" v-model="modify2.power" placeholder="请输入..." />
                 <span class="item-comm required">排放标准：</span><Input class="item-input" v-model="modify2.emissStand" placeholder="请输入..." />
             </div>
             <div class="item-div">
@@ -216,45 +216,45 @@
             </div>
             <div class="item-div">
                 <span class="item-comm required">是否有abs ：</span><Select v-model="modify2.hasAbs" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
                 <span class="item-comm required">其它重要配置：</span><Input class="item-input" v-model="modify2.otherImpConfig" placeholder="请输入..." />
             </div>
             <div class="item-div">
                 <span class="item-comm required">是否为事故车：</span><Select v-model="modify2.isAccident" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
                 <span class="item-comm required">扣分：</span><Input class="item-input" v-model="modify2.deduction" placeholder="请输入..." />
             </div>
             <div class="item-div">
-                <span class="item-comm required">罚款：</span><Input class="item-input" v-model="modify2.fine" placeholder="请输入..." />
+                <span class="item-comm required">罚款(元)：</span><Input class="item-input" v-model="modify2.fine" placeholder="请输入..." />
                 <span class="item-comm required">损伤位置及状况：</span><Input class="item-input" v-model="modify2.damage" placeholder="请输入..." />
             </div>
             <div class="item-div">
                 <span class="item-comm required">是否收押行驶证：</span><Select v-model="modify2.hasCustodyTraveler" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
                 <span class="item-comm required">是否收押机动车登记证书：</span><Select v-model="modify2.hasCustodyRegister" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
             </div>
             <div class="item-div">
                 <span class="item-comm required">是否收押交强险保单：</span><Select v-model="modify2.hasCustodyHigh" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
                 <span class="item-comm required">是否收押商业保险单：</span><Select v-model="modify2.hasCustodyBusy" class="item-input">
-	                    <Option value="0">无</Option>
-	                    <Option value="1">有</Option>
+	                    <Option value="0">否</Option>
+	                    <Option value="1">是</Option>
 	                </Select>
             </div>
             <div class="item-div">
                 <span class="item-comm required">收押其它：</span><Input class="item-input" v-model="modify2.custodyOther" placeholder="请输入..." />
-                <span class="item-comm required">评定估价：</span><Input class="item-input" v-model="modify2.valuatePrice" placeholder="请输入..." />
+                <span class="item-comm required">评定估价(元)：</span><Input class="item-input" v-model="modify2.valuatePrice" placeholder="请输入..." />
             </div>
             <div class="item-div">
                 <span class="item-comm required">验车人签字：</span><Input class="item-input" v-model="modify2.examinerSign" placeholder="请输入..." />
@@ -262,7 +262,7 @@
             </div>
             <div class="item-div">
                 <span class="item-comm required">车主签字：</span><Input class="item-input" v-model="modify2.ownerSign" placeholder="请输入..." />
-                <span class="item-comm required">交车日期书：</span><DatePicker v-model="modify2.deliveryDate" type="date" placeholder="请选择" class="item-input"></DatePicker>
+                <span class="item-comm required">交车日期：</span><DatePicker v-model="modify2.deliveryDate" type="date" placeholder="请选择" class="item-input"></DatePicker>
             </div>
             <div class="item-div">
                 <span class="item-comm required">入库日期：</span><DatePicker v-model="modify2.storageDate" type="date" placeholder="请选择" class="item-input"></DatePicker>
@@ -277,7 +277,7 @@
             <Form ref="salesForm" :model="modify3"  :label-width="100">
                 <ChinaArea txt="修改" @change="chinaAreaChange" :status="myTitle3=='新增' && !modifyModal3" :modifyStatus="myTitle3=='修改' && modifyModal3" 
 	                :parProvince="modify3.province" :parCity="modify3.city" :parArea="modify3.area"></ChinaArea>
-	            <FormItem label="里程数：" prop="name" class="item-width ivu-form-item-required">
+	            <FormItem label="里程数(万)：" prop="name" class="item-width ivu-form-item-required">
 	                <Input style="width:200px;" v-model="modify3.mile" placeholder="请输入..." />	
 	            </FormItem>
 	            <FormItem label="首次上牌：" prop="name" class="item-width ivu-form-item-required">
@@ -652,8 +652,8 @@ export default {
 													register4: autoRepositoryDetailVO.register4
 												};
 												this.modify3Img = [autoRepositoryDetailVO.mainTravelValue,autoRepositoryDetailVO.viceTravelValue,autoRepositoryDetailVO.register1Value,autoRepositoryDetailVO.register2Value,autoRepositoryDetailVO.register3Value,autoRepositoryDetailVO.register4Value];
-												console.log(this.modify3 );
                                                 this.modifyModal3 = true;
+                                                console.log(this.modify3);
                                             } catch (err) {
                                                 this.$Message.error("请求出错！"); 
                                             }
@@ -998,7 +998,10 @@ export default {
             this.modalPreview = false;
             this.modifyModal2 = false;
             this.modifyModal3 = false;
-        },
+			this.modify3.province = null;
+			this.modify3.city = null;
+			this.modify3.area = null;
+		},
         tipComfirmBtn(num) {
             this.tipModal = false;
             if (num != 500) {
@@ -1033,7 +1036,6 @@ export default {
 		confirmBtn3(){
             for (let key in this.modify3) {
 				if (!this.modify3[key]) {
-					debugger;
 					return this.$Message.error("带 * 为必填项");
 				}
 			}
@@ -1044,6 +1046,9 @@ export default {
                     this.modifyModal3 = false;
                     this.getInitialList(this.search);    
                 }
+                this.modify3.province = null;
+	            this.modify3.city = null;
+	            this.modify3.area = null;
             })
 		}
 	}

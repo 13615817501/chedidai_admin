@@ -71,21 +71,20 @@ export default {
 			citys2:[],
 			areas:[],
 			areas2:[],
-			myOnce1:false,
-			myOnce2:false
+			myOnce1:false,  //省第一次修改
+            myOnce2:false,  //市第一次修改
 		}
 	},
 	watch: {
-		'modifyStatus'(newVal,oldVal){
-            if(newVal){
-            	this.modify.province = this.parProvince;
-            	this.modify.city = this.parCity;
-            	this.modify.area = this.parArea;
-            	this.myOnce1 = true; //点击修改时第一次myOnce1,myOnce2都需要为true,跳过对应的监听
-            	this.myOnce2 = true; 
-            }
+		'modifyStatus'(newVal,oldVal){   //是修改的弹窗
+            this.myOnce1 = true;  //点击修改时第一次myOnce1,myOnce2都需要为true,跳过对应的监听
+            this.myOnce2 = true; 
+        	this.modify.province = this.parProvince;
+        	this.modify.city = this.parCity;
+        	this.modify.area = this.parArea;
+            console.log(111,this.modify);
 		},
-		'status'(newVal,oldVal){
+		'status'(newVal,oldVal){  //是新增的弹窗
             if(newVal){
             	this.modify.province = null;
             	this.modify.city = null;
@@ -111,6 +110,7 @@ export default {
             }
             this.$emit('change',this.modify);
             this.myOnce1 = false;
+            console.log(222);
         },
         'modify.city'(newVal,oldVal){
             this.getAdministrative({type:3,code:newVal},true);
@@ -119,9 +119,11 @@ export default {
             }
             this.$emit('change',this.modify);
             this.myOnce2 = false;
+            console.log(333);
         },
         'modify.area'(newVal,oldVal){
             this.$emit('change',this.modify);
+            console.log(444);
         },
 	},
 	activated(){
