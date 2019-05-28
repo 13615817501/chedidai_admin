@@ -2,7 +2,7 @@
     <div id="login">
         <div style="font-size:36px;color:#346FD0;font-weight:bold;line-height:100px;padding-left:60px;">车抵贷后台管理系统</div>
         <div class="login-content">
-			<div class="login-bg"><img src="https://carloan-admin-online.oss-cn-hangzhou.aliyuncs.com/imgs/login_bg_img.png" alt="背景图"></div>
+			<div class="login-bg"><img src="https://carloan-admin-online.oss-cn-hangzhou.aliyuncs.com/imgs/login_bg_img.png" alt=""></div>
 			<div class="logo-box">
 		        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate">
 		            <div style="font-size:28px;text-align:center;line-height:60px;padding-bottom:40px;">登录</div>
