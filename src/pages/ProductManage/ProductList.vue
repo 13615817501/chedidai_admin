@@ -80,12 +80,8 @@
                 </div>
                 <div class="item-div">
                     <span class="item-comm required">杂费(元)：</span><Input class="item-input" v-model="modify.incidentalExpenses" placeholder="请输入..." />
-                    <span class="item-comm required">年检押金(元)：</span><Input class="item-input" v-model="modify.annualInspectionExpenses" placeholder="请输入..." />
-                </div>
-                <div class="item-div">
-                    <span class="item-comm required">违章押金(元)：</span><Input class="item-input" v-model="modify.breakRuleExpenses" placeholder="请输入..." />
                     <span class="item-comm required">进件费(元)：</span><Input class="item-input" v-model="modify.transExpenses" placeholder="请输入..." />
-                </div> 
+                </div>
                 <div class="item-div">
                     <span class="item-comm required">内返最低值(元)：</span><Input class="item-input" v-model="modify.storeCommissionPersent" placeholder="请输入..." />
                     <span class="item-comm required">最高可贷额度(元)：</span><Input class="item-input" v-model="modify.hiestAmount" placeholder="请输入..." />
@@ -172,8 +168,6 @@ export default {
                 plateMortgageExpenses: '',
                 homeVisitExpenses: '',
                 incidentalExpenses: '',
-                annualInspectionExpenses: '',
-                breakRuleExpenses: '',
                 transExpenses: '',
                 storeCommissionPersent: '',
                 hiestAmount: '',
@@ -240,8 +234,8 @@ export default {
                                         (async () => {
                                             try {
                                                 let detailProduct = await this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:params.row.id}});
-                                                let {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,annualInspectionExpenses,breakRuleExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} = detailProduct;
-                                                this.modify = {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,annualInspectionExpenses,breakRuleExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate}
+                                                let {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} = detailProduct;
+                                                this.modify = {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate}
                                                 this.picUrl = params.row.bannerPicValue;
                                                 if(this.modify.repayDateType=='1'){
                                                    this.modify.repayDate = '';
@@ -409,8 +403,6 @@ export default {
                 plateMortgageExpenses: '',
                 homeVisitExpenses: '',
                 incidentalExpenses: '',
-                annualInspectionExpenses: '',
-                breakRuleExpenses: '',
                 transExpenses: '',
                 storeCommissionPersent: '',
                 hiestAmount: '',
@@ -423,7 +415,7 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.periods || !this.modify.debtType || !this.modify.annualRate || !this.modify.calculate || !this.modify.contractTemplate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.annualInspectionExpenses || !this.modify.breakRuleExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount){
+            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.periods || !this.modify.debtType || !this.modify.annualRate || !this.modify.calculate || !this.modify.contractTemplate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount){
                 return this.$Message.error("带 * 为必填项"); 
             }
             if(this.modify.repayDateType=='2' && !this.modify.repayDate){

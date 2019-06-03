@@ -169,7 +169,7 @@ export default {
 				}, {
                     title: '用户姓名',
                     key: 'userName',
-                    minWidth: 160,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userName)
@@ -178,7 +178,7 @@ export default {
                 }, {
                     title: '手机号码',
                     key: 'userMobile',
-                    minWidth: 90,
+                    minWidth: 120,
                      render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
@@ -187,7 +187,7 @@ export default {
                 }, {
 					title: '门店名',
 					key: 'storeName',
-					minWidth: 120,
+					minWidth: 140,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.storeName)
@@ -196,7 +196,7 @@ export default {
 				}, {
 					title: '产品名称',
 					key: 'prodName',
-					minWidth: 90,
+					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.prodName)
@@ -205,7 +205,7 @@ export default {
 				}, {
                     title: '贷款金额（元）',
                     key: 'amount',
-                    minWidth: 90,
+                    minWidth: 140,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.amount)
@@ -214,7 +214,7 @@ export default {
                 }, {
                     title: '复审通过时间',
                     key: 'loanFirstTime',
-                    minWidth: 120,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.loanFirstTime)
@@ -223,7 +223,7 @@ export default {
                 },{
                     title: '复审操作员',
                     key: 'loanFirstStaff',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.loanFirstStaff)

@@ -32,27 +32,23 @@
             </span>
             <div class="div-comm-1">费用条目：</div>
             <span class="span-comm-1">
-                <div>综合服务费(元)：{{certifyData.comprehenServiceFee}}</div>
                 <div>保费(元)：{{certifyData.insuranceFee}}</div>
-                <div>上牌抵押费用(元)：{{certifyData.installLicensePlateFee}}</div>
+                <div>居间服务费(元)：{{certifyData.partiesFee}}</div>
+                <div>账户管理费(元)：{{certifyData.accountMgrFee}}</div>
+                <div>GPS安装费(元)：{{certifyData.installGpsFee}}</div>
+                <div>人生意外险保费(元)：{{certifyData.accidentInsureFee}}</div>
+                <div>进件费用(元)：{{certifyData.transFilesFee}}</div>
+                <div>年检押金(元)：{{certifyData.annualInspectionDeposit}}</div>
                 <div>违章押金(元)：{{certifyData.trafficDeposit}}</div>
             </span>
             <span class="span-comm-1">
                 <div>平台服务费(元)：{{certifyData.platformServiceFee}}</div>
                 <div>保证金(元)：{{certifyData.margin}}</div>
                 <div>家访费用(元)：{{certifyData.homeVisitFee}}</div>
-                <div>进件费用(元)：{{certifyData.transFilesFee}}</div>
-            </span>
-            <span class="span-comm-1">
-                <div>居间服务费(元)：{{certifyData.partiesFee}}</div>
-                <div>GPS及安装费用(元)：{{certifyData.installGpsFee}}</div>
                 <div>杂费(元)：{{certifyData.miscellaneousFee}}</div>
-                <div>人生意外险保费(元)：{{certifyData.accidentInsureFee}}</div>
-            </span>
-            <span class="span-comm-1">
-                <div>账户管理费(元)：{{certifyData.accountMgrFee}}</div>
+                <div>综合服务费(元)：{{certifyData.comprehenServiceFee}}</div>
+                <div>上牌抵押费用(元)：{{certifyData.installLicensePlateFee}}</div>
                 <div>流量费(元)：{{certifyData.flowFee}}</div>
-                <div>年检押金(元)：{{certifyData.annualInspectionDeposit}}</div>
                 <div>服务费(元)：{{certifyData.serviceFee}}</div>
             </span>
             <div class="div-comm-1">还款计划：</div>

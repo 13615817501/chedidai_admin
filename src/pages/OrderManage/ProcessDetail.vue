@@ -18,7 +18,13 @@
                         <tr><td>门店编码：{{certifyList.storeNum}}</td><td>门店客服：{{certifyList.storeCt}}</td><td>门店电话：{{certifyList.storeCtm}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
                         <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td></td></tr>
                     </tbody>
-                </table>   
+                </table>  
+                <div style="margin-top:15px;">
+                    <Button type="primary" size="small" @click="setMoney">设置年检违约金</Button>
+                    <p v-if="certifyList.underwritedStatus">暂未设置年检违约金{{certifyList.underwritedStaff}}</p>    
+                    <p v-if="certifyList.underwritedStatus">年检押金：{{certifyList.underwritedStaff}}</p>    
+                    <p v-if="certifyList.underwritedStatus">违章押金：{{certifyList.underwritedStaff}}</p>    
+                </div> 
                 <div style="margin-top:15px;">
                     <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':'失败'}}</p>
                     <p v-if="certifyList.underwritedStatus">核保时间：{{certifyList.underwritedTime}}</p>    
@@ -79,6 +85,20 @@
                 </Timeline>
             </span>
         </div>
+        <Modal width="300" v-model="modifyModal" title="设置年检违约金" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required">年检押金(元)：</span><Input class="item-input" v-model="modify.annualInspectionExpenses" placeholder="请输入..." />
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required">违章押金(元)：</span><Input class="item-input" v-model="modify.breakRuleExpenses" placeholder="请输入..." />
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -93,7 +113,14 @@ export default {
 	data () {
 		return {
             orderId: '',
-			certifyList:{}
+			certifyList:{},
+            prodId:'',
+            modifyModal:false,
+            modal_loading:false,
+            modify:{
+                annualInspectionExpenses:'',
+                breakRuleExpenses:''
+            }
 		}
 	},
     components:{
@@ -111,6 +138,7 @@ export default {
 		    this.$axios.get('/fx?api=gate.order.admin.detail',{params:formData}).then(res => {
 		    	if(res!=500){
                     this.certifyList = res;
+                    this.prodId = res.prodId;
 			        this.$store.commit('change_height');
 		    	}
 			})
@@ -129,6 +157,31 @@ export default {
         }, 
         contractinfoBtn(){  //合同信息
             this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name4',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
+        },
+        setMoney(){
+            this.modifyModal = true;
+            this.modify = {
+                annualInspectionExpenses:'',
+                breakRuleExpenses:''
+            }
+        },
+        confirmBtn(){
+            if(!this.modify.annualInspectionExpenses || !this.modify.breakRuleExpenses){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            this.modal_loading = true;
+            let formData = this.modify;
+            formData.id = this.prodId;
+            this.$axios.post('/fx?api=gate.annual.rule.product',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("设置成功"); 
+                }
+                this.modifyModal = false;
+                this.modal_loading = false;
+            })
+        },
+        cancel(){
+            this.modifyModal = false;
         }
 	}
 }
@@ -140,7 +193,7 @@ export default {
     .item-comm{
         position: relative;
         display: inline-block;
-        width: 120px; 
+        width: 80px; 
         margin-left: 12px;
     }
     .item-comm.required:before{
@@ -154,7 +207,7 @@ export default {
         width: 120px;
     }
     .modify-modal{
-        padding: 0 10px;
+        margin: 0 10px;
     }
     .item-div{
         margin: 10px 0;
