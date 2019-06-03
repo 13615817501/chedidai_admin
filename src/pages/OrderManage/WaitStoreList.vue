@@ -27,7 +27,7 @@
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
-            <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+            <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
         </div> 
 	    <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
@@ -123,7 +123,7 @@ export default {
                 }, {
                     title: '订单号',
                     key: 'orderNumber',
-                    minWidth: 120,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.orderNumber)
@@ -132,7 +132,7 @@ export default {
                 }, {
 					title: '用户姓名',
 					key: 'userName',
-					minWidth: 160,
+					minWidth: 90,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.userName)
@@ -141,7 +141,7 @@ export default {
 				}, {
                     title: '手机号码',
                     key: 'userMobile',
-                    minWidth: 160,
+                    minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
@@ -150,7 +150,7 @@ export default {
                 }, {
                     title: '门店名',
                     key: 'storeName ',
-                    minWidth: 90,
+                    minWidth: 100,
                      render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.storeName)
@@ -177,7 +177,7 @@ export default {
                 }, {
 					title: '申请时间',
 					key: 'createTime',
-					minWidth: 90,
+					minWidth: 150,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.createTime)

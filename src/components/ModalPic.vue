@@ -1,6 +1,6 @@
 <template>
     <span id="modalPic">
-        <Modal class="preview-img" width="500" v-model="modal" title="图片预览" :mask-closable="false" :closable="false"> 
+        <Modal class="preview-img" width="500" draggable v-model="modal" title="图片预览" :mask-closable="false" :closable="false"> 
             <img-zoom v-if="!morePic" :src="bigimg"  width="470" height="500" :bigsrc="bigimg" :configs="configs"></img-zoom>
             <div v-if="morePic" class="imgs-item">
 	            <span v-for="(img,index) in imgs" :key="index">

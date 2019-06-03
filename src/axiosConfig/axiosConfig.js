@@ -8,7 +8,11 @@ import { Message } from 'iview';
 // axios.defaults.baseURL = 'http://apipre.jinchan.link:8389';
 // axios.defaults.baseURL = 'http://192.168.31.73:8087';
 // axios.defaults.baseURL = 'http://47.97.188.143:8087';
+<<<<<<< HEAD
 // axios.defaults.baseURL = 'http://api.zdautoservice.com:8093';
+=======
+axios.defaults.baseURL = 'http://api.zdautoservice.com:8093';
+>>>>>>> 40bbfcb6769bbaa84eb9119180f15c803ae60062
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'; // post请求时候统一设置的头部
 axios.defaults.timeout = 20000;// 统一的全局参数配置
 

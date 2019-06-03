@@ -40,6 +40,7 @@
                             <Option :value="6">6期</Option>
                             <Option :value="12">12期</Option>
                             <Option :value="24">24期</Option>
+                            <Option :value="36">36期</Option>
                         </Select>  
                     <span class="item-comm required">债权类型：</span><Select v-model="modify.debtType" class="item-input" placeholder="请选择">
                             <Option value="1">质押</Option>
@@ -49,17 +50,14 @@
                 </div>
                 <div class="item-div">
                     <span class="item-comm required">年利率(%)：</span><Input class="item-input" v-model="modify.annualRate" placeholder="请输入..." />
-                    <span class="item-comm required">计算公式：</span><Input class="item-input" v-model="modify.calculate" placeholder="请输入..." />
+                    <span class="item-comm required">月利率(%)：</span><Input class="item-input" v-model="modify.monthRate" placeholder="请输入..." />
+                   <!--  <span class="item-comm required">计算公式：</span><Input class="item-input" v-model="modify.calculate" placeholder="请输入..." /> -->
                 </div>
+                <!-- <div class="item-div"> -->
+                   <!--  <span class="item-comm required">合同模版：</span><Input class="item-input" v-model="modify.contractTemplate" placeholder="请输入..." /> -->
+                <!-- </div> -->
                 <div class="item-div">
-                    <span class="item-comm required">合同模版：</span><Input class="item-input" v-model="modify.contractTemplate" placeholder="请输入..." />
-                    <span class="item-comm required">还款渠道：</span><Select v-model="modify.repaymentChannel" class="item-input" placeholder="请选择">
-                            <Option value="1">资方</Option>
-                            <Option value="2">资方和中都</Option>
-                        </Select>
-                </div>
-                <div class="item-div">
-                    <span class="item-comm required">保费费率(元)：</span><Input class="item-input" v-model="modify.insurePersent" placeholder="请输入..." />
+                    <span class="item-comm required">保费费率(%)：</span><Input class="item-input" v-model="modify.insurePersent" placeholder="请输入..." />
                     <span class="item-comm required">居间服务费费率(%)：</span><Input class="item-input" v-model="modify.intermediateServicePersent" placeholder="请输入..." />
                 </div>  
                 <div class="item-div">
@@ -91,11 +89,18 @@
                     <ImgUpload @changePicUrl="changePicUrl" :myPicUrl="picUrl" :type="4" class="span-upload">产品图片：</ImgUpload>
                 </div> 
                 <div class="item-div">
+                    <span class="item-comm required">还款渠道：</span><Select v-model="modify.repaymentChannel" class="item-input" placeholder="请选择">
+                            <Option value="1">资方</Option>
+                            <Option value="2">资方和中都</Option>
+                            <Option value="3">中都</Option>
+                        </Select>
                     <span class="item-comm required">贷款还款日期方式：</span><Select v-model="modify.repayDateType" class="item-input" placeholder="请选择">
                             <Option value="1">固定时间</Option>
                             <Option value="2">合同生效日起算</Option>
-                        </Select>
-                    <span v-show="modify.repayDateType=='2'">
+                        </Select>    
+                </div> 
+                <div class="item-div">
+                    <span v-show="modify.repayDateType=='1'">
                         <span class="item-comm required">贷款还款日：</span><Input class="item-input" v-model="modify.repayDate" placeholder="请输入..." />
                     </span>
                 </div> 
@@ -154,8 +159,7 @@ export default {
                 periods: '',
                 debtType: '',
                 annualRate: '',
-                calculate: '',
-                contractTemplate: '',
+                monthRate: '',
                 repaymentChannel: '',
                 insurePersent: '',
                 intermediateServicePersent: '',
@@ -234,8 +238,13 @@ export default {
                                         (async () => {
                                             try {
                                                 let detailProduct = await this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:params.row.id}});
+<<<<<<< HEAD
                                                 let {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} = detailProduct;
                                                 this.modify = {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,calculate,contractTemplate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate}
+=======
+                                                let {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,monthRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,annualInspectionExpenses,breakRuleExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} = detailProduct;
+                                                this.modify = {label,bannerPic,fullName,shortName,repayment,periods,debtType,annualRate,monthRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,annualInspectionExpenses,breakRuleExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate}
+>>>>>>> 40bbfcb6769bbaa84eb9119180f15c803ae60062
                                                 this.picUrl = params.row.bannerPicValue;
                                                 if(this.modify.repayDateType=='1'){
                                                    this.modify.repayDate = '';
@@ -389,8 +398,7 @@ export default {
                 periods: '',
                 debtType: '',
                 annualRate: '',
-                calculate: '',
-                contractTemplate: '',
+                monthRate: '',
                 repaymentChannel: '',
                 insurePersent: '',
                 intermediateServicePersent: '',
@@ -415,10 +423,14 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
+<<<<<<< HEAD
             if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.periods || !this.modify.debtType || !this.modify.annualRate || !this.modify.calculate || !this.modify.contractTemplate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount){
+=======
+            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.periods || !this.modify.debtType || !this.modify.annualRate || !this.modify.monthRate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.annualInspectionExpenses || !this.modify.breakRuleExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount){
+>>>>>>> 40bbfcb6769bbaa84eb9119180f15c803ae60062
                 return this.$Message.error("带 * 为必填项"); 
             }
-            if(this.modify.repayDateType=='2' && !this.modify.repayDate){
+            if(this.modify.repayDateType=='1' && !this.modify.repayDate){
                 return this.$Message.error("贷款还款日期不能为空"); 
             }
             let formData = {...this.modify};

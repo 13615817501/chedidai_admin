@@ -5,7 +5,7 @@
 	        <BreadcrumbItem>车辆列表</BreadcrumbItem>
 	    </Breadcrumb>
 	    <div class="listadmin">
-            <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
+            <Table border :columns="columns" :data="certifyList" :height="adjustHeight+80"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
@@ -675,7 +675,7 @@ export default {
                 },{
                     title: '行驶证主页',
                     key: 'mainTravelValue',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {
@@ -703,7 +703,7 @@ export default {
                 },{
                     title: '行驶证副页',
                     key: 'viceTravelValue',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {
@@ -731,7 +731,7 @@ export default {
                 },{
                     title: '绿本第1页',
                     key: 'register1Value',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {
@@ -759,7 +759,7 @@ export default {
                 },{
                     title: '绿本第2页',
                     key: 'register2Value',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {
@@ -787,7 +787,7 @@ export default {
                 }, {
                     title: '绿本第3页',
                     key: 'register3Value',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {
@@ -815,7 +815,7 @@ export default {
                 }, {
                     title: '绿本第4页',
                     key: 'register4Value',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('img', {

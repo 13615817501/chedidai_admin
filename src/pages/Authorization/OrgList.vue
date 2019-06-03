@@ -122,7 +122,7 @@ export default {
 			columns: [{
 				title: '门店名',
 				key: 'name',
-				width: '300px',
+				width: '350px',
 			},{
 				title: '角色',
 				key: 'roles',
@@ -136,19 +136,19 @@ export default {
 			},{
 				title: '省',
 				key: 'province',
-				minWidth: '200px',
+				minWidth: '80px',
 				type: 'template',
 				template: 'province',
 			},{
 				title: '市',
 				key: 'city',
-				minWidth: '200px',
+				minWidth: '80px',
 				type: 'template',
 				template: 'city',
 			},{
 				title: '区',
 				key: 'area',
-				minWidth: '200px',
+				minWidth: '80px',
 				type: 'template',
 				template: 'area',
 			},{

@@ -105,7 +105,7 @@ export default {
                 }, {
 					title: '手机号码',
 					key: 'mobile',
-					minWidth: 160,
+					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.mobile)
@@ -114,7 +114,7 @@ export default {
 				}, {
                     title: '姓名',
                     key: 'name',
-                    minWidth: 160,
+                    minWidth: 80,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.name)
@@ -123,7 +123,7 @@ export default {
                 },{
 					title: '头像',
 					key: 'icon',
-					minWidth: 90,
+					minWidth: 80,
 					render: (h, params) => {
 						return h('div', [
 							h('img', {
@@ -145,7 +145,7 @@ export default {
 				},{
                     title: '身份证号',
                     key: 'idNum',
-                    minWidth: 90,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.idNum)
@@ -154,7 +154,7 @@ export default {
                 },{
                     title: '状态',
                     key: 'status',
-                    minWidth: 160,
+                    minWidth: 70,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.status==0?'失效':'生效')
@@ -163,7 +163,7 @@ export default {
                 },{
                     title: '创建时间',
                     key: 'createTime',
-                    minWidth: 90,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.createTime)

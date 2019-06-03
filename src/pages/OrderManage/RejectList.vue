@@ -26,8 +26,7 @@
             <span>
                 &nbsp;&nbsp;姓名: 
                 <Input v-model.trim="search.name" clearable placeholder="请输入姓名" style="width: 120px"></Input>
-            </span>
-            <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+            </span><Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
         </div> 
 	    <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
