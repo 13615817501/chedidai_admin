@@ -7,9 +7,21 @@
         </Breadcrumb>
         <div class="modify-modal"> 
             <Button type="primary" @click="backBtn"><Icon type="ios-arrow-back" />返回</Button>
+            <div class="tab-top-title">
+                <span>姓名：<span class="span11">{{certifyList.name}}</span></span>
+                <span>身份证：<span class="span11">{{certifyList.identityCard}}</span></span>
+                <span>车牌号：<span class="span11">{{modify1.plateNumber}}</span></span>
+                <span>车架号：<span class="span11">{{modify1.vin}}</span></span>
+                <span>发动机号：<span class="span11">{{modify1.enginner}}</span></span>
+            </div>
+            <div class="tab-top-title">
+                <span>身份证正面：<img class="my-img" :src="certifyList.identityFrontValue" alt="身份证正面：" @click="clickFaceImg(certifyList.identityFrontValue)"></span> 
+                <span>身份证反面：<img class="my-img" :src="certifyList.identityBackValue" alt="身份证反面" @click="clickFaceImg(certifyList.identityBackValue)"></span> 
+                <span>行驶证正面：<img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"></span> 
+            </div>
             <Tabs v-model="activedName" @on-click="tabClick">
                 <TabPane label="客户信息" name="name1">
-                    <div class="name1-box" :style="{height:adjustHeight+80+'px','overflow-y': 'scroll'}">
+                    <div class="name1-box" :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
                         <div class="title-info">个人信息</div>
                         <ul class="common-ul">
                             <li><span>姓名：</span><span>{{certifyList.name}}</span></li>
@@ -53,7 +65,7 @@
                             <li><span>所属部门：</span><span>{{certifyList.dept}}</span></li>
                             <li><span>公司性质：</span><span>{{certifyList.nature}}</span></li>
                         </ul>
-                        <div class="title-info">联系信息</div>
+                        <div class="title-info">联系人信息</div>
                         <span v-for="(item,index) in contacts" :key="index">
                             <ul class="common-ul">
                                 <li><span>姓名：</span><span>{{item.concatName}}</span></li>
@@ -73,7 +85,7 @@
                     </div>
                 </TabPane>
                 <TabPane label="车辆信息" name="name2">
-                    <div class="name2-box" :style="{height:adjustHeight+80+'px','overflow-y': 'scroll'}">
+                    <div class="name2-box" :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
                         <!-- 行驶证信息 -->
                         <div class="title-info">行驶证信息<Button type="primary" v-if="name=='WaitStoreList'" :ghost="!ismodify1" style="margin-left:100px;" size="small" @click="modify1Btn">{{ismodify1?'保存':'修改'}}</Button></div>   
                         <div class="item-div">
@@ -352,7 +364,7 @@
                     </div>
                 </TabPane>
                 <TabPane label="认证信息" name="name3">
-                    <div :style="{height:adjustHeight+80+'px','overflow-y': 'scroll'}">
+                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
                         <div class="title-info">违章照片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="5" :txt="'多选'" :myUploadList="myimgs8" :myUploadList2="myimgs88" @changePicUrl="changePicUrl8"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('违章照片')">保存</Button></span>   
@@ -412,7 +424,7 @@
                     </div>
                 </TabPane>
                 <TabPane label="合同信息" name="name4" v-if="$route.query.activedName=='name4'">
-                    <div :style="{height:adjustHeight+80+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
+                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
                         <div>
@@ -420,11 +432,11 @@
                         </div>
                         </template>
                     </div>
-                    <div :style="{height:adjustHeight+80+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
+                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
                         <div>
-                            <span><img :src="img" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img)"></span>
+                            <span><img :src="img.aurl" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img.aurl)"></span>
                         </div>
                         </template>
                     </div>
@@ -1163,7 +1175,7 @@ export default {
     .item-comm{
         position: relative;
         display: inline-block;
-        width: 145px;
+        width: 100px;
         margin-left: 15px; 
     }
      .my-title-comm{
@@ -1175,6 +1187,15 @@ export default {
         color:red;
         left:-10px;
         top:3px;
+    }
+    .tab-top-title{
+        & > span{
+            margin-right:10px;
+        }
+        margin: 8px;
+        .span11{
+            color: red;
+        }
     }
     .my-title-comm:before{
         top:1px;
