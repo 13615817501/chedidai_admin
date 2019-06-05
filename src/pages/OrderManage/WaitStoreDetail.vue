@@ -423,7 +423,7 @@
                         <span v-if="name!='WaitStoreList'"><img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"></span>
                     </div>
                 </TabPane>
-                <TabPane label="合同信息" name="name4" v-if="$route.query.activedName=='name4'">
+                <TabPane label="合同信息" name="name4" v-if="$route.query.name2!='WaitStoreList' && $route.query.name2!='WaitAuditingList' && $route.query.name2!='WaitConfirmList'">
                     <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
@@ -441,8 +441,58 @@
                         </template>
                     </div>
                 </TabPane>
+                <TabPane label="设备管理" name="name5">
+                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
+                        <Button type="primary" size="small" @click="addDevice" v-if="$route.query.name2=='WaitStoreList'">新增订单设备</Button>
+                        <template v-for="item in deviceList">
+                        <div class="deviceInfo">
+                            <span style="min-width:150px;">设备编号：{{item.deviceNum}}</span>
+                            <span style="min-width:80px;">位置：{{item.position}}</span>
+                            <span>图片：<img style="width:50px;height:50px;vertical-align:middle;margin:0 5px;cursor:pointer;" v-for="(ele,index) in item.imgs" :src="ele.aurl" :key="Math.random()" alt="图片" @click="clickFaceImg(ele.aurl)"></span>
+                            <!-- 安装员:{{item.installStaff}}
+                            检查员:{{item.checkStaff}}
+                            状态:{{item.status==1?'有效':'无效'}}
+                            创建时间:{{item.createTime}}
+                            修改时间:{{item.modifyTime}} -->
+                            <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='WaitStoreList'" @click="modifyDevice(item.id,item.deviceNum)">修改</Button>
+                            <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='GPSInstall'" @click="modifyPosition(item.id,item.imgs,item.position)">添加/修改位置</Button>
+                        </div>   
+                        </template>
+                    </div>
+                </TabPane>
             </Tabs>
         </div>
+        <Modal width="400" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required">设备编号：</span><Input class="item-input" v-model="modify6.deviceNum" placeholder="请输入..." />
+                    
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required">设备类型：</span><Select v-model="modify6.type" class="item-input">
+                        <Option :value="1">gps</Option>
+                    </Select>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="deviceConfirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <Modal width="350" v-model="modifyModal2" :title="myTitle2" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">位置：</span><Input class="item-input" v-model="modify8.position" placeholder="请输入..." />
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">图片：</span><ImgUpload class="position-img" :type="5" :myUploadList="modify8myUploadList" :myUploadList2="modify8myUploadList2" :txt="'多选'" @changePicUrl="modify8ChangePicUrl"></ImgUpload>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="modify8ConfirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
         <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>  
     </div>
 </template>
@@ -456,12 +506,17 @@ export default {
     name: 'WaitStoreDetail',
     data () {
         return {
-            myTitle:'新增产品',
+            myTitle:'新增订单设备',
+            myTitle2:'添加/修改订单设备',
             item:{},
+            modifyModal:false,
+            modifyModal2:false,
+            modal_loading:false,
             activedName:'',
             name: '',   //保存从哪个页面跳转进来的路由name值
             bigimg:'',
             id:'',
+            deviceId:'', //设备ID
             ismodify1:false,  //true 为修改模式
             ismodify2:false,  //true 为修改模式
             ismodify3:false,  //true 为修改模式
@@ -470,7 +525,10 @@ export default {
             carPicsmyUploadList2:[], //相对地址
             insurancePicsmyUploadList:[],
             insurancePicsmyUploadList2:[],
+            modify8myUploadList:[],  
+            modify8myUploadList2:[],  
             contractList:[],
+            deviceList:[],
             modify1: {  //行驶证信息
                 autoRepositoryId: '',
                 plateNumber: '',
@@ -582,6 +640,14 @@ export default {
                 register3: '', //绿本第3页
                 register4: '' //绿本第4页
             },
+            modify6: {
+                deviceNum:'',
+                type: 1
+            },
+            modify8:{
+               position:'',
+               imgs :''
+            },
             modify5Img:[], //保存对应的绝对地址
             carPics:'',        //车辆图片
             insurancePics:'',  //车辆保险
@@ -637,7 +703,8 @@ export default {
         this.getInitialPersonList({userId:this.$route.query.userId});
         this.getInitialCarList({autoRepositoryId:this.$route.query.autoId});
         this.getFile({autoRepositoryId:this.$route.query.autoId});
-        if(this.activedName=='name4'){
+        this.getDeviceList({orderId:this.$route.query.orderId});
+        if(this.$route.query.name2!='WaitStoreList' && this.$route.query.name2!='WaitAuditingList' && this.$route.query.name2!='WaitConfirmList'){
             this.getContractList({orderId:this.$route.query.orderId});
         }
     },
@@ -659,6 +726,14 @@ export default {
                 }
             })
         },
+        getDeviceList(formData ){
+            this.$axios.get('/fx?api=gate.order.device.query',{params:formData}).then(res => {
+                if(res!=500){
+                    this.deviceList = res;
+                    this.$store.commit('change_height');
+                }
+            })
+        }, 
         getInitialCarList(formData){
             this.$axios.get('/fx?api=gate.order.admin.car.detail',{params:formData}).then(res => {
                 if(res!=500){
@@ -1052,6 +1127,30 @@ export default {
             this.bigimg = img;
             this.modalPreview = true;
         },
+        modifyDevice(id,deviceNum){
+            this.modify6 = {
+                deviceNum: deviceNum,
+                type: 1
+            };
+            this.myTitle = '修改订单设备';
+            this.modifyModal = true;
+            this.deviceId = id;
+        },
+        modifyPosition(id,imgs,position){
+            this.modify8myUploadList = [];
+            this.modify8myUploadList2 = [];
+            let arr = [];
+            imgs.forEach( (ele, index) => {
+                this.modify8myUploadList.push(ele.aurl);
+                this.modify8myUploadList2.push(ele.rurl);
+            });
+            this.modifyModal2 = true; 
+            this.modify8.position = position; 
+            this.deviceId = id;
+        },
+        modify8ChangePicUrl(...arr){
+            this.modify8.imgs = String(arr[0]);
+        },
         confirmBtn(){
             let formData = {};
             let  myUrl = '/fx?api=gate.order.admin.person.update';
@@ -1067,6 +1166,22 @@ export default {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
                 }
+            })
+        },
+        deviceConfirmBtn(){ //设备信息保存
+            this.modal_loading = true;
+            let formData =  {...this.modify6};
+            formData.orderId = this.$route.query.orderId;
+            if(this.myTitle == '修改订单设备'){
+                formData.id = this.deviceId;
+            }
+            this.$axios.post('/fx?api=gate.order.addOrUpdate.device',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getDeviceList({orderId:this.$route.query.orderId});
+                }
+                 this.modal_loading = false;
+                 this.modifyModal = false;
             })
         },
         changePicUrl(...arr){ //arr为子组件向父组件传递的参数列表
@@ -1133,6 +1248,8 @@ export default {
         },
         cancel(){
             this.modalPreview = false;
+            this.modifyModal = false;
+            this.modifyModal2 = false;
         },
         addItem(){
             this.carRegisterRecords.push({
@@ -1161,6 +1278,30 @@ export default {
         },
         preview(pdfUrl){
             window.open(pdfUrl);
+        },
+        addDevice(){
+            this.modify6 = {
+                deviceNum: '',
+                type: 1
+            };
+            this.myTitle = '新增订单设备';
+            this.modifyModal = true;
+        },
+        modify8ConfirmBtn(){
+            if(!this.modify8.position || !this.modify8.imgs.length){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            let formData = {...this.modify8};
+            formData.id = this.deviceId;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.device.addOrUpdate.use',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getDeviceList({orderId:this.$route.query.orderId});
+                }
+                 this.modal_loading = false;
+                 this.modifyModal2 = false;
+            })
         }
     }
 }
@@ -1188,6 +1329,9 @@ export default {
         left:-10px;
         top:3px;
     }
+    .position-img{
+        display: inline-block;
+    }
     .tab-top-title{
         & > span{
             margin-right:10px;
@@ -1196,6 +1340,11 @@ export default {
         .span11{
             color: red;
         }
+    }
+    .deviceInfo>span{
+        display: inline-block;
+        margin-top: 25px;
+        margin-right: 10px;
     }
     .my-title-comm:before{
         top:1px;

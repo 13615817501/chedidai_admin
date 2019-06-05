@@ -34,7 +34,7 @@
                         <Option v-for="(option, index) in prodList" :value="option.id" :label="option.name" :key="option.id"></Option>
                     </Select>
                 </div>
-                <div class="item-div">
+                <!-- <div class="item-div">
                     <span class="item-comm">服务费类型：</span><Select clearable v-model="modify.serviceType" class="item-input" placeholder="请选择">
                     <Option :value="1">按单收取</Option>
                     <Option :value="2">百分比收取</Option>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="item-div">
                     <span class="item-comm">服务费：</span><Input class="item-input" clearable v-model="modify.serviceValue" placeholder="请输入..." />
-                </div>
+                </div> -->
             </div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
@@ -100,54 +100,50 @@ export default {
             modify: {
                 storeId:'',
                 prodId:'',
-                serviceType:'',
-                serviceValue:'',
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
                         return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
+                            // h('Button', {
+                            //     props: {
+                            //         type: 'primary',
+                            //         size: 'small',
                                     
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modifyModal = true;
-                                        this.myTitle = '修改';
-                                        this.id = params.row.id;
-                                        this.modify = {
-                                            storeId: params.row.storeId,
-                                            prodId: params.row.productId,
-                                            serviceType: params.row.serviceType,
-                                            serviceValue: params.row.serviceValue
-                                        };
-                                        this.remoteSetting.remote = false;  //变成不是远程搜索
-                                        this.remoteSetting.remoteMethod = null; //关闭远程方法
-                                        this.remoteSetting2.remote = false;  
-                                        this.remoteSetting2.remoteMethod2 = null;
-                                        this.prodList = [{id:params.row.productId,name:params.row.productName}]; //赋默认值
-                                        this.storeList = [{id:params.row.storeId,name:params.row.storeName}]; //赋默认值
-                                        this.$nextTick(() => {
-                                            this.remoteSetting.remote = true; //重新变成远程搜索
-                                            this.remoteSetting.remoteMethod = this.remoteMethod; //重启远程方法 
-                                            this.remoteSetting2.remote = true; //重新变成远程搜索
-                                            this.remoteSetting2.remoteMethod2 = this.remoteMethod2; //重启远程方法
-                                        })
-                                    }
-                                }
-                            }, '修改'),
+                            //     },
+                            //     style: {
+                            //         'margin-left':'10px',
+                            //     },
+                            //     on: {
+                            //         click: () => {
+                            //             this.modifyModal = true;
+                            //             this.myTitle = '修改';
+                            //             this.id = params.row.id;
+                            //             this.modify = {
+                            //                 storeId: params.row.storeId,
+                            //                 prodId: params.row.productId,
+                            //             };
+                            //             this.remoteSetting.remote = false;  //变成不是远程搜索
+                            //             this.remoteSetting.remoteMethod = null; //关闭远程方法
+                            //             this.remoteSetting2.remote = false;  
+                            //             this.remoteSetting2.remoteMethod2 = null;
+                            //             this.prodList = [{id:params.row.productId,name:params.row.productName}]; //赋默认值
+                            //             this.storeList = [{id:params.row.storeId,name:params.row.storeName}]; //赋默认值
+                            //             this.$nextTick(() => {
+                            //                 this.remoteSetting.remote = true; //重新变成远程搜索
+                            //                 this.remoteSetting.remoteMethod = this.remoteMethod; //重启远程方法 
+                            //                 this.remoteSetting2.remote = true; //重新变成远程搜索
+                            //                 this.remoteSetting2.remoteMethod2 = this.remoteMethod2; //重启远程方法
+                            //             })
+                            //         }
+                            //     }
+                            // }, '修改'),
                             h('Button', {
                                 props: {
                                     type: 'error',
@@ -192,24 +188,6 @@ export default {
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.address)
-                        ]);
-                    }
-                },  {
-                    title: '服务费类型',
-                    key: 'serviceType',
-                    minWidth: 160,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.serviceType==1?'按单收取':params.row.serviceType==2?'百分比收取':'')
-                        ]);
-                    }
-                },  {
-                    title: '服务费（元）',
-                    key: 'serviceValue',
-                    minWidth: 160,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.serviceValue)
                         ]);
                     }
                 }, {
@@ -275,8 +253,6 @@ export default {
             this.modify = {
                 storeId:'',
                 prodId:'',
-                serviceType:'',
-                serviceValue:'',
             };
         },
         clickFaceImg(img){

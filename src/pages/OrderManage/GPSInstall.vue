@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>GPS和抵押</BreadcrumbItem>
+	        <BreadcrumbItem>待GPS安装</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
              <span>
@@ -127,7 +127,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 240,
+                    width: 150,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -149,23 +149,23 @@ export default {
                                     }
                                 }
                             }, 'GPS安装确认'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    disabled: (params.row.gpsMortgagrdStatus==2||params.row.gpsMortgagrdStatus==3)?true:false
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '抵押完成确认';
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '抵押完成确认'),
+                            // h('Button', {
+                            //     props: {
+                            //         type: 'primary',
+                            //         size: 'small',
+                            //         disabled: (params.row.gpsMortgagrdStatus==2||params.row.gpsMortgagrdStatus==3)?true:false
+                            //     },
+                            //     style: {
+                            //         'margin-left':'10px',
+                            //     },
+                            //     on: {
+                            //         click: () => {
+                            //             this.tipModal = true;
+                            //             this.modalTipTitle = '抵押完成确认';
+                            //             this.item = params.row;
+                            //         }
+                            //     }
+                            // }, '抵押完成确认'),
                         ]);
                     }
                 },{

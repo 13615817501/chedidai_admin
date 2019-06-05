@@ -41,8 +41,8 @@
 	                    <span class="item-comm required">发动机号码：</span><Input class="item-input" v-model="modify.enginner" placeholder="请输入..." />
 	                </div>
 	                <div class="item-div">
-	                    <span class="item-comm required">注册日期：</span><Input class="item-input" v-model="modify.travelerRegisterDate" placeholder="请输入..." />
-	                    <span class="item-comm required">发证日期：</span><Input class="item-input" v-model="modify.giveDate" placeholder="请输入..." />
+	                    <span class="item-comm required">注册日期：</span><DatePicker v-model="modify.travelerRegisterDate" type="date" placeholder="注册日期" class="item-input"></DatePicker>
+	                    <span class="item-comm required">发证日期：</span><DatePicker v-model="modify.giveDate" type="date" placeholder="发证日期" class="item-input"></DatePicker>
 	                </div>
 	                <div class="item-div">
 	                    <span class="item-comm required">档案编号：</span><Input class="item-input" v-model="modify.archivesNumber" placeholder="请输入..." />
@@ -114,11 +114,11 @@
 	                </div>  
 	                <div class="item-div">
 	                    <span class="item-comm required">车辆获得方式：</span><Input class="item-input" v-model="modify.getWay" placeholder="请输入..." />
-	                    <span class="item-comm required">车辆出厂日期：</span><Input class="item-input" v-model="modify.outDate" placeholder="请输入..." />
+	                    <span class="item-comm required">车辆出厂日期：</span><DatePicker v-model="modify.outDate" type="date" placeholder="出厂日期" class="item-input"></DatePicker>
 	                </div>  
 	                <div class="item-div">
 	                    <span class="item-comm required">签发机关：</span><Input class="item-input" v-model="modify.issueGov" placeholder="请输入..." />
-	                    <span class="item-comm required">发证日期：</span><Input class="item-input" v-model="modify.issueDate" placeholder="请输入..." />
+	                    <span class="item-comm required">发证日期：</span><DatePicker v-model="modify.issueDate" type="date" placeholder="发证日期" class="item-input"></DatePicker>
 	                </div>
 	                <div class="item-div item-title"><span style="vertical-align:middle;">绿本变迁记录 </span><Icon type="md-add-circle" @click="addItem" size="18" style="cursor:pointer;" title="新增"/></div>
 	                <span v-for="(item,index) in carRegisterRecords" :key="index">
@@ -128,7 +128,7 @@
 		                    <Icon type="ios-close-circle" @click="deleteItem(index)" size="16" style="position:absolute;right:5px;top:0;cursor:pointer;" title="删除"/>
 		                </div>    
 		                <div class="item-div">
-		                    <span class="item-comm required">登记日期：</span><Input class="item-input" v-model="item.registerDate" placeholder="请输入..." />   
+		                    <span class="item-comm required">登记日期：</span><DatePicker v-model="item.registerDate" type="date" placeholder="登记日期" class="item-input"></DatePicker>
 		                    <span class="item-comm required">登记编号：</span><Input class="item-input" v-model="item.registerNumber" placeholder="请输入..." />
 		                </div>  
 	                </span>   
@@ -154,7 +154,7 @@
             </div> 
             <div class="item-div">
                 <span class="item-comm required">车辆型号：</span><Input class="item-input" v-model="modify2.model" placeholder="请输入..." />
-                <span class="item-comm required">登记日期：</span><DatePicker v-model="modify2.registerDate" type="date" placeholder="年检相关" class="item-input"></DatePicker>
+                <span class="item-comm required">登记日期：</span><DatePicker v-model="modify2.registerDate" type="date" placeholder="登记日期" class="item-input"></DatePicker>
             </div> 
             <div class="item-div">
                 <span class="item-comm required">行驶里程(万)：</span><Input class="item-input" v-model="modify2.mile" placeholder="公里数" />
@@ -178,17 +178,23 @@
 	                    <Option value="0">无</Option>
 	                    <Option value="1">有</Option>
 	                </Select>
-                <span class="item-comm required">结束时间：</span><DatePicker v-model="modify2.insEndDate" type="date" placeholder="年检相关" class="item-input"></DatePicker>
+	            <span v-show="modify2.hasInspect=='1'">
+                	<span class="item-comm required">结束时间：</span><DatePicker v-model="modify2.insEndDate" type="date" placeholder="年检相关" class="item-input"></DatePicker>
+                </span>  
             </div> 
             <div class="item-div">
                 <span class="item-comm required">有无交强险：</span><Select v-model="modify2.hasHighInsurance" class="item-input">
 	                    <Option value="0">无</Option>
 	                    <Option value="1">有</Option>
 	                </Select>
-                <span class="item-comm required">开始时间：</span><DatePicker v-model="modify2.highStartDate" type="date" placeholder="交强险相关" class="item-input"></DatePicker>
             </div> 
             <div class="item-div">
-                <span class="item-comm required">结束时间：</span><DatePicker v-model="modify2.highEndDate" type="date" placeholder="交强险相关" class="item-input"></DatePicker>
+                <span v-show="modify2.hasHighInsurance=='1'"> 
+                    <span class="item-comm required">开始时间：</span><DatePicker v-model="modify2.highStartDate" type="date" placeholder="交强险相关" class="item-input"></DatePicker>   
+                    <span class="item-comm required">结束时间：</span><DatePicker v-model="modify2.highEndDate" type="date" placeholder="交强险相关" class="item-input"></DatePicker>
+                </span>    
+            </div>
+            <div class="item-div">
                 <span class="item-comm required">有无商业险 ：</span><Select v-model="modify2.hasBusyInsurance" class="item-input">
                         <Option value="0">无</Option>
                         <Option value="1">有</Option>
@@ -253,14 +259,12 @@
 	            <span class="item-comm required">收押其它：</span><Input class="item-input" v-model="modify2.custodyOther" placeholder="请输入..." />    
             </div>
             <div class="item-div">
-                <span class="item-comm required">评定估价(元)：</span><Input class="item-input" v-model="modify2.valuatePrice" placeholder="请输入..." />
+                <!-- <span class="item-comm required">评定估价(元)：</span><Input class="item-input" v-model="modify2.valuatePrice" placeholder="请输入..." /> -->
                 <span class="item-comm required">验车人签字：</span><Input class="item-input" v-model="modify2.examinerSign" placeholder="请输入..." />
-            </div>
-            <div class="item-div">
                 <span class="item-comm required">验车日期：</span><DatePicker v-model="modify2.examinerDate" type="date" placeholder="请选择" class="item-input"></DatePicker>
-                <span class="item-comm required">车主签字：</span><Input class="item-input" v-model="modify2.ownerSign" placeholder="请输入..." />
             </div>
             <div class="item-div">
+                <span class="item-comm required">车主签字：</span><Input class="item-input" v-model="modify2.ownerSign" placeholder="请输入..." />
                 <span class="item-comm required">备注：</span><Input class="item-input" v-model="modify2.remark" placeholder="请输入..." />
             </div>
             <div slot="footer">
@@ -430,11 +434,9 @@ export default {
                 hasCustodyHigh:'',
                 hasCustodyBusy:'',
                 custodyOther:'',
-                valuatePrice:'',
                 examinerSign:'',
                 examinerDate:'',
                 ownerSign:'',
-                storageDate:'',
                 remark:''
 			},
 			modify3: {
@@ -599,11 +601,9 @@ export default {
 													hasCustodyHigh: reportVO.hasCustodyHigh,
 													hasCustodyBusy: reportVO.hasCustodyBusy,
 													custodyOther: reportVO.custodyOther,
-													valuatePrice: reportVO.valuatePrice,
 													examinerSign: reportVO.examinerSign,
 													examinerDate: reportVO.examinerDate,
 													ownerSign: reportVO.ownerSign,
-													storageDate: reportVO.storageDate,
 													remark: reportVO.remark
 												};
                                                 this.modifyModal2 = true;
@@ -937,6 +937,13 @@ export default {
             this.picUrl = '';
         },
         confirmBtn(){
+        	this.modify.travelerRegisterDate = moment(this.modify.travelerRegisterDate).format("YYYY-MM-DD");
+        	this.modify.giveDate = moment(this.modify.giveDate).format("YYYY-MM-DD");
+        	this.modify.outDate = moment(this.modify.outDate).format("YYYY-MM-DD");
+        	this.modify.issueDate = moment(this.modify.issueDate).format("YYYY-MM-DD");
+        	this.carRegisterRecords.forEach( (item, index) => {
+        		item.registerDate = moment(item.registerDate).format("YYYY-MM-DD");
+        	});
             if(!this.modify.plateNumber || !this.modify.carType || !this.modify.travelerOwner || !this.modify.address || !this.modify.nature || !this.modify.travelerModel || !this.modify.vin || !this.modify.enginner || !this.modify.travelerRegisterDate || !this.modify.giveDate || !this.modify.archivesNumber || !this.modify.passenger || !this.modify.weightTotal || !this.modify.weightWhole || !this.modify.size || !this.modify.remark || !this.modify.record || !this.modify.type || !this.modify.brand || !this.modify.model || !this.modify.color || !this.modify.frame || !this.modify.source || !this.modify.enginerNumber || !this.modify.enginerModel || !this.modify.oilType || !this.modify.work || !this.modify.madeFactory || !this.modify.turnType || !this.modify.wheelDistance || !this.modify.wheelCount || !this.modify.wheelNormal || !this.modify.steelCount || !this.modify.wheelbase || !this.modify.axesCount || !this.modify.verandaSize || !this.modify.innerSize || !this.modify.totalWeight || !this.modify.approvedLoad || !this.modify.customer || !this.modify.tractionWeight || !this.modify.driverCustomer || !this.modify.useNature || !this.modify.getWay || !this.modify.outDate || !this.modify.issueGov || !this.modify.issueDate){
                 return this.$Message.error("带 * 为必填项"); 
             }
@@ -962,17 +969,30 @@ export default {
         confirmBtn2(){
 			for (let key in this.modify2) {
 				if (!this.modify2[key]) {
-					return this.$Message.error("带 * 为必填项");
+					if(key=='hasInspect'){
+                        if(this.modify2[key]=='1' && !this.modify2.insEndDate){
+                            return this.$Message.error("带 * 为必填项");
+                        }
+					}else if(key=='hasHighInsurance'){
+						if(this.modify2[key]=='1' && (!this.modify2.highStartDate || !this.modify2.highEndDate)){
+                            return this.$Message.error("带 * 为必填项");
+                        }
+					}else if(key=='hasBusyInsurance'){
+						if(this.modify2[key]=='1' ||(!this.modify2.busyStartDate || !this.modify2.busyEndDate)){
+                            return this.$Message.error("带 * 为必填项");
+                        }
+					}else if(key!='insEndDate' && key!='highStartDate' && key!='highEndDate' && key!='busyStartDate' && key!='busyEndDate'){
+                        return this.$Message.error("带 * 为必填项");
+					}
 				}
 			}
 			this.modify2.registerDate = moment(this.modify2.registerDate).format("YYYY-MM-DD");
-            this.modify2.insEndDate = moment(this.modify2.insEndDate).format("YYYY-MM-DD");
-            this.modify2.highStartDate = moment(this.modify2.highStartDate).format("YYYY-MM-DD");
-            this.modify2.highEndDate = moment(this.modify2.highEndDate).format("YYYY-MM-DD");
-            this.modify2.busyStartDate = moment(this.modify2.busyStartDate).format("YYYY-MM-DD");
-            this.modify2.busyEndDate = moment(this.modify2.busyEndDate).format("YYYY-MM-DD");
+            this.modify2.insEndDate = this.modify2.insEndDate?moment(this.modify2.insEndDate).format("YYYY-MM-DD"):'';
+            this.modify2.highStartDate = this.modify2.highStartDate?moment(this.modify2.highStartDate).format("YYYY-MM-DD"):'';
+            this.modify2.highEndDate = this.modify2.highEndDate?moment(this.modify2.highEndDate).format("YYYY-MM-DD"):'';
+            this.modify2.busyStartDate = this.modify2.busyStartDate?moment(this.modify2.busyStartDate).format("YYYY-MM-DD"):'';
+            this.modify2.busyEndDate = this.modify2.busyEndDate?moment(this.modify2.busyEndDate).format("YYYY-MM-DD"):'';
             this.modify2.examinerDate = moment(this.modify2.examinerDate).format("YYYY-MM-DD");
-            this.modify2.storageDate = moment(this.modify2.storageDate).format("YYYY-MM-DD");
             this.$axios.post('/fx?api=gate.addOrUpdate.auto.report',this.modify2).then(res => {
                 if(res!=500){
                     this.$Message.success("操作成功"); 

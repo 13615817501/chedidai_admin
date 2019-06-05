@@ -364,17 +364,23 @@ let util = {
                 break; 
             case 'GPSInstall':
                 return 'OrderManage';
-                break; 
+                break;
+            case 'GPSCheck':
+                return 'OrderManage';
+                break;      
             case 'HandlingMortgage':
                 return 'OrderManage';
                 break;  
-            case 'FirstOrder':
+            case 'Claim':
                 return 'LoanManage';
                 break;  
-            case 'DeductOrder':
+            case 'PendingLoan':
                 return 'LoanManage';
                 break;  
-            case 'TailOrder':
+            case 'FirstStageDeduction':
+                return 'LoanManage';
+                break;  
+            case 'RepaymentDeduction':
                 return 'LoanManage';
                 break;  
             case 'PendingRepayment':

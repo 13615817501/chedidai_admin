@@ -286,6 +286,7 @@ export default {
         addBtn(){
             this.myTitle = '新增';
             this.modifyModal = true;
+            this.name = '';
         },
         confirmBtn(){
             this.selection.forEach( (item, sub) => {

@@ -15,15 +15,31 @@
                         <tr><td>客户姓名：{{certifyList.userName}}</td><td>客户电话：{{certifyList.userMobile}}</td><td>贷款金额：{{certifyList.amount}}</td><td> <Button type="primary" size="small" style="margin:0 10px;" @click="custominfoBtn">客户认证信息</Button></td></tr>
                         <tr><td colspan="3">贷款车辆：{{certifyList.autoModelName}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="carinfoBtn">车辆认证信息</Button></td></tr>
                         <tr><td>产品：{{certifyList.prodName}}</td><td>贷款期数：{{certifyList.periods}}</td><td>还款方式：{{certifyList.type=='1'?'先息后本':certifyList.type=='2'?'等额本息':'等本等息'}}</td><td> <Button type="primary" size="small"  style="margin:0 10px;" @click="commoninfoBtn">认证信息</Button></td></tr>
-                        <tr><td>门店编码：{{certifyList.storeNum}}</td><td>门店客服：{{certifyList.storeCt}}</td><td>门店电话：{{certifyList.storeCtm}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
-                        <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td></td></tr>
+                        <tr><td>门店编码：{{certifyList.storeNum}}</td><td>门店客服：{{certifyList.storeCt}}</td><td>门店电话：{{certifyList.storeCtm}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="deviceinfoBtn">设备管理</Button></td></tr>
+                        <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
                     </tbody>
                 </table>  
+                <div style="margin-top:15px;" v-if="$route.query.name=='WaitStoreList'">
+                    <div style="margin-top:15px;">
+                        <p>
+                            <span class="yajin">年检押金(元)：</span>
+                            <Input class="item-input" :class="{txt:!isModify1}" :readonly='!isModify1' v-model="modify.annualInspectionDeposit" style="width: 100px" :placeholder="isModify1?'请输入...':''" />
+                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
+                        </p>    
+                        <p>
+                        <span class="yajin">违章押金(元)：</span>
+                            <Input class="item-input" :class="{txt:!isModify2}" :readonly='!isModify2' v-model="modify.trafficDeposit" style="width: 100px" :placeholder="isModify2?'请输入...':''" />
+                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
+                        </p>   
+                        <p>
+                            <span class="yajin">服务费(元)：</span>
+                            <Input class="item-input" :class="{txt:!isModify3}" :readonly='!isModify3' v-model="modify.serviceFee" style="width: 100px" :placeholder="isModify3?'请输入...':''" />
+                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
+                        </p>   
+                    </div>
+                </div> 
                 <div style="margin-top:15px;">
-                    <Button type="primary" size="small" @click="setMoney">设置年检违约金</Button>
-                    <p v-if="certifyList.underwritedStatus">暂未设置年检违约金{{certifyList.underwritedStaff}}</p>    
-                    <p v-if="certifyList.underwritedStatus">年检押金：{{certifyList.underwritedStaff}}</p>    
-                    <p v-if="certifyList.underwritedStatus">违章押金：{{certifyList.underwritedStaff}}</p>    
+                    <p>Actual Amount：{{certifyList.actualAmount}}</p>   
                 </div> 
                 <div style="margin-top:15px;">
                     <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':'失败'}}</p>
@@ -85,20 +101,6 @@
                 </Timeline>
             </span>
         </div>
-        <Modal width="300" v-model="modifyModal" title="设置年检违约金" :mask-closable="false"> 
-            <div class="modify-modal"> 
-                <div class="item-div">
-                    <span class="item-comm required">年检押金(元)：</span><Input class="item-input" v-model="modify.annualInspectionExpenses" placeholder="请输入..." />
-                </div>
-                <div class="item-div">
-                    <span class="item-comm required">违章押金(元)：</span><Input class="item-input" v-model="modify.breakRuleExpenses" placeholder="请输入..." />
-                </div>
-            </div>
-            <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
-                <Button @click="cancel">取消</Button>
-            </div> 
-        </Modal>
     </div>
 </template>
 <script>
@@ -115,12 +117,14 @@ export default {
             orderId: '',
 			certifyList:{},
             prodId:'',
-            modifyModal:false,
-            modal_loading:false,
             modify:{
-                annualInspectionExpenses:'',
-                breakRuleExpenses:''
-            }
+                annualInspectionDeposit:'',
+                trafficDeposit:'',
+                serviceFee:''
+            },
+            isModify1:false,
+            isModify2:false,
+            isModify3:false
 		}
 	},
     components:{
@@ -138,6 +142,11 @@ export default {
 		    this.$axios.get('/fx?api=gate.order.admin.detail',{params:formData}).then(res => {
 		    	if(res!=500){
                     this.certifyList = res;
+                    this.modify = {
+                        annualInspectionDeposit: res.annualInspectionDeposit,
+                        trafficDeposit:res.trafficDeposit,
+                        serviceFee:res.serviceFee
+                    }
                     this.prodId = res.prodId;
 			        this.$store.commit('change_height');
 		    	}
@@ -155,33 +164,35 @@ export default {
         commoninfoBtn(){  //认证信息
             this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name3',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
         }, 
+        deviceinfoBtn(){  //设备信息
+            this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name5',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
+        },
         contractinfoBtn(){  //合同信息
             this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name4',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
         },
-        setMoney(){
-            this.modifyModal = true;
-            this.modify = {
-                annualInspectionExpenses:'',
-                breakRuleExpenses:''
-            }
-        },
-        confirmBtn(){
-            if(!this.modify.annualInspectionExpenses || !this.modify.breakRuleExpenses){
-                return this.$Message.error("带 * 为必填项"); 
-            }
-            this.modal_loading = true;
-            let formData = this.modify;
-            formData.id = this.prodId;
-            this.$axios.post('/fx?api=gate.annual.rule.product',formData).then(res => {
+        commonSavaYajin(url,amount){
+            this.$axios.post(url,{orderId:this.$route.query.orderId,amount:amount}).then(res => {
                 if(res!=500){
-                    this.$Message.success("设置成功"); 
+                    this.$Message.success("保存成功"); 
+                    this.getInitialList({orderId:this.$route.query.orderId});   
                 }
-                this.modifyModal = false;
-                this.modal_loading = false;
             })
         },
-        cancel(){
-            this.modifyModal = false;
+        savaYajinBtn(txt){
+            switch (txt) {
+                case '年检押金':
+                    this.isModify1 = !this.isModify1;
+                    !this.isModify1 && this.commonSavaYajin('/fx?api=gate.order.admin.mdfAnnualInspectionDeposit',this.modify.annualInspectionDeposit);
+                    break;
+                case '违章押金':
+                    this.isModify2 = !this.isModify2;
+                    !this.isModify2 && this.commonSavaYajin('/fx?api=gate.order.admin.mdfTrafficDeposit',this.modify.trafficDeposit);
+                    break;
+                case '服务费':
+                    this.isModify3 = !this.isModify3;
+                    !this.isModify3 && this.commonSavaYajin('/fx?api=gate.order.admin.mdfServiceFee',this.modify.serviceFee);
+                    break;        
+            }
         }
 	}
 }
@@ -231,5 +242,15 @@ export default {
     }
     .content{
         padding-left: 15px;
+    }
+    .yajin{
+        display: inline-block;
+        width: 80px;
+        margin-top: 20px;
+    }
+    .item-input.txt /deep/ input{
+        outline: none;
+        border-color:transparent;
+        box-shadow: none;
     }
 </style>

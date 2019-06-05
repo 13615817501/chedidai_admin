@@ -100,6 +100,9 @@
                 }else if(this.modalTipTitle=='通过尾款完成'){
                     formUrl = '/fx?api=gate.order.admin.loan';  //这里还需要修改
                     formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='GPS信息确认'){
+                    formUrl = '/fx?api=gate.order.admin.checkPassGps';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

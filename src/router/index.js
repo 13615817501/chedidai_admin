@@ -92,30 +92,35 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/FinanceManage/RecordPayment`),
 	            }, {
-	                path: '/LoanManage/DeductOrder',
-	                name: 'DeductOrder',
+	                path: '/LoanManage/Claim',
+	                name: 'Claim',
 	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/DeductOrder`),
+	                component: () => import(`@/pages/LoanManage/Claim`),
 	            },{
-	                path: '/LoanManage/LoanDetail',
-	                name: 'LoanDetail',
+	                path: '/LoanManage/PendingLoan',
+	                name: 'PendingLoan',
 	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/LoanDetail`),
+	                component: () => import(`@/pages/LoanManage/PendingLoan`),
 	            }, {
-	                path: '/LoanManage/FirstOrder',
-	                name: 'FirstOrder',
+	                path: '/LoanManage/FirstStageDeduction',
+	                name: 'FirstStageDeduction',
 	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/FirstOrder`),
+	                component: () => import(`@/pages/LoanManage/FirstStageDeduction`),
 	            }, {
-	                path: '/LoanManage/TailOrder',
-	                name: 'TailOrder',
+	                path: '/LoanManage/RepaymentDeduction',
+	                name: 'RepaymentDeduction',
 	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/TailOrder`),
+	                component: () => import(`@/pages/LoanManage/RepaymentDeduction`),
 	            }, {
 	                path: '/OrderManage/GPSInstall',
 	                name: 'GPSInstall',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/GPSInstall`),
+	            },{
+	                path: '/OrderManage/GPSCheck',
+	                name: 'GPSCheck',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/GPSCheck`),
 	            }, {
 	                path: '/OrderManage/WaitCheckAgain',
 	                name: 'WaitCheckAgain',

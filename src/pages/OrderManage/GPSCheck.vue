@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>待复审订单</BreadcrumbItem>
+	        <BreadcrumbItem>待GPS校验</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
              <span>
@@ -14,7 +14,6 @@
                     <Option :value="4">用户确认时间</Option>
                     <Option :value="6">合同签署时间</Option>
                     <Option :value="7">GPS安装时间</Option>
-                    <Option :value="8">抵押完成时间</Option>
                 </Select>
             </span>
             <span>
@@ -52,10 +51,13 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="350" v-model="backModal" title="退回" :mask-closable="false"> 
-            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+        <Modal width="280" v-model="isPassModal" title="核保状态" :mask-closable="false"> 
+            核保状态：</span><Select v-model="isPass" placeholder="请选择" style="width: 150px">
+                        <Option :value="1">通过</Option>
+                        <Option :value="3">失败</Option>
+                    </Select>
             <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
@@ -78,10 +80,10 @@ export default {
             tipModal:false,
             myTitle:'新增产品',
             item:{},
+            isPassModal:false,
+            isPass:1,
             bigimg:'',
             bannerPic:'',
-            backModal:false,
-            msg:'',
             modalPreview:false,
             modal_loading:false,
             storeNames:[],
@@ -124,7 +126,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 330,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -133,76 +135,89 @@ export default {
                                 props: {
                                     type: 'primary',
                                     size: 'small',
-                                    
                                 },
                                 style: {
-                                    'margin-left':'10px',
+                                    'margin-left':'10px'
                                 },
                                 on: {
                                     click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '通过该待复审订单';
+                                        this.modalTipTitle = '退回GPS安装';
                                         this.item = params.row;
                                     }
                                 }
-                            }, '通过'),
+                            }, '退回GPS安装'),
                             h('Button', {
                                 props: {
-                                    type: 'warning',
+                                    type: 'primary',
                                     size: 'small',
-                                    
                                 },
                                 style: {
-                                    'margin-left':'10px',
+                                    'margin-left':'10px'
                                 },
                                 on: {
                                     click: () => {
-                                        this.msg = '';
-                                        this.backModal = true;
-                                        this.modalTipTitle = '退回该审核订单';
-                                        this.orderId = params.row.orderId;
+                                        this.tipModal = true;
+                                        this.modalTipTitle = '退回门店';
+                                        this.item = params.row;
                                     }
                                 }
-                            }, '退回')
+                            }, '退回门店'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.tipModal = true;
+                                        this.modalTipTitle = 'GPS信息确认';
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, 'GPS信息确认')
                         ]);
                     }
-                }, {
-					title: '订单号',
-					key: 'orderNumber',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.orderNumber)
-						]);
-					}
-				}, {
-                    title: '用户姓名',
-                    key: 'userName',
+                },{
+                    title: '订单号',
+                    key: 'orderNumber',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userName)
+                            h('strong', params.row.orderNumber)
                         ]);
                     }
                 }, {
+					title: '用户姓名',
+					key: 'userName',
+					minWidth: 160,
+					render: (h, params) => {
+						return h('div', [
+							h('strong', params.row.userName)
+						]);
+					}
+				}, {
                     title: '手机号码',
                     key: 'userMobile',
-                    minWidth: 120,
-                     render: (h, params) => {
+                    minWidth: 160,
+                    render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
                         ]);
                     }
                 }, {
-					title: '门店名',
-					key: 'storeName',
-					minWidth: 120,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.storeName)
-						]);
-					}
-				}, {
+                    title: '门店名',
+                    key: 'storeName',
+                    minWidth: 150,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                }, {
 					title: '产品名称',
 					key: 'prodName',
 					minWidth: 120,
@@ -211,26 +226,26 @@ export default {
 							h('strong', params.row.prodName)
 						]);
 					}
-				},{
-                    title: '申请时间',
-                    key: 'createTime',
-                    minWidth: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.createTime)
-                        ]);
-                    }
-                }, {
-                    title: 'GPS确定人员',
+				}, {
+					title: '申请时间',
+					key: 'createTime',
+					minWidth: 150,
+					render: (h, params) => {
+						return h('div', [
+							h('strong', params.row.createTime)
+						]);
+					}
+				}, {
+                    title: 'GPS安装人员',
                     key: 'gpsSettingStaff',
-                    minWidth: 120,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.gpsSettingStaff)
                         ]);
                     }
                 },{
-                    title: 'GPS确定时间',
+                    title: 'GPS安装时间',
                     key: 'gpsSettingTime',
                     minWidth: 150,
                     render: (h, params) => {
@@ -242,7 +257,6 @@ export default {
                     title: '订单详情',
                     key: 'action',
                     width: 150,
-                    align: 'center',
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
@@ -255,7 +269,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitCheckAgain'}});  
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'GPSCheck'}});  
                                     }
                                 }
                             }, '详情'),
@@ -285,21 +299,9 @@ export default {
                 this.prodList = [];
             }
         },
-        confirmBtn2(){
-            if(!this.msg){
-               return this.$Message.warning('请填写退回理由');
-            }
-            this.$axios.post('/fx?api=gate.order.admin.checkAgainBack',{orderId:this.orderId,msg:this.msg}).then(res => {
-                if(res!=500){
-                    this.$Message.success('退回成功');
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
-                }
-            })
-            this.backModal = false;
-        },
 		getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.waitCheckAgainList',{params:formData}).then(res => {
+		    this.$axios.get('/fx?api=gate.order.admin.waitCheckGPS',{params:formData}).then(res => {
 		    	if(res!=500){
 		    		this.certifyList = res.list;
 			        this.totalCount = res.page.totalCount;
@@ -311,7 +313,7 @@ export default {
 		},
         pageChange(page){
 			this.search.pageNum = page;
-            this.getInitialList(this.search);
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
         	this.search.pageNum = 1;
@@ -333,6 +335,7 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
+            debugger;
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
                 return this.$Message.error("带 * 为必填项"); 
             }
@@ -352,7 +355,7 @@ export default {
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
-            this.backModal = false;
+            this.isPassModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -360,7 +363,16 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
-        }
+        },
+        confirmBtn3(){
+            this.$axios.post('/fx?api=gate.order.admin.underwrited',{orderId:this.orderId,isPass:this.isPass}).then(res => {
+                if(res!=500){
+                    this.$Message.success('操作成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
+            this.isPassModal = false;
+        },
 	}
 }
 </script>
