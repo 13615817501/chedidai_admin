@@ -221,8 +221,6 @@
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasInspect=='0'?'无':modify4.hasInspect=='1'?'有':''"/>
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.insStartDate" type="date" placeholder="选择年检开始时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.insStartDate"/>
                             <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.insEndDate" type="date" placeholder="选择年检结束时间" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.insEndDate"/>
                             <span class="item-comm required">有无交强险：</span><Select v-if="ismodify4" v-model="modify4.hasHighInsurance" class="item-input">
@@ -230,10 +228,10 @@
                                     <Option value="1">有</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasHighInsurance=='0'?'无':modify4.hasHighInsurance=='1'?'有':''"/>
-                        </div> 
-                        <div class="item-div">
                             <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highStartDate" type="date" placeholder="选择交强险开始时间" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highStartDate"/>
+                        </div> 
+                        <div class="item-div">
                             <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highEndDate"/>
                             <span class="item-comm required">有无商业险 ：</span><Select v-if="ismodify4" v-model="modify4.hasBusyInsurance" class="item-input">
@@ -241,10 +239,10 @@
                                     <Option value="1">有</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
-                        </div> 
-                        <div class="item-div">
                             <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyStartDate"/>
+                        </div> 
+                        <div class="item-div">
                             <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyEndDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyEndDate"/>
                             <span class="item-comm required">使用性质：</span><Select v-if="ismodify4" v-model="modify4.useNature" class="item-input">
@@ -255,37 +253,37 @@
                                     <Option value="5">其它</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.useNature=='1'?'营运用车':modify4.useNature=='2'?'出租车':modify4.useNature=='3'?'公务用车':modify4.useNature=='4'?'家庭用车':modify4.useNature=='5'?'其它':''"/>
+                            <span class="item-comm required">燃料编号：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.fuelNumber" :placeholder="ismodify4?'请输入...':''"/>
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">燃料编号：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.fuelNumber" :placeholder="ismodify4?'请输入...':''"/>
                             <span class="item-comm required">排量(ml)：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.displace" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">缸数(缸)：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.cylinder" :placeholder="ismodify4?'请输入...':''" />
+                            <span class="item-comm required">发动机功率(kw)：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.power" :placeholder="ismodify4?'请输入...':''" />
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">发动机功率(kw)：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.power" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">排放标准：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.emissStand" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">变速器形式：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.transmission" :placeholder="ismodify4?'请输入...':''" />
+                            <span class="item-comm required">驱动方式：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.driveModel" :placeholder="ismodify4?'请输入...':''" />
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">驱动方式：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.driveModel" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">是否有abs：</span><Select v-if="ismodify4" v-model="modify4.hasAbs" class="item-input">
                                     <Option value="0">否</Option>
                                     <Option value="1">是</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasAbs=='0'?'否':modify4.hasAbs=='1'?'是':''"/>
                             <span class="item-comm required">其他重要配置：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.otherImpConfig" :placeholder="ismodify4?'请输入...':''" />
-                        </div> 
-                        <div class="item-div">
                             <span class="item-comm required">是否为事故车：</span><Select v-if="ismodify4" v-model="modify4.isAccident" class="item-input">
                                     <Option value="0">否</Option>
                                     <Option value="1">是</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.isAccident=='0'?'否':modify4.isAccident=='1'?'是':''"/>
+                        </div> 
+                        <div class="item-div">
                             <span class="item-comm required">扣分：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.deduction" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">罚款：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.fine" :placeholder="ismodify4?'请输入...':''"/>
+                            <span class="item-comm required">损伤位置及状况：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.damage":placeholder="ismodify4?'请输入...':''" />
                         </div>
                         <div class="item-div">
-                            <span class="item-comm required">损伤位置及状况：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.damage":placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">是否收押行驶证：</span><Select v-if="ismodify4" v-model="modify4.hasCustodyTraveler" class="item-input">
                                     <Option value="0">否</Option>
                                     <Option value="1">是</Option>
@@ -296,34 +294,25 @@
                                     <Option value="1">是</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasCustodyRegister=='0'?'否':modify4.hasCustodyRegister=='1'?'是':''"/>
-                        </div> 
-                        <div class="item-div">
                             <span class="item-comm required">是否收押交强险保单：</span><Select v-if="ismodify4" v-model="modify4.hasCustodyHigh" class="item-input">
                                     <Option value="0">否</Option>
                                     <Option value="1">是</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasCustodyHigh=='0'?'否':modify4.hasCustodyHigh=='1'?'是':''"/>
+                        </div> 
+                        <div class="item-div">
                             <span class="item-comm required">是否收押商业保险单：</span><Select v-if="ismodify4" v-model="modify4.hasCustodyBusy" class="item-input">
                                     <Option value="0">否</Option>
                                     <Option value="1">是</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasCustodyBusy=='0'?'否':modify4.hasCustodyBusy=='1'?'是':''"/>
                             <span class="item-comm required">收押其它：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.custodyOther" :placeholder="ismodify4?'请输入...':''" />
+                            <span class="item-comm required">验车人签字：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.examinerSign" :placeholder="ismodify4?'请输入...':''" />
                         </div>
                         <div class="item-div">
-                            <span class="item-comm required">评定估价(元)：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.valuatePrice" :placeholder="ismodify4?'请输入...':''" />
-                            <span class="item-comm required">验车人签字：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.examinerSign" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">验车日期：</span><DatePicker v-if="ismodify4" v-model="modify4.examinerDate" type="date" placeholder="选择验车日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.examinerDate"/>
-                        </div>
-                        <div class="item-div">
                             <span class="item-comm required">车主签字：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.ownerSign" :placeholder="ismodify4?'请输入...':''" />
-                            <span class="item-comm required">交车日期：</span><DatePicker v-if="ismodify4" v-model="modify4.deliveryDate" type="date" placeholder="选择交车日期" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.deliveryDate"/>
-                            <span class="item-comm required">入库日期：</span><DatePicker v-if="ismodify4" v-model="modify4.storageDate" type="date" placeholder="选择入库日期" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.storageDate"/>
-                        </div>
-                        <div class="item-div">
                             <span class="item-comm required">备注：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.remark" :placeholder="ismodify4?'请输入...':''" />
                         </div>
                         <!-- 车辆证件照片 -->
@@ -596,7 +585,6 @@ export default {
                 color: '',
                 source: '',
                 hasInspect: '',
-                insStartDate: '',
                 insEndDate: '',
                 hasHighInsurance: '',
                 highStartDate: '',
@@ -623,12 +611,9 @@ export default {
                 hasCustodyHigh: '',
                 hasCustodyBusy: '',
                 custodyOther: '',
-                valuatePrice: '',
                 examinerSign: '',
                 examinerDate: '',
                 ownerSign: '',
-                deliveryDate: '',
-                storageDate: '',
                 remark: ''
             },
             modify5: {
@@ -806,7 +791,6 @@ export default {
                         color:reportVO.color,
                         source:reportVO.source,
                         hasInspect:reportVO.hasInspect,
-                        insStartDate:reportVO.insStartDate,
                         insEndDate:reportVO.insEndDate,
                         hasHighInsurance:reportVO.hasHighInsurance,
                         highStartDate:reportVO.highStartDate,
@@ -833,12 +817,9 @@ export default {
                         hasCustodyHigh: reportVO.hasCustodyHigh,
                         hasCustodyBusy: reportVO.hasCustodyBusy,
                         custodyOther: reportVO.custodyOther,
-                        valuatePrice: reportVO.valuatePrice,
                         examinerSign: reportVO.examinerSign,
                         examinerDate: reportVO.examinerDate,
                         ownerSign: reportVO.ownerSign,
-                        deliveryDate: reportVO.deliveryDate,
-                        storageDate: reportVO.storageDate,
                         remark: reportVO.remark
                     };
                     this.modify5 = {
@@ -984,7 +965,6 @@ export default {
                         return this.$Message.error("带 * 为必填项"); 
                     }
                 }
-                this.modify4.insStartDate = moment(this.modify4.insStartDate).format("YYYY-MM-DD");
                 this.modify4.insEndDate = moment(this.modify4.insEndDate).format("YYYY-MM-DD");
                 this.modify4.highStartDate = moment(this.modify4.highStartDate).format("YYYY-MM-DD");
                 this.modify4.highEndDate = moment(this.modify4.highEndDate).format("YYYY-MM-DD");
@@ -992,8 +972,6 @@ export default {
                 this.modify4.busyEndDate = moment(this.modify4.busyEndDate).format("YYYY-MM-DD");
                 this.modify4.registerDate = moment(this.modify4.registerDate).format("YYYY-MM-DD"); 
                 this.modify4.examinerDate = moment(this.modify4.examinerDate).format("YYYY-MM-DD");
-                this.modify4.deliveryDate = moment(this.modify4.deliveryDate).format("YYYY-MM-DD");
-                this.modify4.storageDate = moment(this.modify4.storageDate).format("YYYY-MM-DD");
                 this.$axios.post('/fx?api=gate.order.car.register.report.update',this.modify4).then(res => {
                     if(res!=500){
                         this.$Message.success("保存成功"); 
