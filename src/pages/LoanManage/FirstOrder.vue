@@ -186,7 +186,7 @@ export default {
                         ]);
                     }
                 },{
-                    title: '贷款金额（元）',
+                    title: '合同金额（元）',
                     key: 'amount',
                     minWidth: 140,
                     render: (h, params) => {
@@ -229,7 +229,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstOrder'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstOrder'}});
                                     }
                                 }
                             }, '详情'),

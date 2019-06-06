@@ -11,7 +11,7 @@
         <div :style="{paddingLeft:'15px',height:adjustHeight+120+'px',overflow:'auto'}">
             <div class="div-comm-1">订单费用：</div>
             <span class="span-comm-1">
-                <div>贷款金额(元)：{{certifyData.amount}}</div>
+                <div>合同金额(元)：{{certifyData.amount}}</div>
                 <div>总金额-众信(元)：{{certifyData.amountZd}}</div>
                 <div>总金额-资方(元)：{{certifyData.amountCapital}}</div>
             </span>
@@ -252,7 +252,7 @@ export default {
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.status==0?'待还款':params.row.status==1?'结清':params.row.status==2?'逾期':params.row.status==3?'还款失败':'')
+                            h('strong', params.row.status==0?'待还款':params.row.status==1?'结清':params.row.status==2?'逾期':params.row.status==3?'还款失败':params.row.status==9?'未生效':'')
                         ]);
                     }
                 }

@@ -61,6 +61,13 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        <Modal width="350" v-model="backModal" :title="myTitle2" :mask-closable="false"> 
+            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -76,8 +83,11 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
+            backModal:false,
+            msg:'',
             modalTipTitle:'禁用该员工',
             tipModal:false,
+            myTitle2:'退回门店',
             myTitle:'新增产品',
             item:{},
             isPassModal:false,
@@ -88,6 +98,7 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            orderId:'',
 			prodList:[], //产品列表
             search: {
                 timeType: 1,
@@ -141,9 +152,10 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '退回GPS安装';
-                                        this.item = params.row;
+                                        this.backModal = true;
+                                        this.myTitle2 = '退回GPS安装';
+                                        this.orderId = params.row.orderId;
+                                        this.msg = '';
                                     }
                                 }
                             }, '退回GPS安装'),
@@ -157,9 +169,10 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '退回门店';
-                                        this.item = params.row;
+                                        this.backModal = true;
+                                        this.myTitle2 = '退回门店';
+                                        this.orderId = params.row.orderId;
+                                        this.msg = '';
                                     }
                                 }
                             }, '退回门店'),
@@ -319,23 +332,7 @@ export default {
         	this.search.pageNum = 1;
 			this.getInitialList(util.searchList(this.search,'timeInterval'));
 		},
-        addBtn(){
-            this.myTitle = '新增';
-            this.modifyModal = true;
-            this.modify = {
-                name:'',
-                storeId:'',
-                mobile:'',
-                idNum:'',
-                type: '1'
-            };
-        },
-        clickFaceImg(img){
-            this.bigimg = img;
-            this.modalPreview = true;
-        },
         confirmBtn(){
-            debugger;
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
                 return this.$Message.error("带 * 为必填项"); 
             }
@@ -356,6 +353,7 @@ export default {
             this.tipModal = false;
             this.modifyModal = false;
             this.isPassModal = false;
+            this.backModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -373,6 +371,22 @@ export default {
             })
             this.isPassModal = false;
         },
+        confirmBtn2(){
+            if(!this.msg){
+               return this.$Message.warning('请填写退回理由');
+            }
+            let myUrl = '/fx?api=gate.order.admin.gpsBackStore';
+            if(this.myTitle2 == '退回GPS安装'){
+                myUrl = '/fx?api=gate.order.admin.gpsBackInstall';
+            }
+            this.$axios.post(myUrl,{orderId:this.orderId,msg:this.msg}).then(res => {
+                if(res!=500){
+                    this.$Message.success('退回成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
+            this.backModal = false;
+        }
 	}
 }
 </script>

@@ -252,6 +252,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '退回原因',
+                    key: 'reason',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.reason)
+                        ]);
+                    }
+                }, {
                     title: '订单详情',
                     key: 'action',
                     width: 150,

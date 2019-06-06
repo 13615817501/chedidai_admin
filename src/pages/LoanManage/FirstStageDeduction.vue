@@ -54,6 +54,26 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="280" v-model="modifyModal" title="划扣" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">首款金额：</span><Select v-model="modify.flag" placeholder="请选择" style="width: 150px">
+                            <Option :value="1">成功</Option>
+                            <Option :value="3">失败</Option>
+                        </Select>
+                </div>
+                <div class="item-div" v-show="modify.flag==1">
+                    <span class="item-comm required" style="width:60px;">划扣金额：</span><Input v-model.trim="modify.amount" clearable placeholder="请输入划扣金额" style="width: 150px"></Input>
+                </div>
+                <div class="item-div">
+                    <span class="item-comm" style="width:60px;">失败原因：</span><Input v-model="modify.msg" clearable placeholder="请输入失败原因" style="width: 150px"></Input>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -79,6 +99,7 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            orderId:'',
             prodList:[], //产品列表
             search: {
                 timeType: 1,
@@ -98,26 +119,16 @@ export default {
                 remoteMethod: this.remoteMethod
             },
             modify: {
-                name: '',
-                label: '',
-                bannerPic: '',
-                monthRate: '',
-                term: '',
-                jrongRate: '',
-                incidental: '',
-                accident: '',
-                flowAmount: '',
-                defaultAmount: '',
-                defaultYear: '',
-                isInterestHead: '',
-                calInterestWay: ''
+                flag: 1,
+                amount: '',
+                msg: ''
             },
             table_loading: false, //默认先显示加载
             certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 120,
+                    width: 100,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -133,12 +144,16 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '通过首款完成';
-                                        this.item = params.row;
+                                        this.modifyModal = true;
+                                        this.orderId = params.row.orderId;
+                                        this.modify = {
+                                            flag: 1,
+                                            amount: '',
+                                            msg: ''
+                                        }
                                     }
                                 }
-                            }, '首款完成')
+                            }, '划扣'),
                         ]);
                     }
                 }, {
@@ -187,7 +202,7 @@ export default {
                         ]);
                     }
                 },{
-                    title: '贷款金额(元)',
+                    title: '合同金额(元)',
                     key: 'amount',
                     minWidth: 130,
                     render: (h, params) => {
@@ -196,6 +211,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 130,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
+                        ]);
+                    }
+                },{
                     title: '银行卡号',
                     key: 'bankCardNum',
                     minWidth: 170,
@@ -207,7 +231,7 @@ export default {
                 },{
                     title: '银行分行号',
                     key: 'bankName',
-                    minWidth: 130,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.bankName)
@@ -243,7 +267,7 @@ export default {
                 },{
                     title: '首款通过时间',
                     key: 'loanFirstTime',
-                    minWidth: 120,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.loanFirstTime)
@@ -270,7 +294,7 @@ export default {
                 },{
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', [
@@ -284,7 +308,30 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstOrder'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstStageDeduction'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstStageDeduction'}});
                                     }
                                 }
                             }, '详情'),
@@ -350,21 +397,19 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            debugger;
-            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
-                return this.$Message.error("带 * 为必填项"); 
+            if(this.modify.flag == 1 && !this.modify.amount){
+                return this.$Message.error('带 * 为必填项');
             }
             let formData = {...this.modify};
-            let  myUrl = '/fx?api=gate.addOrUpdate.product';
-            if(this.myTitle == '修改'){
-                formData.id = this.id;
-            }
-            this.$axios.post(myUrl,formData).then(res => {
+            formData.orderId = this.orderId;
+            this.modal_loading = true;
+            this.$axios.get('/fx?api=gate.order.admin.deducted',{params:formData}).then(res => {
                 if(res!=500){
-                    this.$Message.success("操作成功"); 
-                    this.modifyModal = false;
+                    this.$Message.success('操作成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
+                this.modal_loading = false;
+                this.modifyModal = false;
             })
         },
         cancel(){

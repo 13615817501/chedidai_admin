@@ -16,10 +16,11 @@ import TreeTable from 'tree-table-vue'
 Vue.use(Tree)
 Vue.use(TreeTable)
 
-import { Timeline,TimelineItem,Input, Upload,Message,Tabs,Tag,Col,Select,Button,Option,Tooltip,DatePicker, Avatar,Table,TabPane, 
+import { Cascader,Timeline,TimelineItem,Input, Upload,Message,Tabs,Tag,Col,Select,Button,Option,Tooltip,DatePicker, Avatar,Table,TabPane, 
 	Row, Menu, MenuItem, Icon, Submenu, Modal , Form, FormItem,Page, Dropdown, DropdownMenu,DropdownItem,Breadcrumb,BreadcrumbItem,Transfer,Spin,Switch ,Progress} from 'iview';
 Vue.component('Timeline', Timeline);
 Vue.component('TimelineItem', TimelineItem);
+Vue.component('Cascader', Cascader);
 Vue.component('Button', Button);
 Vue.component('i-switch', Switch);
 Vue.component('i-progress', Progress);

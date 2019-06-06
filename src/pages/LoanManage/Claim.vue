@@ -53,6 +53,24 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="320" v-model="modifyModal" title="确认首款金额" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">首款金额：</span><Input class="item-input" v-model.trim="modify.amount" placeholder="请输入..." />
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <Modal width="350" v-model="backModal" title="退单" :mask-closable="false"> 
+            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -68,16 +86,15 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
+            backModal:false,
+            msg:'',
             modalTipTitle:'禁用该员工',
             tipModal:false,
             myTitle:'新增产品',
             item:{},
-            bigimg:'',
-            bannerPic:'',
-            modalPreview:false,
             modal_loading:false,
             storeNames:[],
-            id:'',
+            orderId:'',
             prodList:[], //产品列表
 			search: {
                 timeType: 1,
@@ -89,34 +106,19 @@ export default {
                 pageNum: 1,
                 pageSize: 15
             },
-            labelEnum:[], //产品标签 
-            isInterestHeadEnum:[], //是否利息前置
-            calInterestWayEnum:[], //计算利息方式
             remoteSetting: {
                 remote: true,
                 remoteMethod: this.remoteMethod
             },
             modify: {
-                name: '',
-                label: '',
-                bannerPic: '',
-                monthRate: '',
-                term: '',
-                jrongRate: '',
-                incidental: '',
-                accident: '',
-                flowAmount: '',
-                defaultAmount: '',
-                defaultYear: '',
-                isInterestHead: '',
-                calInterestWay: ''
+                amount:''
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 120,
+                    width: 250,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -132,12 +134,47 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        this.backModal = true;
+                                        this.modalTipTitle = '退单';
+                                        this.orderId = params.row.orderId;
+                                        this.msg = '';
+                                    }
+                                }
+                            }, '退单'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modify.amount = '';
+                                        this.modifyModal = true;
+                                        this.orderId = params.row.orderId;
+                                    }
+                                }
+                            }, '确认首款金额'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '通过首款完成';
+                                        this.modalTipTitle = '认领';
                                         this.item = params.row;
                                     }
                                 }
-                            }, '首款完成')
+                            }, '认领')
                         ]);
                     }
                 }, {
@@ -186,12 +223,21 @@ export default {
                         ]);
                     }
                 },{
-                    title: '贷款金额(元)',
+                    title: '合同金额(元)',
                     key: 'amount',
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.amount)
+                        ]);
+                    }
+                },{
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 130,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
                         ]);
                     }
                 },{
@@ -206,7 +252,7 @@ export default {
                 },{
                     title: '银行分行号',
                     key: 'bankName',
-                    minWidth: 130,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.bankName)
@@ -240,24 +286,6 @@ export default {
                         ]);
                     }
                 },{
-                    title: '首款通过时间',
-                    key: 'loanFirstTime',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.loanFirstTime)
-                        ]);
-                    }
-                },{
-                    title: '首款操作员',
-                    key: 'loanFirstStaff',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.loanFirstStaff)
-                        ]);
-                    }
-                },{
                     title: '订单状态',
                     key: 'status',
                     minWidth: 120,
@@ -269,7 +297,7 @@ export default {
                 },{
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', [
@@ -283,7 +311,30 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstOrder'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
                                     }
                                 }
                             }, '详情'),
@@ -327,48 +378,32 @@ export default {
 		},
         pageChange(page){
 			this.search.pageNum = page;
-             this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
         	this.search.pageNum = 1;
 			 this.getInitialList(util.searchList(this.search,'timeInterval'));
 		},
-        addBtn(){
-            this.myTitle = '新增';
-            this.modifyModal = true;
-            this.modify = {
-                name:'',
-                storeId:'',
-                mobile:'',
-                idNum:'',
-                type: '1'
-            };
-        },
-        clickFaceImg(img){
-            this.bigimg = img;
-            this.modalPreview = true;
-        },
         confirmBtn(){
-            debugger;
-            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
-                return this.$Message.error("带 * 为必填项"); 
+            if(!this.modify.amount){
+                return this.$Message.error('带 * 为必填项');
             }
             let formData = {...this.modify};
-            let  myUrl = '/fx?api=gate.addOrUpdate.product';
-            if(this.myTitle == '修改'){
-                formData.id = this.id;
-            }
-            this.$axios.post(myUrl,formData).then(res => {
+            formData.orderId = this.orderId;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.confirmFirstLoan',formData).then(res => {
                 if(res!=500){
-                    this.$Message.success("操作成功"); 
+                    this.$Message.success('操作成功');
                     this.modifyModal = false;
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
+                this.modal_loading = false;
             })
         },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
+            this.backModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -376,6 +411,18 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
+        },
+        confirmBtn2(){
+            if(!this.msg){
+               return this.$Message.warning('请填写退回理由');
+            }
+            this.$axios.post('/fx?api=gate.order.admin.loanBackCheck',{orderId:this.orderId,msg:this.msg}).then(res => {
+                if(res!=500){
+                    this.$Message.success('退回成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
+            this.backModal = false;
         }
 	}
 }

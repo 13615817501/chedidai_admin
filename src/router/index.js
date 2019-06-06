@@ -47,6 +47,11 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/AfterLoanManage/PendingRepayment`),
 	            }, {
+	                path: '/AfterLoanManage/DocReturnList',
+	                name: 'DocReturnList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/AfterLoanManage/DocReturnList`),
+	            }, {
 	                path: '/Authorization/AdminList',
 	                name: 'AdminList',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -106,6 +111,11 @@ var router = new Router({
 	                name: 'FirstStageDeduction',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/FirstStageDeduction`),
+	            }, {
+	                path: '/LoanManage/LoanDetail',
+	                name: 'LoanDetail',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/LoanDetail`),
 	            }, {
 	                path: '/LoanManage/RepaymentDeduction',
 	                name: 'RepaymentDeduction',

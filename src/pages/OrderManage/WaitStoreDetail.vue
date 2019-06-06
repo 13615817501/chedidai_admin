@@ -221,30 +221,40 @@
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasInspect=='0'?'无':modify4.hasInspect=='1'?'有':''"/>
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.insEndDate" type="date" placeholder="选择年检结束时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.insEndDate"/>
+                            <span v-show="modify4.hasInspect=='1'">
+                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.insEndDate" type="date" placeholder="选择年检结束时间" class="item-input"></DatePicker>
+                                <Input v-show="modify4.hasInspect=='1'" class="item-input txt" v-if="!ismodify4" readonly :value="modify4.insEndDate"/>
+                            </span>
                             <span class="item-comm required">有无交强险：</span><Select v-if="ismodify4" v-model="modify4.hasHighInsurance" class="item-input">
                                     <Option value="0">无</Option>
                                     <Option value="1">有</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasHighInsurance=='0'?'无':modify4.hasHighInsurance=='1'?'有':''"/>
-                            <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highStartDate" type="date" placeholder="选择交强险开始时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highStartDate"/>
+                            <span v-show="modify4.hasHighInsurance=='1'">
+                                <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highStartDate" type="date" placeholder="选择交强险开始时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highStartDate"/>
+                            </span>
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highEndDate"/>
+                            <span v-show="modify4.hasHighInsurance=='1'">
+                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highEndDate"/>
+                            </span>    
                             <span class="item-comm required">有无商业险 ：</span><Select v-if="ismodify4" v-model="modify4.hasBusyInsurance" class="item-input">
                                     <Option value="0">无</Option>
                                     <Option value="1">有</Option>
                                 </Select>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
-                            <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyStartDate"/>
+                            <span v-show="modify4.hasBusyInsurance=='1'">    
+                                <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
+                                <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyStartDate"/>
+                            </span> 
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyEndDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyEndDate"/>
+                            <span v-show="modify4.hasBusyInsurance=='1'">   
+                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyEndDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyEndDate"/>
+                            </span> 
                             <span class="item-comm required">使用性质：</span><Select v-if="ismodify4" v-model="modify4.useNature" class="item-input">
                                     <Option value="1">营运用车</Option>
                                     <Option value="2">出租车</Option>
@@ -962,7 +972,21 @@ export default {
             if(this.ismodify4){ //为保存操作
                 for (let key in this.modify4) {
                     if(!this.modify4[key]){
-                        return this.$Message.error("带 * 为必填项"); 
+                        if(key=='hasInspect'){
+                            if(this.modify4[key]=='1' && !this.modify4.insEndDate){
+                                return this.$Message.error("带 * 为必填项");
+                            }
+                        }else if(key=='hasHighInsurance'){
+                            if(this.modify4[key]=='1' && (!this.modify4.highStartDate || !this.modify4.highEndDate)){
+                                return this.$Message.error("带 * 为必填项");
+                            }
+                        }else if(key=='hasBusyInsurance'){
+                            if(this.modify4[key]=='1' ||(!this.modify4.busyStartDate || !this.modify4.busyEndDate)){
+                                return this.$Message.error("带 * 为必填项");
+                            }
+                        }else if(key!='insEndDate' && key!='highStartDate' && key!='highEndDate' && key!='busyStartDate' && key!='busyEndDate'){
+                            return this.$Message.error("带 * 为必填项");
+                        }
                     }
                 }
                 this.modify4.insEndDate = moment(this.modify4.insEndDate).format("YYYY-MM-DD");

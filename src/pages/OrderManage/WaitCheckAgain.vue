@@ -52,8 +52,8 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="350" v-model="backModal" title="退回" :mask-closable="false"> 
-            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+        <Modal width="350" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
+            请填写理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
@@ -76,7 +76,9 @@ export default {
             modifyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
+            backModalTitle:'退回门店',
             myTitle:'新增产品',
+            myTitle2:'退回该复审到合同',
             item:{},
             bigimg:'',
             bannerPic:'',
@@ -124,7 +126,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 180,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -136,34 +138,74 @@ export default {
                                     
                                 },
                                 style: {
-                                    'margin-left':'10px',
+                                    'margin':'10px 10px 0 0',
                                 },
                                 on: {
                                     click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '通过该待复审订单';
+                                        this.modalTipTitle = '通过该复审订单';
                                         this.item = params.row;
                                     }
                                 }
                             }, '通过'),
                             h('Button', {
                                 props: {
-                                    type: 'warning',
+                                    type: 'primary',
                                     size: 'small',
                                     
                                 },
                                 style: {
-                                    'margin-left':'10px',
+                                    'margin':'10px 10px 0 0',
                                 },
                                 on: {
                                     click: () => {
                                         this.msg = '';
                                         this.backModal = true;
-                                        this.modalTipTitle = '退回该审核订单';
+                                        this.myTitle2 = '退回该复审订单到退回门店';
+                                        this.backModalTitle = '退回门店';
                                         this.orderId = params.row.orderId;
                                     }
                                 }
-                            }, '退回')
+                            }, '退回门店'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin':'10px 10px 10px 0',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.msg = '';
+                                        this.backModal = true;
+                                        this.myTitle2 = '拒绝该复审订单';
+                                        this.backModalTitle = '拒绝';
+                                        this.orderId = params.row.orderId;
+                                    }
+                                }
+                            }, '拒绝'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin':'10px 10px 10px 0',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.msg = '';
+                                        this.backModal = true;
+                                        this.myTitle2 = '退回该复审到合同';
+                                        this.backModalTitle = '退回合同';
+                                        this.orderId = params.row.orderId;
+                                    }
+                                }
+                            }, '退回合同')
+                            
                         ]);
                     }
                 }, {
@@ -239,6 +281,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '退回原因',
+                    key: 'reason',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.reason)
+                        ]);
+                    }
+                }, {
                     title: '订单详情',
                     key: 'action',
                     width: 150,
@@ -289,9 +340,22 @@ export default {
             if(!this.msg){
                return this.$Message.warning('请填写退回理由');
             }
-            this.$axios.post('/fx?api=gate.order.admin.checkAgainBack',{orderId:this.orderId,msg:this.msg}).then(res => {
+            let formData = {};
+            formData.orderId = this.orderId;
+            let myUrl = '';
+            if(this.myTitle2 == '退回该复审到合同'){
+                myUrl = '/fx?api=gate.order.admin.checkAgainBackContract';
+                formData.msg = this.msg;
+            }else if(this.myTitle2 == '拒绝该复审订单'){
+                myUrl = '/fx?api=gate.order.admin.checkAgainRefuse';
+                formData.content = this.msg;
+            }else{
+                myUrl = '/fx?api=gate.order.admin.checkAgainBack';
+                formData.msg = this.msg;
+            }
+            this.$axios.post(myUrl,formData).then(res => {
                 if(res!=500){
-                    this.$Message.success('退回成功');
+                    this.$Message.success('操作成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
             })

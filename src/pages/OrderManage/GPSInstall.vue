@@ -213,7 +213,7 @@ export default {
 							h('strong', params.row.prodName)
 						]);
 					}
-				}, {
+				},{
 					title: '申请时间',
 					key: 'createTime',
 					minWidth: 150,
@@ -272,6 +272,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '退回原因',
+                    key: 'reason',
+                    minWidth: 180,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.reason)
+                        ]);
+                    }
+                },{
                     title: '订单详情',
                     key: 'action',
                     width: 150,

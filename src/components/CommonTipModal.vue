@@ -94,15 +94,22 @@
                 }else if(this.modalTipTitle=='通过该待复审订单'){
                     formUrl = '/fx?api=gate.order.admin.checkAgain';  //这里还需要修改
                     formData.orderId = this.item.orderId;
-                }else if(this.modalTipTitle=='通过首款完成'){
+                }else if(this.modalTipTitle=='首款放款确认'){
                     formUrl = '/fx?api=gate.order.admin.loanFirst';  //这里还需要修改
                     formData.orderId = this.item.orderId;
-                }else if(this.modalTipTitle=='通过尾款完成'){
+                }else if(this.modalTipTitle=='尾款放款确认'){
                     formUrl = '/fx?api=gate.order.admin.loan';  //这里还需要修改
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='GPS信息确认'){
                     formUrl = '/fx?api=gate.order.admin.checkPassGps';  //这里还需要修改
                     formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='认领'){
+                    formUrl = '/fx?api=gate.order.admin.claiming';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='还款划扣'){
+                    formUrl = '/fx?api=gate.order.admin.deductedMonthly';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                    formData.repaymentPlanId = this.item.repaymentPlanId;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

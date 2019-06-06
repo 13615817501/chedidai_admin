@@ -12,8 +12,8 @@
             <div style="display:inline-block;vertical-align:top;">
                 <table border="1" style="border-color:#ddd;text-align:center;line-height:38px;" cellspacing="1">
                     <tbody>
-                        <tr><td>客户姓名：{{certifyList.userName}}</td><td>客户电话：{{certifyList.userMobile}}</td><td>贷款金额：{{certifyList.amount}}</td><td> <Button type="primary" size="small" style="margin:0 10px;" @click="custominfoBtn">客户认证信息</Button></td></tr>
-                        <tr><td colspan="3">贷款车辆：{{certifyList.autoModelName}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="carinfoBtn">车辆认证信息</Button></td></tr>
+                        <tr><td>客户姓名：{{certifyList.userName}}</td><td>客户电话：{{certifyList.userMobile}}</td><td>合同金额：{{certifyList.amount}}</td><td> <Button type="primary" size="small" style="margin:0 10px;" @click="custominfoBtn">客户认证信息</Button></td></tr>
+                        <tr><td colspan="2">贷款车辆：{{certifyList.autoModelName}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="modifyCarInfoBtn" v-if="$route.query.name=='WaitAuditingList'">修改车型</Button></td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="carinfoBtn">车辆认证信息</Button></td></tr>
                         <tr><td>产品：{{certifyList.prodName}}</td><td>贷款期数：{{certifyList.periods}}</td><td>还款方式：{{certifyList.type=='1'?'先息后本':certifyList.type=='2'?'等额本息':'等本等息'}}</td><td> <Button type="primary" size="small"  style="margin:0 10px;" @click="commoninfoBtn">认证信息</Button></td></tr>
                         <tr><td>门店编码：{{certifyList.storeNum}}</td><td>门店客服：{{certifyList.storeCt}}</td><td>门店电话：{{certifyList.storeCtm}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="deviceinfoBtn">设备管理</Button></td></tr>
                         <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
@@ -38,6 +38,9 @@
                         </p>   
                     </div>
                 </div> 
+                <div style="margin-top:15px;" v-if="$route.query.name=='WaitAuditingList'">
+                    <Button type="primary" size="small" @click="openMoneyModal">修改合同金额</Button>
+                </div>
                 <div style="margin-top:15px;">
                     <p>Actual Amount：{{certifyList.actualAmount}}</p>   
                 </div> 
@@ -101,6 +104,33 @@
                 </Timeline>
             </span>
         </div>
+        <Modal width="380" v-model="modifyModal2" title="修改车型" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:100px;">车型：</span><Select style="width:200px;" v-model="modifyCar.modelId">
+                        <Option v-for="item in carList" :value="item.model_id" :key="item.model_id">{{item.model_name}}</Option>
+                    </Select>
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required" style="width:100px;">首次上牌时间：</span><DatePicker style="width:200px;" type="month" v-model.trim="modifyCar.regDate" placeholder="请选择"></DatePicker>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <Modal width="380" v-model="modifyMoneyModal" title="修改合同金额" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:120px;">调整后的金额(元)：</span><Input v-model.trim="modifyMoney.amount" clearable placeholder="请输入划扣金额" style="width: 150px"></Input>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="modifyMoneyBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -116,11 +146,25 @@ export default {
 		return {
             orderId: '',
 			certifyList:{},
+            carList:{}, //车辆信息对象
+            modifyModal2:false,
+            modifyMoneyModal:false,
+            modal_loading:false,
             prodId:'',
+            autoId:'',
+            modelIdArr:[],
+            dataObject:[],
+            modifyMoney:{
+                amount:''
+            },
             modify:{
                 annualInspectionDeposit:'',
                 trafficDeposit:'',
                 serviceFee:''
+            },
+            modifyCar:{
+                modelId:'',
+                regDate:''
             },
             isModify1:false,
             isModify2:false,
@@ -138,6 +182,15 @@ export default {
         this.getInitialList({orderId:this.$route.query.orderId});
 	},
 	methods: {
+        getCarDetail(autoRepositoryId){
+            this.$axios.get('/fx?api=gate.order.auto.model.query',{params:{autoRepositoryId:autoRepositoryId}}).then(res => {
+                if(res!=500){
+                    this.modifyCar.modelId = res.modelId;
+                    this.modifyCar.regDate = res.regDate;
+                    this.carList = res.models;
+                }
+            })
+        },
 		getInitialList(formData){ 
 		    this.$axios.get('/fx?api=gate.order.admin.detail',{params:formData}).then(res => {
 		    	if(res!=500){
@@ -148,6 +201,8 @@ export default {
                         serviceFee:res.serviceFee
                     }
                     this.prodId = res.prodId;
+                    this.autoRepositoryId = res.autoId;
+                    this.getCarDetail(res.autoId);
 			        this.$store.commit('change_height');
 		    	}
 			})
@@ -193,6 +248,49 @@ export default {
                     !this.isModify3 && this.commonSavaYajin('/fx?api=gate.order.admin.mdfServiceFee',this.modify.serviceFee);
                     break;        
             }
+        },
+        modifyCarInfoBtn(){
+            this.modifyModal2 = true;
+        },
+        confirmBtn(){
+            this.modifyCar.regDate = moment(this.modifyCar.regDate).format("YYYY-MM");
+            if(!this.modifyCar.modelId || !this.modifyCar.regDate){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            let formData = {...this.modifyCar};
+            formData.orderId = this.$route.query.orderId;
+            formData.autoRepositoryId = this.autoRepositoryId;
+            formData.productId = this.prodId;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.auto.model.update',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("保存成功"); 
+                    this.getInitialList({orderId:this.$route.query.orderId});
+                }
+                this.modal_loading = false;
+                this.modifyModal2 = false;
+            })
+        },
+        cancel(){
+           this.modifyModal2 = false;
+           this.modifyMoneyModal = false;
+        },
+        openMoneyModal(){
+             this.modifyMoneyModal = true;
+             this.modifyMoney.amount = this.certifyList.amount;
+        },
+        modifyMoneyBtn(){
+            let formData = {...this.modifyMoney};
+            formData.orderId = this.$route.query.orderId;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.adjustAmount',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getInitialList({orderId:this.$route.query.orderId});
+                }
+                this.modal_loading = false;
+                this.modifyMoneyModal = false;
+            })
         }
 	}
 }

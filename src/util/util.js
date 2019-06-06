@@ -386,6 +386,9 @@ let util = {
             case 'PendingRepayment':
                 return 'AfterLoanManage';
                 break; 
+            case 'DocReturnList':
+                return 'AfterLoanManage';
+                break;     
             case 'OverdueOrder':
                 return 'AfterLoanManage';
                 break;

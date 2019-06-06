@@ -117,7 +117,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 120,
+                    width: 240,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -126,7 +126,7 @@ export default {
                                 props: {
                                     type: 'primary',
                                     size: 'small',
-                                    
+                                    disabled: params.row.status==11?false:true
                                 },
                                 style: {
                                     'margin-left':'10px',
@@ -134,11 +134,28 @@ export default {
                                 on: {
                                     click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '通过首款完成';
+                                        this.modalTipTitle = '首款放款确认';
                                         this.item = params.row;
                                     }
                                 }
-                            }, '首款完成')
+                            }, '首款放款确认'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    disabled: params.row.status==12?false:true
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.tipModal = true;
+                                        this.modalTipTitle = '尾款放款确认';
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '尾款放款确认')
                         ]);
                     }
                 }, {
@@ -187,12 +204,21 @@ export default {
                         ]);
                     }
                 },{
-                    title: '贷款金额(元)',
+                    title: '合同金额(元)',
                     key: 'amount',
                     minWidth: 130,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.amount)
+                        ]);
+                    }
+                },{
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 130,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
                         ]);
                     }
                 }, {
@@ -207,7 +233,7 @@ export default {
 				},{
                     title: '银行分行号',
                     key: 'bankName',
-                    minWidth: 130,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.bankName)
@@ -243,7 +269,7 @@ export default {
                 },{
                     title: '首款通过时间',
                     key: 'loanFirstTime',
-                    minWidth: 120,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.loanFirstTime)
@@ -259,18 +285,9 @@ export default {
                         ]);
                     }
                 },{
-                    title: '订单状态',
-                    key: 'status',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.status==11?'待放首款':params.row.status==12?'待放尾款':'')
-                        ]);
-                    }
-                },{
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', [
@@ -284,7 +301,30 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'FirstOrder'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'PendingLoan'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'PendingLoan'}});
                                     }
                                 }
                             }, '详情'),
@@ -350,7 +390,6 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            debugger;
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
                 return this.$Message.error("带 * 为必填项"); 
             }
