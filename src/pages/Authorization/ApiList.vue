@@ -1,8 +1,8 @@
 <template>
     <div id="apiList">
         <Breadcrumb>
-	        <BreadcrumbItem>权限设置</BreadcrumbItem>
-	        <BreadcrumbItem>接口权限列表</BreadcrumbItem>
+	        <BreadcrumbItem>组织管理</BreadcrumbItem>
+	        <BreadcrumbItem>权限管理</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
             <span>

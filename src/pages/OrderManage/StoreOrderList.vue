@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>待GPS校验</BreadcrumbItem>
+	        <BreadcrumbItem>门店订单列表</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
              <span>
@@ -12,8 +12,17 @@
                     <Option :value="2">门店审核通过</Option>
                     <Option :value="3">初审通过时间</Option>
                     <Option :value="4">用户确认时间</Option>
+                    <Option :value="5">复审通过时间</Option>
                     <Option :value="6">合同签署时间</Option>
                     <Option :value="7">GPS安装时间</Option>
+                    <Option :value="8">抵押完成时间</Option>
+                    <Option :value="9">首款完成时间</Option>
+                    <Option :value="11">尾款完成时间</Option>
+                    <Option :value="12">订单开始时间</Option>
+                    <Option :value="13">订单失效时间</Option>
+                    <Option :value="14">结清时间</Option>
+                    <Option :value="15">取消订单时间</Option>
+                    <Option :value="16">还款时间</Option>
                 </Select>
             </span>
             <span>
@@ -135,66 +144,6 @@ export default {
 			table_loading: false, //默认先显示加载
 			certifyList:[],
             columns: [{
-                    title: '操作',
-                    key: 'action',
-                    width: 330,
-                    align: 'center',
-                    fixed: "left",
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.backModal = true;
-                                        this.myTitle2 = '退回GPS安装';
-                                        this.orderId = params.row.orderId;
-                                        this.msg = '';
-                                    }
-                                }
-                            }, '退回GPS安装'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.backModal = true;
-                                        this.myTitle2 = '退回门店';
-                                        this.orderId = params.row.orderId;
-                                        this.msg = '';
-                                    }
-                                }
-                            }, '退回门店'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = 'GPS信息确认';
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, 'GPS信息确认')
-                        ]);
-                    }
-                },{
                     title: '订单号',
                     key: 'orderNumber',
                     minWidth: 160,
@@ -206,7 +155,7 @@ export default {
                 }, {
 					title: '用户姓名',
 					key: 'userName',
-					minWidth: 160,
+					minWidth: 100,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.userName)
@@ -233,43 +182,25 @@ export default {
                 }, {
 					title: '产品名称',
 					key: 'prodName',
-					minWidth: 120,
+					minWidth: 150,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.prodName)
 						]);
 					}
 				}, {
-					title: '申请时间',
-					key: 'createTime',
-					minWidth: 150,
+					title: '状态',
+					key: 'statusValue',
+					minWidth: 100,
 					render: (h, params) => {
 						return h('div', [
-							h('strong', params.row.createTime)
+							h('strong', params.row.statusValue)
 						]);
 					}
 				}, {
-                    title: 'GPS安装人员',
-                    key: 'mortgagedStaff',
-                    minWidth: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.mortgagedStaff)
-                        ]);
-                    }
-                },{
-                    title: 'GPS安装时间',
-                    key: 'mortgagedTime',
-                    minWidth: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.mortgagedTime)
-                        ]);
-                    }
-                }, {
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
@@ -282,7 +213,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'GPSCheck'}});  
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'StoreOrderList'}});  
                                     }
                                 }
                             }, '详情'),
@@ -314,7 +245,7 @@ export default {
         },
 		getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.waitCheckGPS',{params:formData}).then(res => {
+		    this.$axios.get('/fx?api=gate.order.admin.storeOrderList',{params:formData}).then(res => {
 		    	if(res!=500){
 		    		this.certifyList = res.list;
 			        this.totalCount = res.page.totalCount;

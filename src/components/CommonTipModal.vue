@@ -110,6 +110,12 @@
                     formUrl = '/fx?api=gate.order.admin.deductedMonthly';  //这里还需要修改
                     formData.orderId = this.item.orderId;
                     formData.repaymentPlanId = this.item.repaymentPlanId;
+                }else if(this.modalTipTitle=='资料回寄完成'){
+                    formUrl = '/fx?api=gate.order.admin.fileCollectFinish';  //这里还需要修改
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='审核催收订单'){
+                    formUrl = '/fx?api=gate.order.collect.audit';  //这里还需要修改
+                    formData.id = this.item.id;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

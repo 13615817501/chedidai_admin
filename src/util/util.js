@@ -371,6 +371,9 @@ let util = {
             case 'HandlingMortgage':
                 return 'OrderManage';
                 break;  
+            case 'StoreOrderList':
+                return 'OrderManage';
+                break;     
             case 'Claim':
                 return 'LoanManage';
                 break;  
@@ -379,7 +382,10 @@ let util = {
                 break;  
             case 'FirstStageDeduction':
                 return 'LoanManage';
-                break;  
+                break; 
+            case 'CollectFeedback':
+                return 'LoanManage';
+                break;     
             case 'RepaymentDeduction':
                 return 'LoanManage';
                 break;  
@@ -389,9 +395,12 @@ let util = {
             case 'DocReturnList':
                 return 'AfterLoanManage';
                 break;     
-            case 'OverdueOrder':
+            case 'CollectList':
                 return 'AfterLoanManage';
                 break;
+            case 'OverdueOrder':
+                return 'AfterLoanManage';
+                break;    
             case 'DisposalAssets':
                 return 'AfterLoanManage';
                 break;

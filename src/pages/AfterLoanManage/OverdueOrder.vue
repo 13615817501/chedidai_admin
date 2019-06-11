@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
             <BreadcrumbItem>贷后管理</BreadcrumbItem>
-            <BreadcrumbItem>资料回寄</BreadcrumbItem>
+            <BreadcrumbItem>逾期订单</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
              <span>
@@ -122,42 +122,7 @@ export default {
                                     
                                 },
                                 style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.backModal = true;
-                                        this.modalTipTitle = '退单';
-                                        this.orderId = params.row.orderId;
-                                        this.msg = '';
-                                    }
-                                }
-                            }, '退单'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modify.amount = '';
-                                        this.modifyModal = true;
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '确认首款金额'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
+                                    'margin':'5px 10px 10px 10px',
                                 },
                                 on: {
                                     click: () => {
@@ -166,7 +131,7 @@ export default {
                                         this.item = params.row;
                                     }
                                 }
-                            }, '认领')
+                            }, '添加催收')
                         ]);
                     }
                 }, {

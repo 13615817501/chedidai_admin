@@ -700,6 +700,7 @@ export default {
         this.getFile({autoRepositoryId:this.$route.query.autoId});
         this.getDeviceList({orderId:this.$route.query.orderId});
         if(this.$route.query.name2!='WaitStoreList' && this.$route.query.name2!='WaitAuditingList' && this.$route.query.name2!='WaitConfirmList'){
+            this.contractList = [];
             this.getContractList({orderId:this.$route.query.orderId});
         }
     },

@@ -1,8 +1,8 @@
 <template>
     <div id="adminList">
         <Breadcrumb>
-	        <BreadcrumbItem>权限设置</BreadcrumbItem>
-	        <BreadcrumbItem>管理员列表</BreadcrumbItem>
+	        <BreadcrumbItem>组织管理</BreadcrumbItem>
+	        <BreadcrumbItem>员工列表</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
             <span>
@@ -50,7 +50,7 @@
             </div>
             <div class="add-comm" v-if="addModalTitle=='新增'">
             	<span class="item-comm required">设置登录密码：</span>
-	            <Input  style="width:50%;" v-model="passwd"  type="password" placeholder="请输入密码..."/>
+	            <Input  style="width:50%;" v-model.trim="passwd"  type="password" placeholder="请输入密码..."/>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">组织门店：</span>
@@ -209,6 +209,7 @@
                                 },
                                 on: {
                                     click: () => {
+                                    	this.passwd = '';
                                     	this.adminId = params.row.id;
                                         this.resetModal = true;
                                     }
@@ -427,7 +428,7 @@
                 this.passwd = '';
 			},
             addConfirmBtn(){
-            	if(!this.add.name||!this.add.mobile||!this.add.icon||!this.add.workNumber||!this.add.idCard||!this.add.orgId||!this.add.roleId||!this.add.content){
+            	if(!this.add.name||!this.add.mobile||!this.add.icon||!this.add.workNumber||!this.add.idCard||!this.add.orgId||!this.add.roleId){
                    return this.$Message.error('带 * 项不能为空');
             	} 
             	if(this.addModalTitle=="新增" && !this.passwd){
@@ -445,6 +446,7 @@
             	if(this.addModalTitle=="新增"){
                     formUrl = '/fx?api=gate.auth.adminInfoNew'; //新增接口
                     formData = {...this.add};
+                    formData.passwd = this.passwd;
             	}else{
             		formUrl = '/fx?api=gate.auth.adminInfoModify'; //修改接口
             		formData = {
@@ -489,7 +491,6 @@
             resetConfirmBtn(){
             	this.$axios.post('/fx?api=gate.auth.adminInfoModify',{passwd:this.passwd,adminId:this.adminId}).then(res => {
 					if (res != 500) {
-						this.passwd = '';
 						this.$Message.success('重置成功');
 					}
 					this.table_loading = false;

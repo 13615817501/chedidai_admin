@@ -49,6 +49,9 @@
                     <p v-if="certifyList.underwritedStatus">核保时间：{{certifyList.underwritedTime}}</p>    
                     <p v-if="certifyList.underwritedStatus">核保操作员：{{certifyList.underwritedStaff}}</p>    
                 </div>
+                <div style="margin-top:15px;">
+                    <p>订单资料状态：{{certifyList.fileCollectStatus==0?'待寄回':certifyList.fileCollectStatus==1?'已寄回':''}}</p>
+                </div>
             </div>
             <span style="display:inline-block;margin-left:100px;">
                 <Timeline>
@@ -88,10 +91,10 @@
                     <TimelineItem :color="certifyList.gpsBlock?'blue':'#ccc'">
                         <p class="time" :style="{color:certifyList.gpsBlock?'#2d8cf0':'#515a6e'}">GPS抵押</p>
                         <template v-if="certifyList.gpsBlock">
-                        <p class="content">GPS完成时间：{{certifyList.gpsBlock.time}}</p>
-                        <p class="content">GPS操作员：{{certifyList.gpsBlock.staff}}</p>
-                        <p class="content">抵押完成时间：{{certifyList.gpsBlock.mortgagedTime}}</p>
-                        <p class="content">抵押操作员：{{certifyList.gpsBlock.mortgagedStaff}}</p>
+                        <p class="content">GPS校验时间：{{certifyList.gpsBlock.time}}</p>
+                        <p class="content">GPS校验员：{{certifyList.gpsBlock.staff}}</p>
+                        <p class="content">GPS安装时间：{{certifyList.gpsBlock.mortgagedTime}}</p>
+                        <p class="content">GPS安装操作员：{{certifyList.gpsBlock.mortgagedStaff}}</p>
                         </template>
                     </TimelineItem> 
                     <TimelineItem :color="certifyList.checkAgainBlock?'blue':'#ccc'">

@@ -1,7 +1,7 @@
 <template>
     <div id="menuManage">
         <Breadcrumb>
-	        <BreadcrumbItem>权限设置</BreadcrumbItem>
+	        <BreadcrumbItem>组织管理</BreadcrumbItem>
 	        <BreadcrumbItem>菜单管理</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="my-tree" :style="{'height':adjustHeight+'px'}">

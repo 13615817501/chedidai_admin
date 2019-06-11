@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
             <BreadcrumbItem>贷后管理</BreadcrumbItem>
-            <BreadcrumbItem>资料回寄</BreadcrumbItem>
+            <BreadcrumbItem>待还款订单</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
              <span>
@@ -43,34 +43,21 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
-            <div style="text-align:center">
-                <p>确定{{modalTipTitle}}吗?</p>
+        <Modal width="300" v-model="modifyModal" title="退单" :mask-closable="false"> 
+            <div style="padding:0 15px;">
+                <span class="item-comm required" style="width:50px;">图片：</span><ImgUpload :type="6" class="imgUpload" :txt="'多选'" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload>
+                <div style="margin-top:10px;"><span class="item-comm required" style="width:50px;">备注：</span><Input v-model.trim="modify.remark" placeholder="请输入..." type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width:150px;"/></div>
             </div>
-        </CommonTipModal>
-        <Modal width="320" v-model="modifyModal" title="确认首款金额" :mask-closable="false"> 
-            <div class="modify-modal"> 
-                <div class="item-div">
-                    <span class="item-comm required" style="width:60px;">首款金额：</span><Input class="item-input" v-model.trim="modify.amount" placeholder="请输入..." />
-                </div>
-            </div>
-            <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
-                <Button @click="cancel">取消</Button>
-            </div> 
-        </Modal>
-        <Modal width="350" v-model="backModal" title="退单" :mask-closable="false"> 
-            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        
     </div>
 </template>
 <script>
 import util from '@/util/util'
-import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
@@ -81,11 +68,12 @@ export default {
         return {
             totalCount: 0,
             modifyModal:false,
-            backModal:false,
-            msg:'',
+            modifyModal:false,
+            myUploadList:[],
+            myUploadList2:[],
             modalTipTitle:'禁用该员工',
-            tipModal:false,
             myTitle:'新增产品',
+           
             item:{},
             modal_loading:false,
             storeNames:[],
@@ -103,14 +91,15 @@ export default {
                 pageSize: 15
             },
             modify: {
-                amount:''
+                pics:'',
+                remark:''
             },
             table_loading: false, //默认先显示加载
             certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 250,
+                    width: 120,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -122,51 +111,15 @@ export default {
                                     
                                 },
                                 style: {
-                                    'margin-left':'10px',
+                                    'margin':'5px 10px 10px 10px',
                                 },
                                 on: {
                                     click: () => {
-                                        this.backModal = true;
-                                        this.modalTipTitle = '退单';
-                                        this.orderId = params.row.orderId;
-                                        this.msg = '';
-                                    }
-                                }
-                            }, '退单'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modify.amount = '';
-                                        this.modifyModal = true;
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '确认首款金额'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '认领';
                                         this.item = params.row;
+                                        this.modifyModal = true;
                                     }
                                 }
-                            }, '认领')
+                            }, '添加催收')
                         ]);
                     }
                 }, {
@@ -208,7 +161,7 @@ export default {
                 }, {
                     title: '产品名称',
                     key: 'prodName',
-                    minWidth: 120,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.prodName)
@@ -253,7 +206,7 @@ export default {
                 },{
                     title: '银行卡号',
                     key: 'bankCardNum',
-                    minWidth: 160,
+                    minWidth: 170,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.bankCardNum)
@@ -323,7 +276,6 @@ export default {
         }
     },
     components:{
-        CommonTipModal,
         ImgUpload
     }, 
     computed:{
@@ -353,46 +305,34 @@ export default {
             this.search.pageNum = 1;
              this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
-        confirmBtn(){
-            if(!this.modify.amount){
-                return this.$Message.error('带 * 为必填项');
+        cancel(){
+            this.modifyModal = false;
+            this.backModal = false;
+            this.modalPreview = false;
+        },
+        confirmBtn2(){
+            if(!this.modify.pics.length || !this.modify.remark){
+               return this.$Message.error('带 * 为必填项');
             }
-            let formData = {...this.modify};
-            formData.orderId = this.orderId;
+            let formData = {};
+            formData.orderId = this.item.orderId;
+            formData.repaymentPlanId = this.item.repaymentPlanId;
+            formData.pics = String(this.modify.pics);
+            formData.remark = this.modify.remark;
             this.modal_loading = true;
-            this.$axios.post('/fx?api=gate.order.admin.confirmFirstLoan',formData).then(res => {
+            this.$axios.post('/fx?api=gate.order.collect.add',formData).then(res => {
                 if(res!=500){
-                    this.$Message.success('操作成功');
-                    this.modifyModal = false;
+                    this.$Message.success('添加成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
                 this.modal_loading = false;
+                this.modifyModal = false;
             })
         },
-        cancel(){
-            this.tipModal = false;
-            this.modifyModal = false;
-            this.backModal = false;
+        changePicUrl(...arr){
+            this.modify.pics = arr;
         },
-        tipComfirmBtn(num) {
-            this.tipModal = false;
-            if (num != 500) {
-                this.$Message.success('操作成功');
-                this.getInitialList(util.searchList(this.search,'timeInterval'));
-            }
-        },
-        confirmBtn2(){
-            if(!this.msg){
-               return this.$Message.warning('请填写退回理由');
-            }
-            this.$axios.post('/fx?api=gate.order.admin.loanBackCheck',{orderId:this.orderId,msg:this.msg}).then(res => {
-                if(res!=500){
-                    this.$Message.success('退回成功');
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
-                }
-            })
-            this.backModal = false;
-        }
+       
     }
 }
 </script>
@@ -420,5 +360,8 @@ export default {
     }
     .item-div{
         margin: 10px 0;
+    }
+    .imgUpload{
+        display: inline-block;
     }
 </style>

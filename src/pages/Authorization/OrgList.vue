@@ -1,8 +1,8 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>权限管理</BreadcrumbItem>
-	        <BreadcrumbItem>部门组织列表</BreadcrumbItem>
+	        <BreadcrumbItem>组织管理</BreadcrumbItem>
+	        <BreadcrumbItem>部门列表</BreadcrumbItem>
 	    </Breadcrumb>
         <tree-table 
             class="listadmin"

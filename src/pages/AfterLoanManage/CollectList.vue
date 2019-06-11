@@ -1,39 +1,20 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-            <BreadcrumbItem>贷后管理</BreadcrumbItem>
-            <BreadcrumbItem>资料回寄</BreadcrumbItem>
+            <BreadcrumbItem>放款管理</BreadcrumbItem>
+            <BreadcrumbItem>催收记录</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
-             <span>
-                时间类型: 
-                <Select v-model="search.timeType" style="width:120px">
-                    <Option :value="16">还款时间</Option>
-                </Select>
-            </span>
-            <span>
-                &nbsp;&nbsp;时间区间: 
-                <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
-            </span>
-            <span>
-                &nbsp;&nbsp;订单号: 
-                <Input v-model="search.orderNumber" clearable placeholder="请输入订单号" style="width: 120px"></Input>
-            </span>
-            <span>
-                &nbsp;&nbsp;手机号: 
-                <Input v-model="search.mobile" clearable placeholder="请输入手机号" style="width: 120px"></Input>
-            </span>
             <span>
                 &nbsp;&nbsp;期数: 
-                <Input v-model="search.period" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+                <Input v-model="search.period" clearable placeholder="请输入期数" style="width: 120px"></Input>
             </span>
             <span>
-                &nbsp;&nbsp;用户姓名: 
-                <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
-            </span>
-            <span>
-                &nbsp;&nbsp;逾期天数: 
-                <Input v-model="search.overdueDaysZd" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+                &nbsp;&nbsp;状态: 
+                <Select v-model="search.status" style="width:120px" clearable>
+                    <Option :value="1">待财务审核</Option>
+                    <Option :value="2">通过财务审核</Option>
+                </Select>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
@@ -48,12 +29,14 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
+import ModalPic from '@/components/ModalPic' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
@@ -62,21 +45,24 @@ export default {
     data () {
         return {
             totalCount: 0,
-            modalTipTitle:'资料回寄完成',
+            backModal:false,
+            modalPreview:false,
+            bigimg:'',
+            modalTipTitle:'审核催收订单',
             tipModal:false,
             item:{},
             modal_loading:false,
             orderId:'',
             search: {
-                timeType: 16,
-                timeInterval: '',
-                orderNumber: '',
-                mobile: '',
-                name: '',
-                period:'',
-                overdueDaysZd:'',
-                pageNum: 1,
-                pageSize: 15
+                period: '',
+                status:''
+            },
+            remoteSetting: {
+                remote: true,
+                remoteMethod: this.remoteMethod
+            },
+            modify: {
+                amount:''
             },
             table_loading: false, //默认先显示加载
             certifyList:[],
@@ -92,7 +78,7 @@ export default {
                                 props: {
                                     type: 'primary',
                                     size: 'small',
-                                    
+                                    disabled: params.row.status!=1
                                 },
                                 style: {
                                     'margin-left':'10px',
@@ -100,11 +86,11 @@ export default {
                                 on: {
                                     click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '资料回寄完成';
+                                        this.modalTipTitle = '审核催收订单';
                                         this.item = params.row;
                                     }
                                 }
-                            }, '完成'),
+                            }, '审核')
                         ]);
                     }
                 }, {
@@ -117,48 +103,78 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '用户姓名',
-                    key: 'userName',
-                    minWidth: 100,
+                    title: '期数',
+                    key: 'period',
+                    minWidth: 60,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userName)
+                            h('strong', params.row.period)
                         ]);
                     }
                 }, {
-                    title: '手机号码',
-                    key: 'userMobile',
+                    title: '图片',
+                    key: 'pics',
+                    minWidth: 250,
+                    render: (h, params) => {
+                        let arr = []
+                        params.row.pics.forEach( (item, index) => {
+                            arr.push(h('img', {
+                                domProps: {
+                                    src: item.value,
+                                },
+                                slot: "content",
+                                style: {
+                                    width: "50px",
+                                    height: '50px',
+                                    'vertical-align': 'middle',
+                                    margin: '5px',
+                                    cursor:"pointer"
+                                },
+                                on: {
+                                    click: () => {
+                                        if(item.value){
+                                            this.clickFaceImg(item.value);
+                                        }
+                                    }
+                                }
+                            }, ''));
+                        });
+                        return h('div', arr);
+                    }
+                }, {
+                    title: '备注',
+                    key: 'remark',
                     minWidth: 120,
                      render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userMobile)
+                            h('strong', params.row.remark)
                         ]);
                     }
                 }, {
-                    title: '门店名',
-                    key: 'storeName',
+                    title: '状态',
+                    key: 'status',
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.storeName)
-                        ]);
-                    }
-                }, {
-                    title: '产品名称',
-                    key: 'prodName',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.prodName)
+                            h('strong', params.row.status==1?'待财务审核':params.row.status==2?'通过财务审核':'')
                         ]);
                     }
                 },{
-                    title: '合同金额(元)',
-                    key: 'amount',
-                    minWidth: 120,
+                    title: '创建时间',
+                    key: 'createTime',
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.amount)
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+                },{
+                    title: '修改时间',
+                    key: 'modifyTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.modifyTime)
                         ]);
                     }
                 },{
@@ -184,24 +200,48 @@ export default {
                             }, '详情'),
                         ]);
                     }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
                 }
             ]
         }
     },
     components:{
         CommonTipModal,
-        ImgUpload
+        ImgUpload,
+        ModalPic
     }, 
     computed:{
         ...mapState(['adjustHeight']) 
     },
     activated(){
-        this.getInitialList(util.searchList(this.search,'timeInterval'));
+        this.getInitialList(this.search);
     },
     methods: {
         getInitialList(formData){ 
             this.table_loading = true;
-            this.$axios.get('/fx?api=gate.order.admin.docsRebackList',{params:formData}).then(res => {
+            this.$axios.get('/fx?api=gate.order.collect.query',{params:formData}).then(res => {
                 if(res!=500){
                     this.certifyList = res.list;
                     this.totalCount = res.page.totalCount;
@@ -213,21 +253,27 @@ export default {
         },
         pageChange(page){
             this.search.pageNum = page;
-            this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(this.search);
         },
         searchList() {
             this.search.pageNum = 1;
-             this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(this.search);
         },
         cancel(){
             this.tipModal = false;
+            this.modifyModal = false;
+            this.modalPreview = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
             if (num != 500) {
-                this.$Message.success('操作成功');
-                this.getInitialList(util.searchList(this.search,'timeInterval'));
+                this.$Message.success('审核成功');
+                this.getInitialList(this.search);
             }
+        },
+        clickFaceImg(img){
+            this.bigimg = img;
+            this.modalPreview = true;
         }
     }
 }

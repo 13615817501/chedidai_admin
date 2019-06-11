@@ -37,6 +37,11 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/AfterLoanManage/DisposalAssets`),
 	            }, {
+	                path: '/AfterLoanManage/CollectList',
+	                name: 'CollectList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/AfterLoanManage/CollectList`),
+	            }, {
 	                path: '/AfterLoanManage/OverdueOrder',
 	                name: 'OverdueOrder',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -116,6 +121,11 @@ var router = new Router({
 	                name: 'LoanDetail',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/LoanDetail`),
+	            },{
+	                path: '/LoanManage/CollectFeedback',
+	                name: 'CollectFeedback',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/CollectFeedback`),
 	            }, {
 	                path: '/LoanManage/RepaymentDeduction',
 	                name: 'RepaymentDeduction',
@@ -126,6 +136,11 @@ var router = new Router({
 	                name: 'GPSInstall',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/GPSInstall`),
+	            },{
+	                path: '/OrderManage/StoreOrderList',
+	                name: 'StoreOrderList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/StoreOrderList`),
 	            },{
 	                path: '/OrderManage/GPSCheck',
 	                name: 'GPSCheck',
