@@ -175,7 +175,6 @@ export default {
 					let requestUrls = result.res.requestUrls[0];
 					let index1 = requestUrls.indexOf('uploadId');
 					let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
-					this.picUrl = myUrl;
 					let myIndex = myUrl.indexOf('/img');
 					let ranUrl = myUrl.slice(myIndex+1);
 					if(myUrl.indexOf('mp4')!=-1){
@@ -183,14 +182,15 @@ export default {
 					}else{
 						this.myUploadTxt = '图片';
 					}
+					myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
 					if(this.txt=='多选' || this.type==11){
-						myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
 						if(this.type==11 && this.uploadList.length>=1){
 							return this.$Message.error('附件只能上传一个');
 						}
                         this.uploadList.push(myUrl);   //绝对地址
                         this.uploadList2.push(ranUrl); //相对地址
 					}else{
+						this.picUrl = myUrl;
 					    this.$emit('changePicUrl', ranUrl,myUrl);
 					}
 				}).catch(err => {

@@ -1248,6 +1248,9 @@ export default {
         },
         tabClick(name){
             this.activeName = name;
+            if(name=='name4'){
+                this.getContractList({orderId:this.$route.query.orderId}); 
+            }
         },
         cancel(){
             this.modalPreview = false;
