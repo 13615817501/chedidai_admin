@@ -48,8 +48,9 @@
             </div>
         </CommonTipModal>
         <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn" @cancel="cancel"></ChooseReason> 
-        <Modal width="350" v-model="backModal" title="退回" :mask-closable="false"> 
-            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+        <Modal width="380" v-model="backModal" title="退回" :mask-closable="false"> 
+            <span class="item-comm required">填写退回理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
@@ -85,6 +86,8 @@ export default {
             passModal:false,
             backModal:false,
             isPassModal:false,
+            myUploadList:[],
+            myUploadList2:[],
             title:'待审核拒绝',
             msg:'',
             ModalContent:[],
@@ -96,6 +99,7 @@ export default {
             bannerPic:'',
             modalPreview:false,
             modal_loading:false,
+            attachment:'', //文件附件集合
             storeNames:[],
             orderId:'',
             prodList:[], //产品列表
@@ -186,6 +190,9 @@ export default {
                                 on: {
                                     click: () => {
                                         this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
                                         this.backModal = true;
                                         this.modalTipTitle = '退回该审核订单';
                                         this.orderId = params.row.orderId;
@@ -402,7 +409,7 @@ export default {
             if(!this.msg){
                return this.$Message.warning('请填写退回理由');
             }
-            this.$axios.post('/fx?api=gate.order.admin.checkBack',{orderId:this.orderId,msg:this.msg}).then(res => {
+            this.$axios.post('/fx?api=gate.order.admin.checkBack',{orderId:this.orderId,msg:this.msg,attachment:String(this.attachment)}).then(res => {
                 if(res!=500){
                     this.$Message.success('退回成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
@@ -435,6 +442,9 @@ export default {
         },
         changeFun(checked, name){
             console.log(checked, name);
+        },
+        changePicUrl(...arr){
+            this.attachment = arr[0];
         }
 	}
 }

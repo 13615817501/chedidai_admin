@@ -194,7 +194,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'CollectFeedback'}});
                                     }
                                 }
                             }, '详情'),
@@ -217,7 +217,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'CollectFeedback'}});
                                     }
                                 }
                             }, '详情'),

@@ -71,50 +71,66 @@
                         formData.status = 0;
                     }
                 }else if(this.modalTipTitle=='通过该门店处理订单'){
-                    formUrl = '/fx?api=gate.order.admin.checkOfflinePass';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.checkOfflinePass';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='通过该审核订单'){
                     formUrl = '/fx?api=gate.order.admin.checkPass';
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='通过该复审订单'){
-                    formUrl = '/fx?api=gate.order.admin.checkAgain';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.checkAgain';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='删除该产品合同条目'){
-                    formUrl = '/fx?api=gate.prod.admin.delContProdMapping';  //这里还需要修改
+                    formUrl = '/fx?api=gate.prod.admin.delContProdMapping'; 
                     formData.id = this.item.id;
                 }else if(this.modalTipTitle=='通过该签署合同'){
-                    formUrl = '/fx?api=gate.order.admin.signContract';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.signContract';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='GPS安装确认'){
-                    formUrl = '/fx?api=gate.order.admin.installedGps';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.installedGps';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='抵押完成确认'){
-                    formUrl = '/fx?api=gate.order.admin.mortgaged';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.mortgaged'; 
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='通过该待复审订单'){
-                    formUrl = '/fx?api=gate.order.admin.checkAgain';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.checkAgain';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='首款放款确认'){
-                    formUrl = '/fx?api=gate.order.admin.loanFirst';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.loanFirst'; 
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='尾款放款确认'){
-                    formUrl = '/fx?api=gate.order.admin.loan';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.loan';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='GPS信息确认'){
-                    formUrl = '/fx?api=gate.order.admin.checkPassGps';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.checkPassGps';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='认领'){
-                    formUrl = '/fx?api=gate.order.admin.claiming';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.claiming'; 
                     formData.orderId = this.item.orderId;
+                    formData.type = 4;
                 }else if(this.modalTipTitle=='还款划扣'){
-                    formUrl = '/fx?api=gate.order.admin.deductedMonthly';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.deductedMonthly';  
                     formData.orderId = this.item.orderId;
                     formData.repaymentPlanId = this.item.repaymentPlanId;
                 }else if(this.modalTipTitle=='资料回寄完成'){
-                    formUrl = '/fx?api=gate.order.admin.fileCollectFinish';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.admin.fileCollectFinish';  
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='审核催收订单'){
-                    formUrl = '/fx?api=gate.order.collect.audit';  //这里还需要修改
+                    formUrl = '/fx?api=gate.order.collect.audit';  
+                    formData.id = this.item.id;
+                }else if(this.modalTipTitle=='认领该门店处理'){
+                    formUrl = '/fx?api=gate.order.admin.claiming';  
+                    formData.orderId = this.item.orderId;
+                    formData.type = 1;
+                }else if(this.modalTipTitle=='认领该初审订单'){
+                    formUrl = '/fx?api=gate.order.admin.claiming';  
+                    formData.orderId = this.item.orderId;
+                    formData.type = 2;
+                }else if(this.modalTipTitle=='认领该复审订单'){
+                    formUrl = '/fx?api=gate.order.admin.claiming';  
+                    formData.orderId = this.item.orderId;
+                    formData.type = 3;
+                }else if(this.modalTipTitle=='删除该订单备注'){
+                    formUrl = '/fx?api=gate.order.admin.remarkDel';  
                     formData.id = this.item.id;
                 }
                 this.modal_loading = true;

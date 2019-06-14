@@ -254,10 +254,25 @@ export default {
                 }, {
                     title: '退回原因',
                     key: 'reason',
-                    minWidth: 150,
+                    minWidth: 200,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.reason)
+                            h('strong', params.row.reason),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display:params.row.reasonAttachment?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        window.open(params.row.reasonAttachment);
+                                    }
+                                }
+                            }, '附件'),
                         ]);
                     }
                 }, {

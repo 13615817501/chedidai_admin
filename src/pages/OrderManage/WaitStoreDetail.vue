@@ -167,10 +167,10 @@
                             <span class="item-comm required">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.getWay" :placeholder="ismodify2?'请输入...':''"/>
                         </div>  
                         <div class="item-div">
-                            <span class="item-comm required">车辆出厂日期：</span><DatePicker v-if="ismodify2" v-model="modify2.outDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
+                            <span class="item-comm required">车辆出厂日期：</span><DatePicker v-if="ismodify2" v-model="modify2.outDate" type="date" placeholder="选择出厂日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify2" readonly :value="modify2.outDate"/>
                             <span class="item-comm required">签发机关：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.issueGov" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">发证日期：</span><DatePicker v-if="ismodify2" v-model="modify2.issueDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
+                            <span class="item-comm required">发证日期：</span><DatePicker v-if="ismodify2" v-model="modify2.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify2" readonly :value="modify2.issueDate"/>
                         </div>  
                         <!-- 绿本变迁记录  -->
@@ -184,7 +184,7 @@
                                 </span>
                             </div>    
                             <div class="item-div">
-                                <span class="item-comm required">登记日期：</span><DatePicker v-if="ismodify3" v-model="item.registerDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
+                                <span class="item-comm required">登记日期：</span><DatePicker v-if="ismodify3" v-model="item.registerDate" type="date" placeholder="选择登记日期" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify3" readonly :value="item.registerDate"/>
                                 <span class="item-comm required">登记编号：</span><Input class="item-input" :class="{txt:!ismodify3}" :readonly='!ismodify3' v-model="item.registerNumber" :placeholder="ismodify3?'请输入...':''" />
                             </div>  
@@ -252,7 +252,7 @@
                         </div> 
                         <div class="item-div">
                             <span v-show="modify4.hasBusyInsurance=='1'">   
-                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyEndDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
+                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyEndDate" type="date" placeholder="选择商业险结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.busyEndDate"/>
                             </span> 
                             <span class="item-comm required">使用性质：</span><Select v-if="ismodify4" v-model="modify4.useNature" class="item-input">
@@ -422,7 +422,7 @@
                         <span v-if="name!='WaitStoreList'"><img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"></span>
                     </div>
                 </TabPane>
-                <TabPane label="合同信息" name="name4" v-if="$route.query.name2!='WaitStoreList' && $route.query.name2!='WaitAuditingList' && $route.query.name2!='WaitConfirmList'">
+                <TabPane label="合同信息" name="name4">
                     <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>

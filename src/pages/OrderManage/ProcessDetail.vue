@@ -106,6 +106,10 @@
                     </TimelineItem>
                 </Timeline>
             </span>
+            <div style="margin-bottom:15px;">
+                <Button type="primary" icon="md-add" style="margin:15px 0;" @click="addBtn">新增订单备注</Button>
+                <Table border :columns="columns2" :data="certifyList2"></Table>
+            </div>
         </div>
         <Modal width="380" v-model="modifyModal2" title="修改车型" :mask-closable="false"> 
             <div class="modify-modal"> 
@@ -134,6 +138,22 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        <Modal width="380" v-model="addModal" title="新增订单备注" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:120px;">备注：</span><Input style="margin-top:10px;" v-model.trim="remark" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="addConfirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
+            <div style="text-align:center">
+                <p>确定{{modalTipTitle}}吗?</p>
+            </div>
+        </CommonTipModal>
     </div>
 </template>
 <script>
@@ -150,9 +170,14 @@ export default {
             orderId: '',
 			certifyList:{},
             carList:{}, //车辆信息对象
+            modalTipTitle:'',
             modifyModal2:false,
+            tipModal:false,
+            item:{},
+            addModal:false,
             modifyMoneyModal:false,
             modal_loading:false,
+            remark:'',
             prodId:'',
             autoId:'',
             modelIdArr:[],
@@ -169,6 +194,69 @@ export default {
                 modelId:'',
                 regDate:''
             },
+            certifyList2:[],
+            columns2: [{
+                    title: '操作',
+                    key: 'action',
+                    width: 90,
+                    align: 'center',
+                    fixed: "left",
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                on: {
+                                    click: () => {
+                                        this.tipModal = true;
+                                        this.modalTipTitle = '删除该订单备注';
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '删除')
+                        ]);
+                    }
+                },{
+                    title: '操作员',
+                    key: 'staff',
+                    minWidth: 50,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.staff)
+                        ]);
+                    }
+                },{
+                    title: '订单状态',
+                    key: 'orderStatus',
+                    minWidth: 50,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.orderStatus)
+                        ]);
+                    }
+                },{
+                    title: '备注信息',
+                    key: 'remark',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.remark)
+                        ]);
+                    }
+                },{
+                    title: '创建时间',
+                    key: 'createTime',
+                    minWidth: 80,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+                }
+            ],
             isModify1:false,
             isModify2:false,
             isModify3:false
@@ -183,8 +271,16 @@ export default {
     },
 	activated(){
         this.getInitialList({orderId:this.$route.query.orderId});
+        this.getRemarkList({orderId:this.$route.query.orderId});
 	},
 	methods: {
+        getRemarkList(formData){
+            this.$axios.get('/fx?api=gate.order.admin.remarkList',{params:formData}).then(res => {
+                if(res!=500){
+                    this.certifyList2 = res.list;
+                }
+            })
+        },
         getCarDetail(autoRepositoryId){
             this.$axios.get('/fx?api=gate.order.auto.model.query',{params:{autoRepositoryId:autoRepositoryId}}).then(res => {
                 if(res!=500){
@@ -205,7 +301,9 @@ export default {
                     }
                     this.prodId = res.prodId;
                     this.autoRepositoryId = res.autoId;
-                    this.getCarDetail(res.autoId);
+                    if(this.$route.query.name=='WaitAuditingList'){
+                        this.getCarDetail(res.autoId);
+                    }
 			        this.$store.commit('change_height');
 		    	}
 			})
@@ -277,6 +375,8 @@ export default {
         cancel(){
            this.modifyModal2 = false;
            this.modifyMoneyModal = false;
+           this.tipModal = false;
+           this.addModal = false;
         },
         openMoneyModal(){
              this.modifyMoneyModal = true;
@@ -294,6 +394,28 @@ export default {
                 this.modal_loading = false;
                 this.modifyMoneyModal = false;
             })
+        },
+        addBtn(){
+            this.remark = '';
+            this.addModal = true;
+        },
+        addConfirmBtn(){
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.remark',{orderId:this.$route.query.orderId,remark:this.remark}).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getRemarkList({orderId:this.$route.query.orderId});
+                }
+                this.modal_loading = false;
+                this.addModal = false;
+            })
+        },
+        tipComfirmBtn(num) {
+            this.tipModal = false;
+            if (num != 500) {
+                this.$Message.success('操作成功');
+                this.getRemarkList({orderId:this.$route.query.orderId});
+            }
         }
 	}
 }

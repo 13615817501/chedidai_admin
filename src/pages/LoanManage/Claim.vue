@@ -65,7 +65,8 @@
             </div> 
         </Modal>
         <Modal width="350" v-model="backModal" title="退单" :mask-closable="false"> 
-            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <span class="item-comm required">填写退回理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
@@ -94,6 +95,9 @@ export default {
             item:{},
             modal_loading:false,
             storeNames:[],
+            myUploadList:[],
+            myUploadList2:[],
+            attachment:[], //附件大集合
             orderId:'',
             prodList:[], //产品列表
 			search: {
@@ -134,10 +138,14 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
                                         this.backModal = true;
                                         this.modalTipTitle = '退单';
                                         this.orderId = params.row.orderId;
-                                        this.msg = '';
+                                       
                                     }
                                 }
                             }, '退单'),
@@ -416,13 +424,16 @@ export default {
             if(!this.msg){
                return this.$Message.warning('请填写退回理由');
             }
-            this.$axios.post('/fx?api=gate.order.admin.loanBackCheck',{orderId:this.orderId,msg:this.msg}).then(res => {
+            this.$axios.post('/fx?api=gate.order.admin.loanBackCheck',{orderId:this.orderId,msg:this.msg,attachment:String(this.attachment)}).then(res => {
                 if(res!=500){
                     this.$Message.success('退回成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
             })
             this.backModal = false;
+        },
+        changePicUrl(...arr){
+            this.attachment = arr[0];
         }
 	}
 }

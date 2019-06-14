@@ -1,6 +1,6 @@
 <template>
     <div id="imgUpload">
-        <span v-if="txt!='多选'">
+        <span v-if="txt!='多选' && type!=11">
             <span class="item-comm required"><slot></slot></span>
 	        <div class="demo-upload-list" v-show="picUrl" @click="toChange" title="单击更改">
 	            <template>
@@ -15,7 +15,12 @@
 	        <span v-show="!picUrl" class="my-default" title="单击上传" @click="toChange"><Icon type="ios-camera-outline" size="24"/></span>
 	        <input style="display:none" type="file" id="file" ref="file" @change="changeFile"/>
 	    </span>
-	    <div v-if="txt=='多选'">
+	    <span v-if="type==11">
+	        <span class="my-default" title="单击上传" @click="toChange"><Icon type="ios-cloud-upload-outline" size="24"/></span>
+	        <input style="display:none" type="file" id="file" ref="file" @change="changeFile"/>
+	        <div style="margin-top:2px;" v-for="(item,index) in uploadList2" :key="index">{{item}}<Icon type="ios-trash" style="margin-left:10px;cursor:pointer;" title="删除" @click="deleteBtn(index)"/></div>
+	    </span>
+	    <div v-if="txt=='多选' && type!=11">
 	    	<div class="demo-upload-list" v-for="(item,index) in uploadList" :key="Math.random()">
                 <template>
                     <img :src="item">
@@ -135,18 +140,27 @@ export default {
 			});
             let file = this.$refs.file.files[0];
             if(file){
-            	let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$/i;
-            	if(this.uploadTxt=='图片或视频'){
-            		reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp|\.mp4$/i;
-            	}
-            	if(!reg.test(file.name)){
-            		let file = this.$refs.file;
-	                file.value='';
-	                let errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp';
-	                if(this.uploadTxt=='图片或视频'){
-	                	errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp,视频格式只支持mp4';
-	                }
-                    return this.$Message.error(errorTxt);
+            	if(this.type==11){
+                    let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx$/i;
+	            	if(!reg.test(file.name)){
+	            		let file = this.$refs.file;
+		                file.value='';
+	                    return this.$Message.error('格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp');
+	            	}
+            	}else{
+            		let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$/i;
+	            	if(this.uploadTxt=='图片或视频'){
+	            		reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp|\.mp4$/i;
+	            	}
+	            	if(!reg.test(file.name)){
+	            		let file = this.$refs.file;
+		                file.value='';
+		                let errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp';
+		                if(this.uploadTxt=='图片或视频'){
+		                	errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp,视频格式只支持mp4';
+		                }
+	                    return this.$Message.error(errorTxt);
+	            	}
             	}
 				let random_name = this.random_string(6) + '_' + new Date().getTime() + '.' + file.name.split('.').pop();   // 随机命名
 				if(this.txt=='多选'){
@@ -169,13 +183,15 @@ export default {
 					}else{
 						this.myUploadTxt = '图片';
 					}
-					if(this.txt=='多选'){
-						// myUrl = client.signatureUrl(myUrl);
-						// console.log(myUrl);
+					if(this.txt=='多选' || this.type==11){
+						myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
+						if(this.type==11 && this.uploadList.length>=1){
+							return this.$Message.error('附件只能上传一个');
+						}
                         this.uploadList.push(myUrl);   //绝对地址
                         this.uploadList2.push(ranUrl); //相对地址
 					}else{
-						this.$emit('changePicUrl', ranUrl,myUrl);
+					    this.$emit('changePicUrl', ranUrl,myUrl);
 					}
 				}).catch(err => {
 					this.$Message.warning('文件上传出错');
@@ -191,6 +207,10 @@ export default {
             let myIndex = file.indexOf('/img');
 			let ranUrl = file.slice(myIndex+1);
             this.uploadList2.splice(this.uploadList2.indexOf(ranUrl), 1);
+        },
+        deleteBtn(index){
+            this.uploadList.splice(index,1); //绝对地址
+            this.uploadList2.splice(index,1); //相对地址
         }
 	}
 }

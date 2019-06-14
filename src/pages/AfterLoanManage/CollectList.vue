@@ -24,11 +24,16 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
-            <div style="text-align:center">
-                <p>确定{{modalTipTitle}}吗?</p>
+        <Modal width="300" v-model="modifyModal" title="退单" :mask-closable="false"> 
+            <div style="padding:0 15px;">
+                <span class="item-comm required" style="width:50px;">图片：</span><ImgUpload :type="6" class="imgUpload" :txt="'多选'" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload>
+                <div style="margin-top:10px;"><span class="item-comm required" style="width:50px;">备注：</span><Input v-model.trim="modify.remark" placeholder="请输入..." type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width:150px;"/></div>
             </div>
-        </CommonTipModal>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
         <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>
     </div>
 </template>
@@ -47,12 +52,16 @@ export default {
             totalCount: 0,
             backModal:false,
             modalPreview:false,
+            modifyModal:false,
             bigimg:'',
             modalTipTitle:'审核催收订单',
             tipModal:false,
             item:{},
+            myUploadList:[],
+            myUploadList2:[],
             modal_loading:false,
             orderId:'',
+            id:'',
             search: {
                 period: '',
                 status:''
@@ -62,7 +71,8 @@ export default {
                 remoteMethod: this.remoteMethod
             },
             modify: {
-                amount:''
+                pics:'',
+                remark:''
             },
             table_loading: false, //默认先显示加载
             certifyList:[],
@@ -85,12 +95,22 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '审核催收订单';
-                                        this.item = params.row;
+                                        this.modifyModal = true;
+                                        this.modalTipTitle = '修改催收订单';
+                                        this.id = params.row.id;
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
+                                        params.row.pics.forEach( (ele, index) => {
+                                            this.myUploadList.push(ele.value);
+                                            this.myUploadList2.push(ele.key);
+                                        });
+                                        this.modify =  {
+                                            pics: this.myUploadList2,
+                                            remark: params.row.remark
+                                        }
                                     }
                                 }
-                            }, '审核')
+                            }, '修改')
                         ]);
                     }
                 }, {
@@ -194,7 +214,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'CollectList'}});
                                     }
                                 }
                             }, '详情'),
@@ -217,7 +237,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'CollectList'}});
                                     }
                                 }
                             }, '详情'),
@@ -274,6 +294,27 @@ export default {
         clickFaceImg(img){
             this.bigimg = img;
             this.modalPreview = true;
+        },
+        changePicUrl(...arr){
+            this.modify.pics = arr;
+        },
+        confirmBtn2(){
+            if(!this.modify.pics.length || !this.modify.remark){
+               return this.$Message.error('带 * 为必填项');
+            }
+            let formData = {};
+            formData.id = this.id;
+            formData.pics = String(this.modify.pics);
+            formData.remark = this.modify.remark;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.collect.update',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success('添加成功');
+                    this.getInitialList(this.search);
+                }
+                this.modal_loading = false;
+                this.modifyModal = false;
+            })
         }
     }
 }

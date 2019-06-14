@@ -52,8 +52,9 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="350" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
-            请填写理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+        <Modal width="400" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
+            <span class="item-comm required">填写退回理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
@@ -79,6 +80,9 @@ export default {
             backModalTitle:'退回门店',
             myTitle:'新增产品',
             myTitle2:'退回该复审到合同',
+            myUploadList:[],
+            myUploadList2:[],
+            attachment:[], //附件大集合
             item:{},
             bigimg:'',
             bannerPic:'',
@@ -160,6 +164,9 @@ export default {
                                 on: {
                                     click: () => {
                                         this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
                                         this.backModal = true;
                                         this.myTitle2 = '退回该复审订单到退回门店';
                                         this.backModalTitle = '退回门店';
@@ -179,6 +186,9 @@ export default {
                                 on: {
                                     click: () => {
                                         this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
                                         this.backModal = true;
                                         this.myTitle2 = '拒绝该复审订单';
                                         this.backModalTitle = '拒绝';
@@ -198,6 +208,9 @@ export default {
                                 on: {
                                     click: () => {
                                         this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
                                         this.backModal = true;
                                         this.myTitle2 = '退回该复审到合同';
                                         this.backModalTitle = '退回合同';
@@ -283,10 +296,25 @@ export default {
                 }, {
                     title: '退回原因',
                     key: 'reason',
-                    minWidth: 150,
+                    minWidth: 200,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.reason)
+                            h('strong', params.row.reason),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display:params.row.reasonAttachment?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        window.open(params.row.reasonAttachment);
+                                    }
+                                }
+                            }, '附件'),
                         ]);
                     }
                 }, {
@@ -346,12 +374,14 @@ export default {
             if(this.myTitle2 == '退回该复审到合同'){
                 myUrl = '/fx?api=gate.order.admin.checkAgainBackContract';
                 formData.msg = this.msg;
+                formData.attachment = String(this.attachment);
             }else if(this.myTitle2 == '拒绝该复审订单'){
                 myUrl = '/fx?api=gate.order.admin.checkAgainRefuse';
                 formData.content = this.msg;
             }else{
                 myUrl = '/fx?api=gate.order.admin.checkAgainBack';
                 formData.msg = this.msg;
+                formData.attachment = String(this.attachment);
             }
             this.$axios.post(myUrl,formData).then(res => {
                 if(res!=500){
@@ -424,6 +454,9 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
+        },
+        changePicUrl(...arr){
+            this.attachment = arr[0];
         }
 	}
 }

@@ -373,6 +373,18 @@ let util = {
                 break;  
             case 'StoreOrderList':
                 return 'OrderManage';
+                break;
+            case 'OrderList':
+                return 'OrderManage';
+                break;
+            case 'WaitClaimCheckAgain':
+                return 'OrderManage';
+                break;
+            case 'WaitClaimCheck':
+                return 'OrderManage';
+                break;
+            case 'WaitClaimStore':
+                return 'OrderManage';
                 break;     
             case 'Claim':
                 return 'LoanManage';

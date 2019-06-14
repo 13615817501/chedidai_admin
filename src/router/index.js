@@ -137,6 +137,26 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/GPSInstall`),
 	            },{
+	                path: '/OrderManage/OrderList',
+	                name: 'OrderList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/OrderList`),
+	            },{
+	                path: '/OrderManage/WaitClaimCheckAgain',
+	                name: 'WaitClaimCheckAgain',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/WaitClaimCheckAgain`),
+	            },{
+	                path: '/OrderManage/WaitClaimCheck',
+	                name: 'WaitClaimCheck',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/WaitClaimCheck`),
+	            },{
+	                path: '/OrderManage/WaitClaimStore',
+	                name: 'WaitClaimStore',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/WaitClaimStore`),
+	            },{
 	                path: '/OrderManage/StoreOrderList',
 	                name: 'StoreOrderList',
 	                meta: { auth: true }, // 为true需要登录才能查看

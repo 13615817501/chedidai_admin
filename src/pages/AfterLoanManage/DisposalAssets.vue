@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
             <BreadcrumbItem>贷后管理</BreadcrumbItem>
-            <BreadcrumbItem>资料回寄</BreadcrumbItem>
+            <BreadcrumbItem>资产处置</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
              <span>
@@ -25,7 +25,7 @@
             </span>
             <span>
                 &nbsp;&nbsp;期数: 
-                <Input v-model="search.period" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+                <Input v-model="search.period" clearable placeholder="请输入期数" style="width: 120px"></Input>
             </span>
             <span>
                 &nbsp;&nbsp;用户姓名: 
@@ -33,7 +33,7 @@
             </span>
             <span>
                 &nbsp;&nbsp;逾期天数: 
-                <Input v-model="search.overdueDaysZd" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+                <Input v-model="search.overdueDaysZd" clearable placeholder="请输入逾期天数" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 

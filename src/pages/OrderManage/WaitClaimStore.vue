@@ -1,9 +1,9 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>待门店处理</BreadcrumbItem>
-	    </Breadcrumb>
+            <BreadcrumbItem>订单管理</BreadcrumbItem>
+            <BreadcrumbItem>待门店认领</BreadcrumbItem>
+        </Breadcrumb>
         <div class="search-box">
             <span>
                 申请时间: 
@@ -29,33 +29,28 @@
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
         </div> 
-	    <div class="listadmin">
+        <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
-        </div>
-        <div style="text-align:center;margin-top:20px;">
-            <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
         <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
             <div style="text-align:center">
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn" @cancel="cancel"></ChooseReason> 
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
-import ChooseReason from '@/components/ChooseReason' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
-	name: 'CustomList',
-	props:[],
-	data () {
-		return {
-			totalCount: 0,
+    name: 'CustomList',
+    props:[],
+    data () {
+        return {
+            totalCount: 0,
             modalTipTitle:'禁用该员工',
             tipModal:false,
             myTitle:'新增产品',
@@ -65,18 +60,18 @@ export default {
             item:{},
             orderId:'',
             prodList:[], //产品列表集合
-			search:{
+            search:{
                 timeType:1,
                 timeInterval:'',
                 orderNumber: '',
                 prodId:'',
                 mobile: '',
                 name: '',
-			    pageNum: 1,
-			    pageSize:15
-			},
-			table_loading: false, //默认先显示加载
-			certifyList:[],
+                pageNum: 1,
+                pageSize:15
+            },
+            table_loading: false, //默认先显示加载
+            certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
@@ -97,27 +92,11 @@ export default {
                                 on: {
                                     click: () => {
                                         this.tipModal = true;
-                                        this.modalTipTitle = '通过该门店处理订单';
+                                        this.modalTipTitle = '认领该门店处理';
                                         this.item = params.row;
                                     }
                                 }
-                            }, '通过'),
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.passModal = true;
-                                        this.title = '待门店处理拒绝';
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '拒绝'),
+                            }, '认领')
                         ]);
                     }
                 }, {
@@ -130,15 +109,15 @@ export default {
                         ]);
                     }
                 }, {
-					title: '用户姓名',
-					key: 'userName',
-					minWidth: 90,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.userName)
-						]);
-					}
-				}, {
+                    title: '用户姓名',
+                    key: 'userName',
+                    minWidth: 90,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.userName)
+                        ]);
+                    }
+                }, {
                     title: '手机号码',
                     key: 'userMobile',
                     minWidth: 120,
@@ -157,48 +136,24 @@ export default {
                         ]);
                     }
                 }, {
-					title: '产品名称',
-					key: 'prodName',
-					minWidth: 120,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.prodName)
-						]);
-					}
-				}, {
-                    title: '退回原因',
-                    key: 'reason',
-                    minWidth: 150,
+                    title: '产品名称',
+                    key: 'prodName',
+                    minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.reason),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    display:params.row.reasonAttachment?'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        window.open(params.row.reasonAttachment);
-                                    }
-                                }
-                            }, '附件'),
+                            h('strong', params.row.prodName)
                         ]);
                     }
                 }, {
-					title: '申请时间',
-					key: 'createTime',
-					minWidth: 150,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.createTime)
-						]);
-					}
-				}, {
+                    title: '申请时间',
+                    key: 'createTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+                }, {
                     title: '订单详情',
                     key: 'action',
                     width: 150,
@@ -215,28 +170,27 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitStoreList'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitClaimStore'}});
                                     }
                                 }
                             }, '详情'),
                         ]);
                     }
                 }
-			]
-		}
-	},
+            ]
+        }
+    },
     components:{
         CommonTipModal,
         ImgUpload,
-        ChooseReason
     }, 
-	computed:{
+    computed:{
         ...mapState(['adjustHeight']) 
     },
-	activated(){
+    activated(){
         this.getInitialList(util.searchList(this.search,'timeInterval'));
         this.getRefuseReasonList();
-	},
+    },
     watch:{
        '$route'(to,from){
            if(from.name=='WaitStoreDetail'){
@@ -245,7 +199,7 @@ export default {
            }
        }
     },
-	methods: {
+    methods: {
         getRefuseReasonList(){
             this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {
                 if(res!=500){
@@ -265,26 +219,26 @@ export default {
                 this.prodList = [];
             }
         },
-		getInitialList(formData){ 
+        getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.waitCheckOfflineList',{params:formData}).then(res => {
-		    	if(res!=500){
-		    		this.certifyList = res.list;
-			        this.totalCount = res.page.totalCount;
-			        this.search.pageNum = res.page.currentPage;
-			        this.$store.commit('change_height');
-		    	}
-		    	this.table_loading = false;
-			})
-		},
+            this.$axios.get('/fx?api=gate.order.admin.claimStoreList',{params:formData}).then(res => {
+                if(res!=500){
+                    this.certifyList = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.search.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+                this.table_loading = false;
+            })
+        },
         pageChange(page){
-			this.search.pageNum = page;
+            this.search.pageNum = page;
             this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
-        	this.search.pageNum = 1;
-			this.getInitialList(util.searchList(this.search,'timeInterval'));
-		},
+            this.search.pageNum = 1;
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
+        },
         confirmBtn(num){
             if(num!=500){
                 this.$Message.success('操作成功');
@@ -304,7 +258,7 @@ export default {
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         }
-	}
+    }
 }
 </script>
 <style lang="less" scoped>

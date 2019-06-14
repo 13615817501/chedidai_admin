@@ -18,7 +18,7 @@
         <Modal width="650" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
             <div class="modify-modal" style="margin:15px 0;"> 
                 <div style="text-align:center;margin:10px 0 30px;">合同条目名称：<Input v-model.trim="name" placeholder="输入后自动匹配出合同条目" style="width: 200px"></Input></div>
-                <Table @on-selection-change="selectionChange" border ref="selection" :columns="columns4" :data="contractList"></Table>
+                <Table @on-selection-change="selectionChange" border ref="selection" :columns="columns4" :data="contractList" height="500"></Table>
             </div>  
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
@@ -101,7 +101,7 @@ export default {
                 }, {
 					title: '合同条目ID',
 					key: 'contractItemId',
-					minWidth: 160,
+					minWidth: 90,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.contractItemId)
@@ -192,7 +192,7 @@ export default {
                 }, {
                     title: '合同条目ID',
                     key: 'id',
-                    minWidth: 160,
+                    minWidth: 40,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.id)
@@ -247,6 +247,7 @@ export default {
     },
 	activated(){
         this.getInitialList(this.search);
+        this.getContractItemList();
 	},
     watch:{
         name(newVal,oldVal){
@@ -258,11 +259,16 @@ export default {
                     });
                 })
             } else {
-                this.contractList = [];
+                this.getContractItemList();
             }
         }
     },
 	methods: {
+        getContractItemList(){
+            this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{pageNum:1,pageSize:10000}}).then(res => {
+                this.contractList = res.list;
+            })
+        },
 		getInitialList(formData){ 
             this.table_loading = true;
 		    this.$axios.get('/fx?api=gate.prod.admin.prodContractList',{params:formData}).then(res => {
