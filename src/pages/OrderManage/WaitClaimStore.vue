@@ -2,7 +2,7 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
             <BreadcrumbItem>订单管理</BreadcrumbItem>
-            <BreadcrumbItem>待门店认领</BreadcrumbItem>
+            <BreadcrumbItem>门店认领</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
             <span>

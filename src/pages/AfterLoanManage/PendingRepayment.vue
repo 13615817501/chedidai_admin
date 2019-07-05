@@ -269,6 +269,29 @@ export default {
                             }, '详情'),
                         ]);
                     }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'PendingRepayment'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
                 }
             ]
         }

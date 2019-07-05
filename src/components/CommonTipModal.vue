@@ -79,9 +79,14 @@
                 }else if(this.modalTipTitle=='通过该复审订单'){
                     formUrl = '/fx?api=gate.order.admin.checkAgain';  
                     formData.orderId = this.item.orderId;
-                }else if(this.modalTipTitle=='删除该产品合同条目'){
+                }else if(this.modalTipTitle=='禁用该产品合同条目'){
                     formUrl = '/fx?api=gate.prod.admin.delContProdMapping'; 
                     formData.id = this.item.id;
+                    formData.status = '0';
+                }else if(this.modalTipTitle=='启用该产品合同条目'){
+                    formUrl = '/fx?api=gate.prod.admin.delContProdMapping'; 
+                    formData.id = this.item.id;
+                    formData.status = '1';
                 }else if(this.modalTipTitle=='通过该签署合同'){
                     formUrl = '/fx?api=gate.order.admin.signContract';  
                     formData.orderId = this.item.orderId;
@@ -129,9 +134,22 @@
                     formUrl = '/fx?api=gate.order.admin.claiming';  
                     formData.orderId = this.item.orderId;
                     formData.type = 3;
+                }else if(this.modalTipTitle=='认领该贷后'){
+                    formUrl = '/fx?api=gate.order.admin.claiming';  
+                    formData.orderId = this.item.orderId;
+                    formData.type = 5;
                 }else if(this.modalTipTitle=='删除该订单备注'){
                     formUrl = '/fx?api=gate.order.admin.remarkDel';  
                     formData.id = this.item.id;
+                }else if(this.modalTipTitle=='资产处置'){
+                    formUrl = '/fx?api=gate.order.admin.toAssetDisposa';  
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='电签归档'){
+                    formUrl = '/fx?api=gate.contract.seal.archive';  
+                    formData.flowId = this.item.flowId;
+                }else if(this.modalTipTitle=='电签撤回'){
+                    formUrl = '/fx?api=gate.contract.seal.revoke';  
+                    formData.flowId = this.item.flowId;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

@@ -125,12 +125,14 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>  
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
+import ModalPic from '@/components/ModalPic' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
@@ -349,7 +351,8 @@ export default {
 	},
     components:{
         CommonTipModal,
-        ImgUpload
+        ImgUpload,
+        ModalPic
     }, 
 	computed:{
         ...mapState(['adjustHeight']) 
@@ -453,6 +456,7 @@ export default {
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
+            this.modalPreview = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;

@@ -52,16 +52,6 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="280" v-model="isPassModal" title="核保状态" :mask-closable="false"> 
-            核保状态：</span><Select v-model="isPass" placeholder="请选择" style="width: 150px">
-                        <Option :value="1">通过</Option>
-                        <Option :value="3">失败</Option>
-                    </Select>
-            <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
-                <Button @click="cancel">取消</Button>
-            </div> 
-        </Modal>
     </div>
 </template>
 <script>
@@ -81,8 +71,6 @@ export default {
             tipModal:false,
             myTitle:'新增产品',
             item:{},
-            isPassModal:false,
-            isPass:1,
             bigimg:'',
             bannerPic:'',
             modalPreview:false,
@@ -223,37 +211,6 @@ export default {
 						]);
 					}
 				}, {
-                    title: '核保状态',
-                    key: 'action',
-                    width: 120,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', {
-                                style: {
-                                    'margin-left':'10px',
-                                    'display': params.row.underwritedStatus==1?'inline-block':'none'
-                                },
-                            },params.row.underwritedStatus==1?'通过':''),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    'display': params.row.underwritedStatus!=1?'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.orderId = params.row.orderId;
-                                        this.isPassModal = true;
-                                    }
-                                }
-                            }, params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'通过')
-                        ]);
-                    }
-                }, {
                     title: '合同确定人员',
                     key: 'contractStaff',
                     minWidth: 120,
@@ -295,7 +252,21 @@ export default {
                             }, '附件'),
                         ]);
                     }
-                },{
+                }, {
+                    title: '核保状态',
+                    key: 'action',
+                    width: 120,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', {
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
+                        ]);
+                    }
+                }, {
                     title: '订单详情',
                     key: 'action',
                     width: 90,

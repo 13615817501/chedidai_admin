@@ -24,7 +24,7 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <Modal width="300" v-model="modifyModal" title="退单" :mask-closable="false"> 
+        <Modal width="300" v-model="modifyModal" title="修改" :mask-closable="false"> 
             <div style="padding:0 15px;">
                 <span class="item-comm required" style="width:50px;">图片：</span><ImgUpload :type="6" class="imgUpload" :txt="'多选'" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload>
                 <div style="margin-top:10px;"><span class="item-comm required" style="width:50px;">备注：</span><Input v-model.trim="modify.remark" placeholder="请输入..." type="textarea" :autosize="{minRows: 2,maxRows: 5}" style="width:150px;"/></div>

@@ -175,7 +175,7 @@ export default {
 				}, {
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
@@ -188,7 +188,29 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'GPSCheck'}});  
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
                                     }
                                 }
                             }, '详情'),

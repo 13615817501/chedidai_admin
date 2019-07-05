@@ -45,7 +45,7 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
-            modalTipTitle:'禁用该员工',
+            modalTipTitle:'禁用该产品合同条目',
             tipModal:false,
             myTitle:'新增产品',
             item:{},
@@ -57,8 +57,6 @@ export default {
             storeNames:[],
             id:'',
             contractList:[], //合同列表集合
-            contractItemIdsArrObj:[],  //选中合同条目集合 每项都是对象
-            contractItemIdsArr:[],  //选中合同条目集合    每项都是文本
             ItemId: '',
             isRequiredArr:[], //保存是否必须的选中的集合
             selection:[],  //被选中的集合
@@ -81,21 +79,38 @@ export default {
                         return h('div', [
                             h('Button', {
                                 props: {
-                                    type: 'primary',
+                                    type: 'error',
                                     size: 'small',
-                                    disabled: params.row.status==2 
                                 },
                                 style: {
                                     'margin-left':'10px',
+                                    display: params.row.status=='1'?'inline-block':'none'
                                 },
                                 on: {
                                     click: () => {
-                                        this.modalTipTitle = '删除该产品合同条目';
+                                        this.modalTipTitle = '禁用该产品合同条目';
                                         this.tipModal = true;
                                         this.item = params.row;
                                     }
                                 }
-                            }, '删除')
+                            }, '禁用'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display: params.row.status=='0'?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modalTipTitle = '启用该产品合同条目';
+                                        this.tipModal = true;
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '启用')
                         ]);
                     }
                 }, {
@@ -110,7 +125,7 @@ export default {
 				},{
                     title: '合同条目名称',
                     key: 'contractItemName',
-                    minWidth: 160,
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.contractItemName)
@@ -137,7 +152,7 @@ export default {
                 },{
                     title: '是否必须',
                     key: 'isRequired',
-                    minWidth: 160,
+                    minWidth: 80,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.isRequired?'是':'否')
@@ -146,7 +161,7 @@ export default {
                 }, {
                     title: '排序',
                     key: 'sort',
-                    minWidth: 160,
+                    minWidth: 60,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.sort)
@@ -161,35 +176,23 @@ export default {
                             h('strong', params.row.createTime)
                         ]);
                     }
+                },{
+                    title: '状态',
+                    key: 'status',
+                    minWidth: 80,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.status=='0'?'失效':'生效')
+                        ]);
+                    }
                 }
 			],
             columns4: [
                 {
                     type: 'selection',
                     width: 100,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    disabled: params.row.status==2 
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modalTipTitle = '删除该产品合同条目';
-                                        this.tipModal = true;
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '删除')
-                        ]);
-                    }
-                }, {
+                    align: 'center'
+                },{
                     title: '合同条目ID',
                     key: 'id',
                     minWidth: 40,
@@ -218,8 +221,8 @@ export default {
                                    value: params.row.isRequired
                                 },
                                 on: {
-                                    'on-change': () => {
-                                        params.row.isRequired = !params.row.isRequired
+                                    'input': (event) => {
+                                        params.row.isRequired = event;
                                         if(params.row.isRequired){
                                             this.isRequiredArr.push({id:params.row.id,isRequired:params.row.isRequired});
                                         }else{
@@ -267,6 +270,9 @@ export default {
         getContractItemList(){
             this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{pageNum:1,pageSize:10000}}).then(res => {
                 this.contractList = res.list;
+                this.contractList.map( (item, index) => {
+                    item.isRequired = false;
+                });
             })
         },
 		getInitialList(formData){ 
@@ -293,6 +299,12 @@ export default {
             this.myTitle = '新增';
             this.modifyModal = true;
             this.name = '';
+            this.getContractItemList();
+            this.contractList.forEach( (ele, index) => {
+                ele.isRequired = false;
+            });
+            this.isRequiredArr = [];//保存是否必须的选中的集合
+            this.selection = []; //被选中的集合
         },
         confirmBtn(){
             this.selection.forEach( (item, sub) => {
@@ -325,27 +337,6 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(this.search);
             }
-        },
-        saveItemId(option){
-            if(!option){
-                return;
-            }
-            let bol = this.contractItemIdsArr.some( (item, index) => {
-                return item.id == option.value;
-            });
-            if(!bol){
-                this.contractItemIdsArrObj.push(option);
-                this.contractItemIdsArr.push(option.value);
-            }
-        },
-        handleCloseProduct(product){
-            this.contractItemIdsArrObj.forEach( (item, index) => {
-                if(item.id == product.id){
-                   this.contractItemIdsArrObj.splice(index,1);
-                   
-                }
-            });
-            this.contractItemIdsArr.splice(this.contractItemIdsArr.indexOf(product.value),1);
         },
         backBtn(){
             this.$router.push({name:this.$route.query.name,query:{pageNum:this.$route.query.pageNum}});

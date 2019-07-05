@@ -33,7 +33,7 @@
             <span class="span-progress" v-if="showProgress"><i-progress class="my-progress" :percent="percentage" hide-info></i-progress></span>
 	        <span class="my-default" title="点击上传" @click="toChange"><Icon type="md-add" size="24"/></span>
 	        <input style="display:none" type="file" id="file" ref="file" @change="changeFile"/>
-            <Modal title="图片预览" v-model="visible">
+            <Modal title="图片预览" v-model="visible" draggable>
                 <img :src="imgName" v-if="visible" style="width: 100%">
             </Modal>
 	    </div>

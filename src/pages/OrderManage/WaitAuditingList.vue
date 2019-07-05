@@ -56,16 +56,6 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
-        <Modal width="280" v-model="isPassModal" title="核保状态" :mask-closable="false"> 
-            核保状态：</span><Select v-model="isPass" placeholder="请选择" style="width: 150px">
-                        <Option :value="1">通过</Option>
-                        <Option :value="3">失败</Option>
-                    </Select>
-            <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
-                <Button @click="cancel">取消</Button>
-            </div> 
-        </Modal>
     </div>
 </template>
 <script>
@@ -81,11 +71,9 @@ export default {
 	data () {
 		return {
 			totalCount: 0,
-            isPass: 1, //核保状态 1通过 3失败
             modifyModal:false,
             passModal:false,
             backModal:false,
-            isPassModal:false,
             myUploadList:[],
             myUploadList2:[],
             title:'待审核拒绝',
@@ -283,28 +271,11 @@ export default {
                             h('strong', {
                                 style: {
                                     'margin-left':'10px',
-                                    'display': params.row.underwritedStatus==1?'inline-block':'none'
                                 },
-                            },params.row.underwritedStatus==1?'通过':''),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    'display': params.row.underwritedStatus!=1?'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.orderId = params.row.orderId;
-                                        this.isPassModal = true;
-                                    }
-                                }
-                            }, params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'通过')
+                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
                         ]);
                     }
-                },{
+                }, {
                     title: '订单详情',
                     key: 'action',
                     width: 150,
@@ -416,15 +387,6 @@ export default {
                 }
             })
             this.backModal = false;
-        },
-        confirmBtn3(){
-            this.$axios.post('/fx?api=gate.order.admin.underwrited',{orderId:this.orderId,isPass:this.isPass}).then(res => {
-                if(res!=500){
-                    this.$Message.success('操作成功');
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
-                }
-            })
-            this.isPassModal = false;
         },
         cancel(){
             this.tipModal = false;

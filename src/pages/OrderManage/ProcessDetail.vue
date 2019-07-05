@@ -45,7 +45,7 @@
                     <p>Actual Amount：{{certifyList.actualAmount}}</p>   
                 </div> 
                 <div style="margin-top:15px;">
-                    <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':'失败'}}</p>
+                    <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':'失败'}}<Button style="margin-left:10px;" v-if="certifyList.underwritedStatus!=1?true:false" type="primary" size="small" @click="passStatus">操作</Button></p>
                     <p v-if="certifyList.underwritedStatus">核保时间：{{certifyList.underwritedTime}}</p>    
                     <p v-if="certifyList.underwritedStatus">核保操作员：{{certifyList.underwritedStaff}}</p>    
                 </div>
@@ -154,6 +154,16 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="280" v-model="isPassModal" title="核保状态" :mask-closable="false"> 
+            核保状态：</span><Select v-model="isPass" placeholder="请选择" style="width: 150px">
+                        <Option :value="1">通过</Option>
+                        <Option :value="3">失败</Option>
+                    </Select>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -167,6 +177,8 @@ export default {
 	props:[],
 	data () {
 		return {
+            isPassModal:false,
+            isPass:1,
             orderId: '',
 			certifyList:{},
             carList:{}, //车辆信息对象
@@ -377,6 +389,7 @@ export default {
            this.modifyMoneyModal = false;
            this.tipModal = false;
            this.addModal = false;
+           this.isPassModal = false;
         },
         openMoneyModal(){
              this.modifyMoneyModal = true;
@@ -400,6 +413,9 @@ export default {
             this.addModal = true;
         },
         addConfirmBtn(){
+            if(!this.remark){
+                return this.$Message.error('备注不能为空');
+            }
             this.modal_loading = true;
             this.$axios.post('/fx?api=gate.order.admin.remark',{orderId:this.$route.query.orderId,remark:this.remark}).then(res => {
                 if(res!=500){
@@ -416,6 +432,21 @@ export default {
                 this.$Message.success('操作成功');
                 this.getRemarkList({orderId:this.$route.query.orderId});
             }
+        },
+        passStatus(){
+            this.orderId = this.$route.query.orderId;
+            this.isPassModal = true;
+        },
+        confirmBtn3(){
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.underwrited',{orderId:this.orderId,isPass:this.isPass}).then(res => {
+                if(res!=500){
+                    this.$Message.success('操作成功');
+                    this.getInitialList({orderId:this.$route.query.orderId});
+                }
+                this.modal_loading = false;
+            })
+            this.isPassModal = false;
         }
 	}
 }

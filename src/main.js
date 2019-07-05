@@ -11,10 +11,13 @@ import 'iview/dist/styles/iview.css'
 import '@/assets/css/common.less'
 import xss from 'xss'
 import 'element-ui/lib/theme-chalk/index.css'
+import 'viewerjs/dist/viewer.css'
+import Viewer from 'v-viewer'
 import { Tree } from 'element-ui'
 import TreeTable from 'tree-table-vue'
 Vue.use(Tree)
 Vue.use(TreeTable)
+Vue.use(Viewer)
 
 import { Cascader,Timeline,TimelineItem,Input, Upload,Message,Tabs,Tag,Col,Select,Button,Option,Tooltip,DatePicker, Avatar,Table,TabPane, 
 	Row, Menu, MenuItem, Icon, Submenu, Modal , Form, FormItem,Page, Dropdown, DropdownMenu,DropdownItem,Breadcrumb,BreadcrumbItem,Transfer,Spin,Switch ,Progress} from 'iview';
@@ -52,6 +55,7 @@ Vue.component('Avatar', Avatar);
 Vue.component('Dropdown', Dropdown);
 Vue.component('DropdownMenu', DropdownMenu);
 Vue.component('DropdownItem', DropdownItem);
+
 
 Vue.prototype.$Message = Message;
 Vue.config.productionTip = false

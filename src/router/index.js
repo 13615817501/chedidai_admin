@@ -171,6 +171,11 @@ var router = new Router({
 	                name: 'WaitCheckAgain',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/WaitCheckAgain`),
+	            },{
+	                path: '/OrderManage/WaitClaimCollect',
+	                name: 'WaitClaimCollect',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/WaitClaimCollect`),
 	            }, {
 	                path: '/OrderManage/RejectList',
 	                name: 'RejectList',
@@ -256,6 +261,21 @@ var router = new Router({
 	                name: 'OrderDetail',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/components/OrderDetail`),
+	            }, {
+	                path: '/Finance/PaymentOut',
+	                name: 'PaymentOut',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/Finance/PaymentOut`),
+	            },{
+	                path: '/Finance/PaymentIn',
+	                name: 'PaymentIn',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/Finance/PaymentIn`),
+	            },{
+	                path: '/Finance/Distribution',
+	                name: 'Distribution',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/Finance/Distribution`),
 	            }
 	        ]
 	    },{

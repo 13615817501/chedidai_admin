@@ -108,68 +108,6 @@ export default {
             table_loading: false, //默认先显示加载
             certifyList:[],
             columns: [{
-                    title: '操作',
-                    key: 'action',
-                    width: 250,
-                    align: 'center',
-                    fixed: "left",
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.backModal = true;
-                                        this.modalTipTitle = '退单';
-                                        this.orderId = params.row.orderId;
-                                        this.msg = '';
-                                    }
-                                }
-                            }, '退单'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modify.amount = '';
-                                        this.modifyModal = true;
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '确认首款金额'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '认领';
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '认领')
-                        ]);
-                    }
-                }, {
                     title: '订单号',
                     key: 'orderNumber',
                     minWidth: 160,
@@ -208,7 +146,7 @@ export default {
                 }, {
                     title: '产品名称',
                     key: 'prodName',
-                    minWidth: 120,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.prodName)
@@ -253,7 +191,7 @@ export default {
                 },{
                     title: '银行卡号',
                     key: 'bankCardNum',
-                    minWidth: 160,
+                    minWidth: 180,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.bankCardNum)
@@ -269,27 +207,18 @@ export default {
                         ]);
                     }
                 },{
-                    title: '还款日期',
-                    key: 'limitPayTime',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.limitPayTime)
-                        ]);
-                    }
-                },{
                     title: '订单状态',
-                    key: 'status',
+                    key: 'statusValue',
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.status==13?'待还款 ':params.row.status==14?'逾期':'')
+                            h('strong', params.row.statusValue)
                         ]);
                     }
                 },{
                     title: '期数',
                     key: 'period',
-                    minWidth: 120,
+                    minWidth: 90,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.period)
@@ -312,7 +241,30 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DisposalAssets'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DisposalAssets'}});
                                     }
                                 }
                             }, '详情'),

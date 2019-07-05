@@ -385,7 +385,10 @@ let util = {
                 break;
             case 'WaitClaimStore':
                 return 'OrderManage';
-                break;     
+                break;  
+            case 'WaitClaimCollect':
+                return 'OrderManage';
+                break;        
             case 'Claim':
                 return 'LoanManage';
                 break;  
@@ -436,7 +439,16 @@ let util = {
                 break;
             case 'OrgList':
                 return 'Authorization';
-                break;    
+                break; 
+            case 'PaymentOut':
+                return 'Finance';
+                break;  
+            case 'PaymentIn':
+                return 'Finance';
+                break; 
+            case 'Distribution':
+                return 'Finance';
+                break;                 
         }
     },
     testPhone(num) {

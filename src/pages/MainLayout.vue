@@ -248,7 +248,7 @@ export default {
                     return 'logo-dropbox';
                     break;
                 case '财务管理':
-                    return 'md-build';
+                    return 'logo-usd';
                     break;  
                 case '业务大盘':
                     return 'ios-color-palette';

@@ -13,15 +13,53 @@
                 <span>车牌号：<span class="span11">{{modify1.plateNumber}}</span></span>
                 <span>车架号：<span class="span11">{{modify1.vin}}</span></span>
                 <span>发动机号：<span class="span11">{{modify1.enginner}}</span></span>
+                <span><span class="span11"><Button type="primary" :loading="carImgloading1"  @click="downLoadCarInfo"><Icon type="md-download" />下载车辆文件</Button></span></span>
             </div>
             <div class="tab-top-title">
-                <span>身份证正面：<img class="my-img" :src="certifyList.identityFrontValue" alt="身份证正面：" @click="clickFaceImg(certifyList.identityFrontValue)"></span> 
-                <span>身份证反面：<img class="my-img" :src="certifyList.identityBackValue" alt="身份证反面" @click="clickFaceImg(certifyList.identityBackValue)"></span> 
-                <span>行驶证正面：<img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"></span> 
+                <span>
+                    <!-- 身份证正面：<img class="my-img" :src="certifyList.identityFrontValue" alt="身份证正面：" @click="clickFaceImg(certifyList.identityFrontValue)"> -->
+                    身份证正面： <viewer :images="certifyList.identityFrontValue?certifyList.identityFrontValue.split(' '):[]"><img class="my-img" :src="certifyList.identityFrontValue" alt="身份证正面">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="certifyList.identityBackValue" alt="身份证反面" @click="clickFaceImg(certifyList.identityBackValue)"> -->
+                   身份证反面： <viewer :images="certifyList.identityBackValue?certifyList.identityBackValue.split(' '):[]"><img class="my-img" :src="certifyList.identityBackValue" alt="身份证反面">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"> -->
+                    行驶证正面：<viewer :images="modify5Img[0]?modify5Img[0].split(' '):[]"><img class="my-img" :src="modify5Img[0]" alt="行驶证正面">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"> -->
+                    行驶证反面：<viewer :images="modify5Img[1]?modify5Img[1].split(' '):[]"><img class="my-img" :src="modify5Img[1]" alt="行驶证反面">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[2]" alt="绿本第1页" @click="clickFaceImg(modify5Img[2])"> -->
+                    绿本第1页：<viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="绿本第1页">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[3]" alt="绿本第2页" @click="clickFaceImg(modify5Img[3])"> -->
+                    绿本第2页：<viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="绿本第2页">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[4]" alt="绿本第3页" @click="clickFaceImg(modify5Img[4])"> -->
+                   绿本第3页：<viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="绿本第3页">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[5]" alt="绿本第4页" @click="clickFaceImg(modify5Img[5])"> -->
+                    绿本第4页：<viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="绿本第4页">
+                                </viewer>
+                </span> 
             </div>
-            <Tabs v-model="activedName" @on-click="tabClick">
+            <Tabs v-model="activedName" @on-click="tabClick" style="font-size:14px;">
                 <TabPane label="客户信息" name="name1">
-                    <div class="name1-box" :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
+                    <div class="name1-box" :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
                         <div class="title-info">个人信息</div>
                         <ul class="common-ul">
                             <li><span>姓名：</span><span>{{certifyList.name}}</span></li>
@@ -77,15 +115,19 @@
                         </span>
                         <div class="title-info">基础材料</div>
                         <div class="original-img">
-                           <span style="margin-left:0;"><img :src="certifyList.identityFrontValue" alt="身份证正面" @click="clickFaceImg(certifyList.identityFrontValue)"></span>
-                           <span><img :src="certifyList.identityBackValue" alt="身份证反面" @click="clickFaceImg(certifyList.identityBackValue)"></span>
+                            <span style="margin-left:0;">
+                                <!-- <img :src="certifyList.identityFrontValue" alt="身份证正面" @click="clickFaceImg(certifyList.identityFrontValue)"> -->
+                                <viewer :images="identityInfo"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in identityInfo" :src="src" :key="index" alt="基础材料">
+                                </viewer>
+                            </span>
+                         <!--   <span><img :src="certifyList.identityBackValue" alt="身份证反面" @click="clickFaceImg(certifyList.identityBackValue)"></span>
                            <span><img :src="certifyList.bankFrontValue" alt="银行卡正面" @click="clickFaceImg(certifyList.bankFrontValue)"></span>
-                           <span><img :src="certifyList.bankBackValue" alt="银行卡反面" @click="clickFaceImg(certifyList.bankBackValue)"></span>
+                           <span><img :src="certifyList.bankBackValue" alt="银行卡反面" @click="clickFaceImg(certifyList.bankBackValue)"></span> -->
                         </div> 
                     </div>
                 </TabPane>
                 <TabPane label="车辆信息" name="name2">
-                    <div class="name2-box" :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
+                    <div class="name2-box" :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
                         <!-- 行驶证信息 -->
                         <div class="title-info">行驶证信息<Button type="primary" v-if="name=='WaitStoreList'" :ghost="!ismodify1" style="margin-left:100px;" size="small" @click="modify1Btn">{{ismodify1?'保存':'修改'}}</Button></div>   
                         <div class="item-div">
@@ -101,23 +143,23 @@
                         <div class="item-div">
                             <span class="item-comm required">车辆识别代码：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.vin" :placeholder="ismodify1?'请输入...':''" />
                             <span class="item-comm required">发动机号码：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.enginner" :placeholder="ismodify1?'请输入...':''" />
-                            <span class="item-comm required">注册日期：</span><DatePicker v-if="ismodify1" v-model="modify1.travelerRegisterDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
+                            <span class="item-comm">注册日期：</span><DatePicker v-if="ismodify1" v-model="modify1.travelerRegisterDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify1" readonly :value="modify1.travelerRegisterDate"/>
                         </div>
                         <div class="item-div">
-                            <span class="item-comm required">发证日期：</span><DatePicker v-if="ismodify1" v-model="modify1.giveDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker>
+                            <span class="item-comm">发证日期：</span><DatePicker v-if="ismodify1" v-model="modify1.giveDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify1" readonly :value="modify1.giveDate"/>
-                            <span class="item-comm required">档案编号：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.archivesNumber" :placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">档案编号：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.archivesNumber" :placeholder="ismodify1?'请输入...':''" />
                             <span class="item-comm required">核载人数(人)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.passenger" :placeholder="ismodify1?'请输入...':''" />
                         </div>
                         <div class="item-div">
-                            <span class="item-comm required">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.weightTotal":placeholder="ismodify1?'请输入...':''" />
-                            <span class="item-comm required">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.weightWhole" :placeholder="ismodify1?'请输入...':''" />
-                            <span class="item-comm required">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.size" :placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.weightTotal":placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.weightWhole" :placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.size" :placeholder="ismodify1?'请输入...':''" />
                         </div>  
                         <div class="item-div">
-                            <span class="item-comm required">备注：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.remark" :placeholder="ismodify1?'请输入...':''" />
-                            <span class="item-comm required">检验记录：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.record" :placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">备注：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.remark" :placeholder="ismodify1?'请输入...':''" />
+                            <span class="item-comm">检验记录：</span><Input class="item-input" :class="{txt:!ismodify1}" :readonly='!ismodify1' v-model="modify1.record" :placeholder="ismodify1?'请输入...':''" />
                         </div>
                         <!-- 绿本 -->
                         <div class="title-info">绿本<Button type="primary" v-if="name=='WaitStoreList'" :ghost="!ismodify2" style="margin-left:142px;" size="small" @click="modify2Btn">{{ismodify2?'保存':'修改'}}</Button></div>
@@ -133,44 +175,44 @@
                         </div>
                         <div class="item-div">
                             <span class="item-comm required">发动机号：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.enginerNumber" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.enginerModel" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">燃油种类：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.oilType" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.enginerModel" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">燃油种类：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.oilType" :placeholder="ismodify2?'请输入...':''" />
                         </div> 
                         <div class="item-div">
                             <span class="item-comm required">排量/功率(kw)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.work" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.madeFactory" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">转向形式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.turnType" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.madeFactory" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">转向形式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.turnType" :placeholder="ismodify2?'请输入...':''" />
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelDistance" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelCount" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelNormal" :placeholder="ismodify3?'请输入...':''" />
+                            <span class="item-comm">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelDistance" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelCount" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelNormal" :placeholder="ismodify3?'请输入...':''" />
                         </div>
                         <div class="item-div">
-                            <span class="item-comm required">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.steelCount" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelbase" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.axesCount" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.steelCount" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.wheelbase" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.axesCount" :placeholder="ismodify2?'请输入...':''" />
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.verandaSize" :placeholder="ismodify2?'请输入...':''" /> 
-                            <span class="item-comm required">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.innerSize" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.totalWeight" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.verandaSize" :placeholder="ismodify2?'请输入...':''" /> 
+                            <span class="item-comm">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.innerSize" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.totalWeight" :placeholder="ismodify2?'请输入...':''" />
                         </div>  
                         <div class="item-div">
-                            <span class="item-comm required">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.approvedLoad" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.customer" :placeholder="ismodify2?'请输入...':''"/>
-                            <span class="item-comm required">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.tractionWeight" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.approvedLoad" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.customer" :placeholder="ismodify2?'请输入...':''"/>
+                            <span class="item-comm">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.tractionWeight" :placeholder="ismodify2?'请输入...':''" />
                         </div>  
                         <div class="item-div">
-                            <span class="item-comm required">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.driverCustomer" :placeholder="ismodify2?'请输入...':''"/>
-                            <span class="item-comm required">使用性质：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.useNature" :placeholder="ismodify2?'请输入...':''"/>
-                            <span class="item-comm required">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.getWay" :placeholder="ismodify2?'请输入...':''"/>
+                            <span class="item-comm">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.driverCustomer" :placeholder="ismodify2?'请输入...':''"/>
+                            <span class="item-comm">使用性质：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.useNature" :placeholder="ismodify2?'请输入...':''"/>
+                            <span class="item-comm">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.getWay" :placeholder="ismodify2?'请输入...':''"/>
                         </div>  
                         <div class="item-div">
-                            <span class="item-comm required">车辆出厂日期：</span><DatePicker v-if="ismodify2" v-model="modify2.outDate" type="date" placeholder="选择出厂日期" class="item-input"></DatePicker>
+                            <span class="item-comm">车辆出厂日期：</span><DatePicker v-if="ismodify2" v-model="modify2.outDate" type="date" placeholder="选择出厂日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify2" readonly :value="modify2.outDate"/>
-                            <span class="item-comm required">签发机关：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.issueGov" :placeholder="ismodify2?'请输入...':''" />
-                            <span class="item-comm required">发证日期：</span><DatePicker v-if="ismodify2" v-model="modify2.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
+                            <span class="item-comm">签发机关：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.issueGov" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm">发证日期：</span><DatePicker v-if="ismodify2" v-model="modify2.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify2" readonly :value="modify2.issueDate"/>
                         </div>  
                         <!-- 绿本变迁记录  -->
@@ -244,6 +286,7 @@
                                     <Option value="0">无</Option>
                                     <Option value="1">有</Option>
                                 </Select>
+                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
                             <span v-show="modify4.hasBusyInsurance=='1'">    
                                 <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
                                 <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
@@ -323,7 +366,7 @@
                             <span class="item-comm required">验车日期：</span><DatePicker v-if="ismodify4" v-model="modify4.examinerDate" type="date" placeholder="选择验车日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.examinerDate"/>
                             <span class="item-comm required">车主签字：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.ownerSign" :placeholder="ismodify4?'请输入...':''" />
-                            <span class="item-comm required">备注：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.remark" :placeholder="ismodify4?'请输入...':''" />
+                            <span class="item-comm">备注：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.remark" :placeholder="ismodify4?'请输入...':''" />
                         </div>
                         <!-- 车辆证件照片 -->
                         <div class="title-info">车辆证件照片</div>
@@ -337,12 +380,42 @@
                             <Button type="primary"  size="small" @click="modify5Btn">保存</Button>    
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <span class="span-width"><span class="my-title-comm">行驶证正面：</span><img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"></span>  
-                            <span class="span-width"><span class="my-title-comm">行驶证反面：</span><img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"></span>  
-                            <span class="span-width"><span class="my-title-comm">绿本第1页：</span><img class="my-img" :src="modify5Img[2]" alt="绿本第1页" @click="clickFaceImg(modify5Img[2])"></span>  
-                            <span class="span-width"><span class="my-title-comm">绿本第2页：</span><img class="my-img" :src="modify5Img[3]" alt="绿本第2页" @click="clickFaceImg(modify5Img[3])"></span>  
-                            <span class="span-width"><span class="my-title-comm">绿本第3页：</span><img class="my-img" :src="modify5Img[4]" alt="绿本第3页" @click="clickFaceImg(modify5Img[4])"></span>  
-                            <span class="span-width"><span class="my-title-comm">绿本第4页：</span><img class="my-img" :src="modify5Img[5]" alt="绿本第4页" @click="clickFaceImg(modify5Img[5])"></span> 
+                            <span class="span-width">
+                                <span class="my-title-comm">行驶证正面：</span>
+                                <!-- <img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"> -->
+                                <viewer :images="modify5Img[0]?modify5Img[0].split(' '):[]"><img class="my-img" :src="modify5Img[0]" alt="行驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">行驶证反面：</span>
+                                    <!-- <img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"> -->
+                                <viewer :images="modify5Img[1]?modify5Img[1].split(' '):[]"><img class="my-img" :src="modify5Img[1]" alt="行驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第1页：</span>
+                                <!-- <img class="my-img" :src="modify5Img[2]" alt="绿本第1页" @click="clickFaceImg(modify5Img[2])"> -->
+                                <viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="行驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第2页：</span>
+                                    <!-- <img class="my-img" :src="modify5Img[3]" alt="绿本第2页" @click="clickFaceImg(modify5Img[3])"> -->
+                                    <viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="行驶证正面">
+                                </viewer>
+                                </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第3页：</span>
+                                <!-- <img class="my-img" :src="modify5Img[4]" alt="绿本第3页" @click="clickFaceImg(modify5Img[4])"> -->
+                                <viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="行驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第4页：</span>
+                                <!-- <img class="my-img" :src="modify5Img[5]" alt="绿本第4页" @click="clickFaceImg(modify5Img[5])"> -->
+                                <viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="行驶证正面">
+                                </viewer>
+                            </span> 
                         </div>     
                         <div class="title-info">车辆照片</div>
                         <div v-if="name=='WaitStoreList'">
@@ -350,7 +423,9 @@
                             <Button type="primary"  size="small" @click="modify6Btn">保存</Button>  
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="车辆照片" class="my-img" style="margin:0 15px;" v-for="img in carPicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)">
+                            <!--  <img :src="img" alt="车辆照片" class="my-img" style="margin:0 15px;" v-for="img in carPicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)"> -->
+                            <viewer :images="carPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in carPicsmyUploadList" :src="src" :key="index" alt="车辆照片">
+                                </viewer>
                         </div>
                         <div class="title-info">车辆保单</div>
                         <div v-if="name=='WaitStoreList'">
@@ -358,39 +433,53 @@
                             <Button type="primary" size="small" @click="modify7Btn">保存</Button> 
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="车辆保单" class="my-img" style="margin:0 15px;" v-for="img in insurancePicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)">
+                            <!-- <img :src="img" alt="车辆保单" class="my-img" style="margin:0 15px;" v-for="img in insurancePicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)"> -->
+                             <viewer :images="insurancePicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in insurancePicsmyUploadList" :src="src" :key="index" alt="车辆保单">
+                                </viewer>
                         </div>
                     </div>
                 </TabPane>
                 <TabPane label="认证信息" name="name3">
-                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
+                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
                         <div class="title-info">违章照片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="5" :txt="'多选'" :myUploadList="myimgs8" :myUploadList2="myimgs88" @changePicUrl="changePicUrl8"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('违章照片')">保存</Button></span>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="违章照片" class="my-img" style="margin:0 15px;" v-for="img in myimgs8" :key="Math.random()" @click="clickFaceImg(img)">  
+                            <viewer :images="myimgs8"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs8" :src="src" :key="index" alt="违章照片"></viewer>
+                            <!-- <img :src="img" alt="违章照片" class="my-img" style="margin:0 15px;" v-for="img in myimgs8" :key="Math.random()" @click="clickFaceImg(img)">   -->
                         </div>
                         <div class="title-info">驾照验证图片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width"><ImgUpload :type="5" class="imgUpload display-before" :myPicUrl="myimgs9" @changePicUrl="changePicUrl9"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('驾照验证图片')">保存</Button></span>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="myimgs9" alt="驾照验证图片" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs9)">  
+                            <viewer :images="myimgs9?myimgs9.split(' '):[]"><img class="my-img" style="margin:0 15px;" :src="myimgs9" alt="驾照验证图片"></viewer>
+                            <!-- <img :src="myimgs9" alt="驾照验证图片" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs9)">   -->
                         </div>
-                        <div class="title-info">车300评估图片</div>
+                        <div class="title-info">快易估评估照片</div>
                         <div v-if="name=='WaitStoreList'">
-                            <span class="span-width"><ImgUpload :type="5" class="imgUpload display-before" :myPicUrl="myimgs10" @changePicUrl="changePicUrl10"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('车300评估图片')">保存</Button></span>   
+                            <span class="span-width1"><ImgUpload :type="5" class="imgUpload" :txt="'多选'" :myUploadList="myimgs10" :myUploadList2="myimgs110" @changePicUrl="changePicUrl10" ></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('快易估评估照片')">保存</Button></span>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="myimgs10" alt="车300评估图片" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs10)">  
+                            <viewer :images="myimgs10"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs10" :src="src" :key="index" alt="快易估评估照片"></viewer>
+                            <!-- <img :src="img" alt="快易估评估照片" class="my-img" style="margin:0 15px;" v-for="img in myimgs10" :key="Math.random()" @click="clickFaceImg(img)">    -->
+                        </div>
+                        <div class="title-info">车型评估反馈照片</div>
+                        <div v-if="name=='WaitStoreList'">
+                            <span class="span-width"><ImgUpload :type="5" class="imgUpload display-before" :myPicUrl="myimgs16" @changePicUrl="changePicUrl16"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('车型评估反馈照片')">保存</Button></span>   
+                        </div>
+                        <div v-if="name!='WaitStoreList'">
+                            <!-- <img :src="myimgs16" alt="车型评估反馈照片" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs16)"> -->
+                            <viewer :images="myimgs16?myimgs16.split(' '):[]"><img class="my-img" style="margin:0 15px;" :src="myimgs16" alt="车型评估反馈照片"></viewer>  
                         </div>
                         <div class="title-info">人保预审截图</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload :type="5" class="imgUpload" :txt="'多选'" :myUploadList="myimgs11" :myUploadList2="myimgs111" @changePicUrl="changePicUrl11"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('人保预审截图')">保存</Button></span>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="人保预审截图" class="my-img" style="margin:0 15px;" v-for="img in myimgs11" :key="Math.random()" @click="clickFaceImg(img)">   
+                            <viewer :images="myimgs11"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs11" :src="src" :key="index" alt="人保预审截图"></viewer>
+                            <!-- <img :src="img" alt="人保预审截图" class="my-img" style="margin:0 15px;" v-for="img in myimgs11" :key="Math.random()" @click="clickFaceImg(img)">    -->
                         </div>
                         <div class="title-info">人法、失信截图</div>
                         <div v-if="name=='WaitStoreList'">
@@ -400,54 +489,69 @@
                             <Button type="primary" size="small" @click="modifyCommonBtn('失信截图')">保存</Button>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="myimgs121" alt="人法截图" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs121)">  
-                            <img :src="myimgs122" alt="失信截图" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs122)">  
+                            <!-- <img :src="myimgs121" alt="人法截图" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs121)">  
+                            <img :src="myimgs122" alt="失信截图" class="my-img" style="margin:0 15px;" @click="clickFaceImg(myimgs122)">  --> 
+                            <viewer :images="imgsbox"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in imgsbox" :src="src" :key="index" alt="人法截图"></viewer>
                         </div>
                         <div class="title-info">银行卡复印件</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload class="imgUpload" :myUploadList="myimgs13" :myUploadList2="myimgs133" :txt="'多选'" :type="5" @changePicUrl="changePicUrl13"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('银行卡复印件')">保存</Button></span>   
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="银行卡复印件" class="my-img" style="margin:0 15px;" v-for="img in myimgs13" :key="Math.random()" @click="clickFaceImg(img)">   
+                            <!-- <img :src="img" alt="银行卡复印件" class="my-img" style="margin:0 15px;" v-for="img in myimgs13" :key="Math.random()" @click="clickFaceImg(img)">  -->
+                            <viewer :images="myimgs13"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs13" :src="src" :key="index" alt="银行卡复印件"></viewer>
                         </div>
                         <div class="title-info">人保征信授权书</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload :txt="'多选'" :myUploadList="myimgs14" :myUploadList2="myimgs144" class="imgUpload" :type="5" @changePicUrl="changePicUrl14"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('人保征信授权书')">保存</Button></span>
                         </div>
                         <div v-if="name!='WaitStoreList'">
-                            <img :src="img" alt="银行卡复印件" class="my-img" style="margin:0 15px;" v-for="img in myimgs14" :key="Math.random()" @click="clickFaceImg(img)">   
+                            <!-- <img :src="img" alt="人保征信授权书" class="my-img" style="margin:0 15px;" v-for="img in myimgs14" :key="Math.random()" @click="clickFaceImg(img)">  -->
+                            <viewer :images="myimgs14"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs14" :src="src" :key="index" alt="人保征信授权书"></viewer>
                         </div>
                         <div class="title-info" style="margin:18px 0 2;">补充材料</div>
                         <span class="span-width1" v-if="name=='WaitStoreList'"><ImgUpload :type="5" class="imgUpload"  :myUploadList="myimgs15" :myUploadList2="myimgs155" :txt="'多选'" @changePicUrl="changePicUrl15"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('补充材料')">保存</Button>  </span>
-                        <span v-if="name!='WaitStoreList'"><img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"></span>
+                        <span v-if="name!='WaitStoreList'">
+                            <!-- <img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"> -->
+                            <viewer :images="myimgs15"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs15" :src="src" :key="index" alt="补充材料"></viewer>
+                        </span>
                     </div>
                 </TabPane>
                 <TabPane label="合同信息" name="name4">
-                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
+                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
+                        <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button>  
                         <template v-for="item in contractList">
-                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
+                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button v-if="!item.flowId" class="btn-margin" type="dashed" size="small" @click="applySeal(item)">申请电签</Button><Button v-if="item.flowId" class="btn-margin" type="dashed" size="small" @click="sealDetail(item.flowId)">电签详情</Button></div>
                         <div>
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="6" :txt="'多选'" :myUploadList="formatImg(item.imgs,'绝对')" :myUploadList2="formatImg(item.imgs,'相对')" @changePicUrl="changePicUrl300"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyContractBtn(item.contractId)">保存</Button></span>   
                         </div>
                         </template>
                     </div>
-                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
+                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
+                        <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button>  
                         <template v-for="item in contractList">
-                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
+                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button v-if="item.flowId" class="btn-margin" type="dashed" size="small" @click="sealDetail(item.flowId)">电签详情</Button></div>
                         <div>
-                            <span><img :src="img.aurl" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img.aurl)"></span>
+                            <span>
+                                <!-- <img :src="img.aurl" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img.aurl)"> -->
+                                <viewer :images="item.imgsArr"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in item.imgsArr" :src="src" :key="index" alt="合同信息"></viewer>
+                            </span>
                         </div>
                         </template>
                     </div>
                 </TabPane>
                 <TabPane label="设备管理" name="name5">
-                    <div :style="{height:adjustHeight-20+'px','overflow-y': 'scroll'}">
+                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
                         <Button type="primary" size="small" @click="addDevice" v-if="$route.query.name2=='WaitStoreList'">新增订单设备</Button>
                         <template v-for="item in deviceList">
                         <div class="deviceInfo">
                             <span style="min-width:150px;">设备编号：{{item.deviceNum}}</span>
                             <span style="min-width:80px;">位置：{{item.position}}</span>
-                            <span>图片：<img style="width:50px;height:50px;vertical-align:middle;margin:0 5px;cursor:pointer;" v-for="(ele,index) in item.imgs" :src="ele.aurl" :key="Math.random()" alt="图片" @click="clickFaceImg(ele.aurl)"></span>
+                            <span style="min-width:80px;">设备类型：{{item.type==1?'有线GPS':'无线GPS'}}</span>
+                            <span class="imgs-imgsArr">
+                                <!-- 图片：<img style="width:50px;height:50px;vertical-align:middle;margin:0 5px;cursor:pointer;" v-for="(ele,index) in item.imgs" :src="ele.aurl" :key="Math.random()" alt="图片" @click="clickFaceImg(ele.aurl)"> -->
+                                图片：<viewer :images="item.imgsArr"><img class="my-img" style="margin:0 15px;" v-for="(ele,index) in item.imgsArr" :src="ele" :key="index" alt="图片"></viewer>
+                            </span>
                             <!-- 安装员:{{item.installStaff}}
                             检查员:{{item.checkStaff}}
                             状态:{{item.status==1?'有效':'无效'}}
@@ -469,7 +573,8 @@
                 </div>
                 <div class="item-div">
                     <span class="item-comm required">设备类型：</span><Select v-model="modify6.type" class="item-input">
-                        <Option :value="1">gps</Option>
+                        <Option :value="1">有线GPS</Option>
+                        <Option :value="2">无线GPS</Option>
                     </Select>
                 </div>
             </div>
@@ -492,12 +597,50 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        <Modal width="350" v-model="applySealModal" title="申请电签" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:80px;">使用场景：</span><Input class="item-input" v-model="applySealModify.scene" placeholder="请输入..." />
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required" style="width:80px;">甲方关键字：</span><Input class="item-input" v-model="applySealModify.firstPartKey" placeholder="请输入..." />
+                </div>
+                <div class="item-div">
+                    <span class="item-comm required" style="width:80px;">乙方关键字：</span><Input class="item-input" v-model="applySealModify.secondPartKey" placeholder="请输入..." />
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="applySealConfirm">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <Modal width="440" v-model="applySealDetModal" title="申请电签" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">状态：{{sealDetailObj.status}}</div>
+                <div class="item-div">电签时间：{{sealDetailObj.startTime}}</div>
+                <div class="item-div">合同名称：{{sealDetailObj.docName}}</div> 
+                <div class="item-div"><Button type="primary" @click="toUrl(sealDetailObj.signUrl)" style="margin-right:8px;">跳转到电签地址</Button><Button type="primary" @click="archive(sealDetailObj.flowId)" style="margin-right:8px;" v-if="$route.query.name2=='WaitCheckAgain'">电签归档</Button><Button type="primary" style="margin-right:8px;" @click="revoke(sealDetailObj.flowId)">电签撤回</Button><Button type="primary" @click="downloadSeal(sealDetailObj.flowId)">下载电签</Button></div>
+                <div class="listadmin">
+                    <Table border :columns="columns" :data="signDetail"></Table>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="applySealDetConfirm">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <CommonTipModal :modal="tipModal" @cancel="cancel1" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
+            <div style="text-align:center">
+                <p>确定{{modalTipTitle}}吗?</p>
+            </div>
+        </CommonTipModal>
         <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>  
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
+import CommonTipModal from '@/components/CommonTipModal'    
 import ModalPic from '@/components/ModalPic'    
 import moment from 'moment'
 import { mapState } from 'vuex'
@@ -505,9 +648,19 @@ export default {
     name: 'WaitStoreDetail',
     data () {
         return {
+            mat:'',
             myTitle:'新增订单设备',
             myTitle2:'添加/修改订单设备',
             item:{},
+            carImgloading1:false,
+            carImgloading2:false,
+            modalTipTitle:'电签归档',
+            tipModal:false,
+            applySealModal:false,
+            applySealDetModal:false,
+            applySealObj:{},
+            sealDetailObj:{},
+            signDetail:[],
             modifyModal:false,
             modifyModal2:false,
             modal_loading:false,
@@ -528,6 +681,41 @@ export default {
             modify8myUploadList2:[],  
             contractList:[],
             deviceList:[],
+            identityInfo:[],  //基础信息集合
+            columns: [{
+                    title: '电签姓名',
+                    key: 'accountName',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.accountName)
+                        ]);
+                    }
+                },  {
+                    title: '电签时间',
+                    key: 'signTime',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.signTime)
+                        ]);
+                    }
+                }, {
+                    title: '电签状态',
+                    key: 'signStatus',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.signStatus)
+                        ]);
+                    }
+                }
+            ],
+            applySealModify:{
+                scene:'',
+                firstPartKey:'',
+                secondPartKey:''
+            },
             modify1: {  //行驶证信息
                 autoRepositoryId: '',
                 plateNumber: '',
@@ -662,10 +850,12 @@ export default {
             imgs13:[],
             imgs14:[],
             imgs15:[],
+            imgs16:[],
             myimgs8:[], //绝对地址
             myimgs88:[], //相对地址
             myimgs9:'',  //绝对地址
-            myimgs10:'', //绝对地址
+            myimgs10:[], //绝对地址
+            myimgs110:[], //相对地址
             myimgs11:[], //绝对地址
             myimgs111:[], //相对地址
             myimgs121:'', //绝对地址
@@ -676,19 +866,23 @@ export default {
             myimgs144:[],
             myimgs15:[],
             myimgs155:[],
+            myimgs16:'',
             myimgs300:[], //相对地址
             myimgs3000:[], //绝对地址
             carRegisterRecords:[],  //绿本变迁记录集合
+            imgsbox:[],  //人法、失信截图集合
         }
     },
     components:{
         ImgUpload,
-        ModalPic
+        ModalPic,
+        CommonTipModal
     }, 
     computed:{
         ...mapState(['adjustHeight']) 
     },
     activated(){
+        this.mat = localStorage.getItem('mat');
         this.name = this.$route.query.name2;
         this.ismodify1 = false;  
         this.ismodify2 = false;  
@@ -710,6 +904,7 @@ export default {
                 if(res!=500){
                     this.certifyList = res;
                     this.contacts = res.contacts;
+                    this.identityInfo = [res.identityFrontValue,res.identityBackValue,res.bankFrontValue,res.bankBackValue];  //基础材料集合
                     this.$store.commit('change_height');
                 }
             })
@@ -718,6 +913,14 @@ export default {
             this.$axios.get('/fx?api=gate.order.admin.contractQuery',{params:formData}).then(res => {
                 if(res!=500){
                     this.contractList = res;
+                    this.contractList.forEach( (item,index)=>{
+                        let imgsArr = [];
+                        item.imgs.map( (ele, index) => {
+                            imgsArr.push(ele.aurl);
+                        });
+                        item.imgsArr = imgsArr;
+                        return item;
+                    })
                     this.$store.commit('change_height');
                 }
             })
@@ -726,6 +929,14 @@ export default {
             this.$axios.get('/fx?api=gate.order.device.query',{params:formData}).then(res => {
                 if(res!=500){
                     this.deviceList = res;
+                    this.deviceList.forEach( (item,index)=>{
+                        let imgsArr = [];
+                        item.imgs.map( (ele, index) => {
+                            imgsArr.push(ele.aurl);
+                        });
+                        item.imgsArr = imgsArr;
+                        return item;
+                    })
                     this.$store.commit('change_height');
                 }
             })
@@ -870,7 +1081,12 @@ export default {
                         this.myimgs88.push(item.key);
                     });
                     this.myimgs9 = res.travelerValidValue; //绝对地址
-                    this.myimgs10 = res.car300EvaluateValue; //绝对地址
+                    this.myimgs10 = [];
+                    this.myimgs110 = [];
+                    res.car300Evaluate.forEach( (item, index) => {
+                        this.myimgs10.push(item.value);
+                        this.myimgs110.push(item.key);
+                    });
                     this.myimgs11 = [];
                     this.myimgs111 = [];
                     res.orderPeoPre.forEach( (item, index) => {
@@ -879,6 +1095,7 @@ export default {
                     });
                     this.myimgs121 = res.peolawValue; //绝对地址
                     this.myimgs122 = res.lostLetterValue; //绝对地址
+                    this.imgsbox = [res.peolawValue,res.lostLetterValue];
                     this.myimgs13 = [];
                     this.myimgs133 = [];
                     res.orderBank.forEach( (item, index) => {
@@ -893,6 +1110,7 @@ export default {
                     });
                     this.myimgs15 = [];
                     this.myimgs155 = [];
+                    this.myimgs16 = res.modelBackValue; //绝对地址
                     res.orderSupple.forEach( (item, index) => {
                         this.myimgs15.push(item.value);
                         this.myimgs155.push(item.key);
@@ -909,13 +1127,16 @@ export default {
             })
         },
         modify1Btn(){
-            this.modify1.travelerRegisterDate = moment(this.modify1.travelerRegisterDate).format("YYYY-MM-DD");
-            this.modify1.giveDate = moment(this.modify1.giveDate).format("YYYY-MM-DD");
-            this.modify1.outDate = moment(this.modify1.outDate).format("YYYY-MM-DD");
+            this.modify1.travelerRegisterDate = this.modify1.travelerRegisterDate?moment(this.modify1.travelerRegisterDate).format("YYYY-MM-DD"):'';
+            this.modify1.giveDate = this.modify1.giveDate?moment(this.modify1.giveDate).format("YYYY-MM-DD"):'';
+            this.modify1.outDate = this.modify1.outDate?moment(this.modify1.outDate).format("YYYY-MM-DD"):'';
             if(this.ismodify1){ //为保存操作
                 for (let key in this.modify1) {
                     if(!this.modify1[key]){
-                        return this.$Message.error("带 * 为必填项"); 
+                        if(key!='remark' && key!='record' && key!='travelerRegisterDate' && key!='giveDate' && key!='archivesNumber' && key!='weightTotal' && key!='weightWhole' && key!='size' && key!='outDate'){
+                            debugger;
+                            return this.$Message.error("带 * 为必填项"); 
+                        }
                     }
                 }
                 this.$axios.post('/fx?api=gate.order.car.traveler.update',this.modify1).then(res => {
@@ -929,12 +1150,14 @@ export default {
             }
         },
         modify2Btn(){
-            this.modify2.issueDate = moment(this.modify2.issueDate).format("YYYY-MM-DD");
-            this.modify2.outDate = moment(this.modify2.outDate).format("YYYY-MM-DD");
+            this.modify2.issueDate = this.modify2.issueDate?moment(this.modify2.issueDate).format("YYYY-MM-DD"):'';
+            this.modify2.outDate = this.modify2.outDate?moment(this.modify2.outDate).format("YYYY-MM-DD"):'';
             if(this.ismodify2){ //为保存操作
                 for (let key in this.modify2) {
                     if(!this.modify2[key]){
-                        return this.$Message.error("带 * 为必填项"); 
+                        if(key!='wheelDistance' && key!='wheelCount' && key!='wheelNormal' && key!='steelCount' && key!='wheelbase' && key!='axesCount' && key!='verandaSize' && key!='innerSize' && key!='totalWeight' && key!='approvedLoad' && key!='customer' && key!='tractionWeight' && key!='driverCustomer' && key!='useNature' && key!='getWay' && key!='issueGov' && key!='enginerModel' && key!='oilType' && key!='madeFactory' && key!='turnType' && key!='outDate' && key!='issueDate'){
+                            return this.$Message.error("带 * 为必填项"); 
+                        }
                     }
                 }
                 this.$axios.post('/fx?api=gate.order.car.register.update',this.modify2).then(res => {
@@ -978,6 +1201,7 @@ export default {
                                 return this.$Message.error("带 * 为必填项");
                             }
                         }else if(key=='hasHighInsurance'){
+                            debugger;
                             if(this.modify4[key]=='1' && (!this.modify4.highStartDate || !this.modify4.highEndDate)){
                                 return this.$Message.error("带 * 为必填项");
                             }
@@ -985,7 +1209,7 @@ export default {
                             if(this.modify4[key]=='1' ||(!this.modify4.busyStartDate || !this.modify4.busyEndDate)){
                                 return this.$Message.error("带 * 为必填项");
                             }
-                        }else if(key!='insEndDate' && key!='highStartDate' && key!='highEndDate' && key!='busyStartDate' && key!='busyEndDate'){
+                        }else if(key!='insEndDate' && key!='highStartDate' && key!='highEndDate' && key!='busyStartDate' && key!='busyEndDate' && key!='remark'){
                             return this.$Message.error("带 * 为必填项");
                         }
                     }
@@ -1011,6 +1235,7 @@ export default {
             this.$axios.post('/fx?api=gate.order.car.register.auto.file.update',this.modify5).then(res => {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
+                    this.getInitialCarList({autoRepositoryId:this.$route.query.autoId});
                 }
             })
         },
@@ -1044,6 +1269,15 @@ export default {
                 }
             })
         },
+        downLoadContract(){
+            this.carImgloading2 = true;
+            this.$axios.get('/fx?api=gate.contract.download',{params:{orderId:this.$route.query.orderId}}).then(res => {
+                if(res!=500){
+                    window.open(res.filePath);
+                }
+                this.carImgloading2 = false;
+            })
+        },
         modifyCommonBtn(txt){
             let formData = {autoRepositoryId: this.$route.query.autoId};
             let myUrl = '/fx?api=gate.order.car.file.update';
@@ -1063,7 +1297,7 @@ export default {
                     formData.otherFileType = 1;
                     formData.filePath = String(this.imgs9);
                     break;
-                case '车300评估图片':
+                case '快易估评估照片':
                     if(!this.imgs10.length){
                         return this.$Message.warning("请上传图片"); 
                     }
@@ -1071,6 +1305,14 @@ export default {
                     formData.otherFileType = 2;
                     formData.filePath = String(this.imgs10);
                     break;
+                case '车型评估反馈照片':
+                    if(!this.imgs16.length){
+                        return this.$Message.warning("请上传图片"); 
+                    }
+                    myUrl = '/fx?api=gate.order.car.other.file.update';
+                    formData.otherFileType = 5;
+                    formData.filePath = String(this.imgs16);
+                    break;     
                 case '人保预审截图':
                     if(!this.imgs11.length){
                         return this.$Message.warning("至少需要一张图片"); 
@@ -1154,6 +1396,15 @@ export default {
         modify8ChangePicUrl(...arr){
             this.modify8.imgs = String(arr[0]);
         },
+        downLoadCarInfo(){
+            this.carImgloading1 = true;
+            this.$axios.get('/fx?api=gate.order.auto.download',{params:{autoId:this.$route.query.autoId}}).then(res => {
+                if(res!=500){
+                    window.open(res.filePath);
+                }
+                this.carImgloading1 = false;
+            })
+        },
         confirmBtn(){
             let formData = {};
             let  myUrl = '/fx?api=gate.order.admin.person.update';
@@ -1186,6 +1437,9 @@ export default {
                  this.modal_loading = false;
                  this.modifyModal = false;
             })
+        },
+        toUrl(url){
+            window.open(url);
         },
         changePicUrl(...arr){ //arr为子组件向父组件传递的参数列表
             switch (arr[1]) {
@@ -1243,6 +1497,9 @@ export default {
         changePicUrl15(...arr){
             this.imgs15 = arr;
         },
+        changePicUrl16(...arr){
+            this.imgs16 = arr[0];
+        },
         changePicUrl300(...arr){
             this.myimgs300 = arr;
         },
@@ -1256,6 +1513,11 @@ export default {
             this.modalPreview = false;
             this.modifyModal = false;
             this.modifyModal2 = false;
+            this.applySealModal = false;
+            this.applySealDetModal = false;
+        },
+        cancel1(){
+             this.tipModal = false;
         },
         addItem(){
             this.carRegisterRecords.push({
@@ -1308,6 +1570,73 @@ export default {
                  this.modal_loading = false;
                  this.modifyModal2 = false;
             })
+        },
+        applySeal(item){  //申请电签
+            this.applySealModal = true;
+            this.applySealObj = item;
+            this.applySealModify = {
+                scene:'',
+                firstPartKey:'',
+                secondPartKey:''
+            }
+        },
+        sealDetail(flowId){  //电签详情
+            this.$axios.get('/fx?api=gate.contract.seal.query',{params:{flowId:flowId}}).then(res => {
+                if(res!=500){
+                    this.sealDetailObj = res; 
+                    this.signDetail = res.signDetail; 
+                }
+            })
+            this.applySealDetModal = true;
+        },
+        applySealConfirm(){   
+            if(!this.applySealModify.scene || !this.applySealModify.firstPartKey || !this.applySealModify.secondPartKey){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            let formData = {...this.applySealModify};
+            formData.orderId = this.$route.query.orderId;
+            formData.orderContractId = this.applySealObj.id;
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.contract.seal.apply',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getContractList({orderId:this.$route.query.orderId});
+                }
+                this.modal_loading = false;
+                this.applySealModal = false;
+            })
+        },
+        applySealDetConfirm(){
+             this.applySealDetModal = false;
+        },
+        archive(flowId){
+            this.tipModal = true;
+            this.modalTipTitle = '电签归档';
+            this.item = {
+                flowId:flowId
+            }
+        },  
+        revoke(flowId){
+            this.tipModal = true;
+            this.modalTipTitle = '电签撤回';
+            this.item = {
+                flowId:flowId
+            }
+        },
+        tipComfirmBtn(num) {
+            this.tipModal = false;
+            if (num != 500) {
+                this.$Message.success('操作成功');
+                this.applySealDetModal = false;
+                this.getContractList({orderId:this.$route.query.orderId});
+            }
+        },
+        downloadSeal(flowId){
+            this.$axios.get('/fx?api=gate.contract.seal.download',{params:{flowId:flowId}}).then(res => {
+                if(res!=500){
+                    window.open(res.docUrl);
+                }
+            })
         }
     }
 }
@@ -1346,6 +1675,9 @@ export default {
         .span11{
             color: red;
         }
+    }
+    .imgs-imgsArr>div{
+        display: inline-block;
     }
     .deviceInfo>span{
         display: inline-block;
@@ -1389,7 +1721,7 @@ export default {
         width: 20%;
     }
     .btn-margin{
-        margin: 0 25px;
+        margin-left: 25px;
     }
     .original-img{
         display: flex;
@@ -1398,7 +1730,7 @@ export default {
         padding: 0 15px;
         span{
             display: inline-block;
-            width: 10%;
+            // width: 10%;
             margin: 0 4% ;
         }
     }
@@ -1450,5 +1782,15 @@ export default {
         color:red;
         left:-10px;
         top:3px;
+    }
+    .tab-top-title span{
+        display: inline-block;
+        margin-top: 8px;
+    }
+    .item-input /deep/ input{
+        font-size: 14px;
+    }
+    .tab-top-title{
+        font-size:14px;
     }
 </style>

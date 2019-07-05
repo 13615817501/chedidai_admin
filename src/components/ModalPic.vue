@@ -1,7 +1,7 @@
 <template>
     <span id="modalPic">
         <Modal class="preview-img" width="500" draggable v-model="modal" title="图片预览" :mask-closable="false" :closable="false"> 
-            <img-zoom v-if="!morePic" :src="bigimg"  class="my-width" :bigsrc="bigimg" :configs="configs"></img-zoom>
+            <img-zoom v-if="!morePic" :src="bigimg"  width="465" height="465" :bigsrc="bigimg" :configs="configs"></img-zoom>
             <div v-if="morePic" class="imgs-item">
 	            <span v-for="(img,index) in imgs" :key="index">
 	                <img-zoom :src="img"  width="140" height="140" :bigsrc="img" :configs="configs"></img-zoom>
@@ -57,10 +57,10 @@
     		margin: 5px;
     	}
     }
-    .preview-img /deep/ ._magnifier.my-width img{
-        max-width:100%;
-    }
-    .preview-img  /deep/ .ivu-modal-body{
-    	text-align: center;
-    }
+    // .preview-img /deep/ ._magnifier.my-width img{
+    //     max-width:100%;
+    // }
+    // .preview-img  /deep/ .ivu-modal-body{
+    // 	text-align: center;
+    // }
 </style>

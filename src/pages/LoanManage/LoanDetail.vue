@@ -17,18 +17,22 @@
             </span>
             <span class="span-comm-1">
                 <div>期数：{{certifyData.periods}}</div>
+                <div>未还金额-众信(元)：{{certifyData.needPayAmountZd}}</div>
+                <div>未还金额-资方(元)：{{certifyData.needPayAmountCapital}}</div>
+            </span>
+            <span class="span-comm-1">
+                <div>已还期数：{{certifyData.paidPeriodNum}}</div>
                 <div>已还金额-众信(元)：{{certifyData.realPayAmountZd}}</div>
                 <div>已还金额-资方(元)：{{certifyData.realPayAmountCapital}}</div>
             </span>
             <span class="span-comm-1">
                 <div>产品名称：{{certifyData.prodName}}</div>
-                <div>应还金额-众信(元)：{{certifyData.needPayAmountZd}}</div>
-                <div>应还金额-资方(元)：{{certifyData.needPayAmountCapital}}</div>
+                <div>逾期金额-众信(元)：{{certifyData.overdueAmount}}</div>
+                <div>逾期金额-资方(元)：{{certifyData.overdueAmountCapital}}</div>
             </span>
             <span class="span-comm-1">
                 <div>年利率：{{certifyData.interestRate}}</div>
-                <div>逾期金额-众信(元)：{{certifyData.overdueAmount}}</div>
-                <div>逾期金额-资方(元)：{{certifyData.overdueAmountCapital}}</div>
+                <div>首期划扣金额：{{certifyData.firstLoanAmount}}</div>
             </span>
             <div class="div-comm-1">费用条目：</div>
             <span class="span-comm-1">
@@ -252,7 +256,7 @@ export default {
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.status==0?'待还款':params.row.status==1?'结清':params.row.status==2?'逾期':params.row.status==3?'还款失败':params.row.status==9?'未生效':'')
+                            h('strong', params.row.status==0?'待还款':params.row.status==1?'结清':params.row.status==2?'逾期':params.row.status==3?'还款失败':params.row.status==4?'逾期已还款':params.row.status==5?'资产处置':params.row.status==9?'未生效':'')
                         ]);
                     }
                 }
@@ -310,6 +314,7 @@ export default {
         display: inline-block;
         width: 300px;
         padding-left: 20px;
+        vertical-align: top;
     }
     .div-comm-1{
         font-weight: 600;

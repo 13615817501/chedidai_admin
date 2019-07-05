@@ -49,13 +49,10 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="280" v-model="isPassModal" title="核保状态" :mask-closable="false"> 
-            核保状态：<Select v-model="isPass" placeholder="请选择" style="width: 150px">
-                        <Option :value="1">通过</Option>
-                        <Option :value="3">失败</Option>
-                    </Select>
+        <Modal width="280" v-model="downMoneyModal" title="下调金额" :mask-closable="false"> 
+            金额(元)：<Input v-model.trim="downMoney" clearable placeholder="请输入金额" style="width: 120px"></Input>
             <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn4">确定</Button>
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
@@ -74,14 +71,14 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
-            isPass: 1, //核保状态 1通过 3失败
-            isPassModal:false,
+            downMoneyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
             myTitle:'新增产品',
             item:{},
             bigimg:'',
             bannerPic:'',
+            downMoney:'', //下调金额
             modalPreview:false,
             modal_loading:false,
             storeNames:[],
@@ -124,7 +121,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 100,
+                    width: 170,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -145,7 +142,24 @@ export default {
                                         this.item = params.row;
                                     }
                                 }
-                            }, '通过')
+                            }, '通过'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.downMoney = '';
+                                        this.downMoneyModal = true;
+                                        this.orderId = params.row.orderId;
+                                    }
+                                }
+                            }, '下调金额')
                         ]);
                     }
                 }, {
@@ -187,7 +201,7 @@ export default {
 				}, {
 					title: '产品名称',
 					key: 'prodName',
-					minWidth: 130,
+					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.prodName)
@@ -230,25 +244,8 @@ export default {
                             h('strong', {
                                 style: {
                                     'margin-left':'10px',
-                                    'display': params.row.underwritedStatus==1?'inline-block':'none'
                                 },
-                            },params.row.underwritedStatus==1?'通过':''),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    'display': params.row.underwritedStatus!=1?'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.orderId = params.row.orderId;
-                                        this.isPassModal = true;
-                                    }
-                                }
-                            }, params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'通过')
+                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
                         ]);
                     }
                 }, {
@@ -374,20 +371,12 @@ export default {
                 }
             })
         },
-        confirmBtn3(){
-            this.$axios.post('/fx?api=gate.order.admin.underwrited',{orderId:this.orderId,isPass:this.isPass}).then(res => {
-                if(res!=500){
-                    this.$Message.success('操作成功');
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
-                }
-            })
-            this.isPassModal = false;
-        },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
             this.tipModal = false;
             this.isPassModal = false;
+            this.downMoneyModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -395,6 +384,17 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
+        },
+        confirmBtn4(){
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.contractBackCheck',{orderId:this.orderId,msg:this.downMoney}).then(res => {
+                if(res!=500){
+                    this.$Message.success('操作成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+                this.modal_loading = false;
+            })
+            this.downMoneyModal = false;
         }
 	}
 }

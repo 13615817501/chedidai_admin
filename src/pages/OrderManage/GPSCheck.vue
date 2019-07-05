@@ -243,7 +243,7 @@ export default {
                 }, {
 					title: '产品名称',
 					key: 'prodName',
-					minWidth: 120,
+					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.prodName)
