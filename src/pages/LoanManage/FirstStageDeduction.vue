@@ -168,19 +168,37 @@ export default {
                 }, {
                     title: '用户姓名',
                     key: 'userName',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userName)
                         ]);
                     }
                 }, {
+                    title: '身份证号',
+                    key: 'identityCard',
+                    minWidth: 160,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.identityCard)
+                        ]);
+                    }
+                },{
                     title: '手机号码',
                     key: 'userMobile',
                     minWidth: 120,
                      render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
+                        ]);
+                    }
+                }, {
+                    title: '银行卡号',
+                    key: 'bankCardNum',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankCardNum)
                         ]);
                     }
                 }, {
@@ -195,7 +213,7 @@ export default {
                 }, {
                     title: '产品名称',
                     key: 'prodName',
-                    minWidth: 120,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.prodName)
@@ -220,15 +238,6 @@ export default {
                         ]);
                     }
                 },{
-                    title: '银行卡号',
-                    key: 'bankCardNum',
-                    minWidth: 170,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.bankCardNum)
-                        ]);
-                    }
-                },{
                     title: '银行分行号',
                     key: 'bankName',
                     minWidth: 160,
@@ -240,10 +249,10 @@ export default {
                 },{
                     title: '划扣状态',
                     key: 'deductStatus',
-                    minWidth: 90,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?'失败':'')
+                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?`失败 (${params.row.deductFailReason})`:'')
                         ]);
                     }
                 },{

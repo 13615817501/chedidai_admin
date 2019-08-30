@@ -324,8 +324,11 @@ let util = {
                 return 'CustomManage';
                 break; 
             case 'CarList':
-                return 'CustomManage';
-                break;       
+                return 'CustomManage'; 
+                break;   
+            case 'RecmdList':
+                return 'CustomManage'; 
+                break;         
             case 'ProductList':
                 return 'ProductManage';
                 break;  
@@ -384,6 +387,9 @@ let util = {
                 return 'OrderManage';
                 break;
             case 'WaitClaimStore':
+                return 'OrderManage';
+                break;  
+            case 'WaitUnderwriting':
                 return 'OrderManage';
                 break;  
             case 'WaitClaimCollect':

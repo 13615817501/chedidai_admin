@@ -9,9 +9,9 @@ import { Message } from 'iview';
 // axios.defaults.baseURL = 'http://192.168.31.73:8087';
 // axios.defaults.baseURL = 'http://47.97.188.143:8093';
 // axios.defaults.baseURL = 'http://api.zdautoservice.com:8093';
-// axios.defaults.baseURL = 'https://aps.zdautoservice.com';
+if(process.env.NODE_ENV=='production') axios.defaults.baseURL = 'https://aps.zdautoservice.com';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'; // post请求时候统一设置的头部
-axios.defaults.timeout = 20000;// 统一的全局参数配置
+// axios.defaults.timeout = 20000;// 统一的全局参数配置
 
 axios.interceptors.request.use((request) => {
     let apiUrl = util.getApiString(request.url);
@@ -22,7 +22,7 @@ axios.interceptors.request.use((request) => {
         mat = localStorage.getItem('mat')?localStorage.getItem('mat'):'inm';
     }
     let formData = {
-        api: apiUrl,
+        // api: apiUrl,
         v: '1.0',
         ttid:   '1002',
         did: '1',

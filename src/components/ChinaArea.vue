@@ -82,7 +82,6 @@ export default {
         	this.modify.province = this.parProvince;
         	this.modify.city = this.parCity;
         	this.modify.area = this.parArea;
-            console.log(111,this.modify);
 		},
 		'status'(newVal,oldVal){  //是新增的弹窗
             if(newVal){
@@ -110,7 +109,6 @@ export default {
             }
             this.$emit('change',this.modify);
             this.myOnce1 = false;
-            console.log(222);
         },
         'modify.city'(newVal,oldVal){
             this.getAdministrative({type:3,code:newVal},true);
@@ -119,11 +117,9 @@ export default {
             }
             this.$emit('change',this.modify);
             this.myOnce2 = false;
-            console.log(333);
         },
         'modify.area'(newVal,oldVal){
             this.$emit('change',this.modify);
-            console.log(444);
         },
 	},
 	activated(){

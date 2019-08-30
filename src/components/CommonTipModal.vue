@@ -150,6 +150,12 @@
                 }else if(this.modalTipTitle=='电签撤回'){
                     formUrl = '/fx?api=gate.contract.seal.revoke';  
                     formData.flowId = this.item.flowId;
+                }else if(this.modalTipTitle=='已发起核保'){
+                    formUrl = '/fx?api=gate.order.launchUnderwriting';  
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle.includes('确认金额')){
+                    formUrl = '/fx?api=gate.order.confirm';  
+                    formData.orderId = this.item.orderId;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

@@ -263,7 +263,7 @@ export default {
                                 style: {
                                     'margin-left':'10px',
                                 },
-                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
+                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'已发起核保'),
                         ]);
                     }
                 }, {

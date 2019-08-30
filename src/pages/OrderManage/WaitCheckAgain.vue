@@ -53,7 +53,7 @@
             </div>
         </CommonTipModal>
         <Modal width="400" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
-            <span class="item-comm required">填写退回理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <span class="item-comm required">填写理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
             <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>

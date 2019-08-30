@@ -50,10 +50,10 @@
                 <div>保证金(元)：{{certifyData.margin}}</div>
                 <div>家访费用(元)：{{certifyData.homeVisitFee}}</div>
                 <div>杂费(元)：{{certifyData.miscellaneousFee}}</div>
-                <div>综合服务费(元)：{{certifyData.comprehenServiceFee}}</div>
+                <!-- <div>综合服务费(元)：{{certifyData.comprehenServiceFee}}</div> -->
                 <div>上牌抵押费用(元)：{{certifyData.installLicensePlateFee}}</div>
                 <div>流量费(元)：{{certifyData.flowFee}}</div>
-                <div>服务费(元)：{{certifyData.serviceFee}}</div>
+                <div>综合服务费(元)：{{certifyData.serviceFee}}</div>
             </span>
             <div class="div-comm-1">还款计划：</div>
             <Table border :columns="columns" :data="certifyList"></Table>

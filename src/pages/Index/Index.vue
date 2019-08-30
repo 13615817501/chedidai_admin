@@ -84,9 +84,6 @@ export default {
 	computed:{
         ...mapState(['adjustHeight']) 
     },
-	watch: {
-
-	},
 	activated(){
 		this.getInitialList();
 		this.getInitialList2();
@@ -184,7 +181,6 @@ export default {
                     obj.seriesData.push({
 	            		name:item.storeName,
 				        type:'line',
-				        stack: '新增人数',
 				        data:[item.num],
 				        smooth: true,
 						lineStyle: {
@@ -198,11 +194,11 @@ export default {
 							    x2: 0,
 							    y2: 1,
 							    colorStops: [{
-							        offset: 0, color: '#1377E8' // 0% 处的颜色
+							        offset: 0, color: this.theme.color[index] || '#1377E8' // 0% 处的颜色
 							    }, {
-							        offset: 0.1, color: '#1377E8' // 100% 处的颜色
+							        offset: 0.1, color: this.theme.color[index] || '#1377E8' // 100% 处的颜色
 							    },{
-							        offset: 1, color: '#DEEEFE' // 100% 处的颜色
+							        offset: 1, color: this.theme.color[index+1] || '#DEEEFE' // 100% 处的颜色
 							    }],
 							    global: false // 缺省为 false
 							}
@@ -882,7 +878,7 @@ export default {
 			var option = {
 				// backgroundColor: '#000',
 			    title : {
-			        text: '省市区各门店新增数',
+			        text: '省市区各门店数',
 			        link: '#',
 			        left: 'center',
 			        top:'25',

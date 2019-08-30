@@ -56,6 +56,14 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        <Modal width="400" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
+            <span class="item-comm required">填写理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -74,15 +82,22 @@ export default {
             downMoneyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
+            backModal:false,
+            backModalTitle:'退回门店',
+            myUploadList:[],
+            myUploadList2:[],
             myTitle:'新增产品',
             item:{},
             bigimg:'',
+            msg:'',
+            attachment:[],
             bannerPic:'',
             downMoney:'', //下调金额
             modalPreview:false,
             modal_loading:false,
             storeNames:[],
             id:'',
+            orderId:'',
 			prodList:[], //产品列表
             search: {
                 timeType: 1,
@@ -154,12 +169,33 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.downMoney = '';
-                                        this.downMoneyModal = true;
+                                        this.msg = '';
+                                        this.attachment = [];
+                                        this.myUploadList = [];
+                                        this.myUploadList2 = [];
+                                        this.backModal = true;
+                                        this.backModalTitle = '退回门店';
                                         this.orderId = params.row.orderId;
                                     }
                                 }
-                            }, '下调金额')
+                            }, '退回门店'),
+                            // h('Button', {
+                            //     props: {
+                            //         type: 'primary',
+                            //         size: 'small',
+                                    
+                            //     },
+                            //     style: {
+                            //         'margin-left':'10px',
+                            //     },
+                            //     on: {
+                            //         click: () => {
+                            //             this.downMoney = '';
+                            //             this.downMoneyModal = true;
+                            //             this.orderId = params.row.orderId;
+                            //         }
+                            //     }
+                            // }, '下调金额')
                         ]);
                     }
                 }, {
@@ -245,7 +281,7 @@ export default {
                                 style: {
                                     'margin-left':'10px',
                                 },
-                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
+                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'已发起核保'),
                         ]);
                     }
                 }, {
@@ -395,7 +431,26 @@ export default {
                 this.modal_loading = false;
             })
             this.downMoneyModal = false;
-        }
+        },
+        changePicUrl(...arr){
+            this.attachment = arr[0];
+        },
+        confirmBtn2(){
+            if(!this.msg){
+               return this.$Message.warning('请填写退回理由');
+            }
+            let formData = {};
+            formData.orderId = this.orderId;
+            formData.msg = this.msg;
+            formData.attachment = String(this.attachment);
+            this.$axios.post('/fx?api=gate.order.admin.contractBackStore',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success('操作成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
+            this.backModal = false;
+        },
 	}
 }
 </script>

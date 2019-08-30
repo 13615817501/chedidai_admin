@@ -23,16 +23,17 @@
 	    <div v-if="txt=='多选' && type!=11">
 	    	<div class="demo-upload-list" v-for="(item,index) in uploadList" :key="Math.random()">
                 <template>
-                    <img :src="item">
+                    <img :src="formatItem(item)">
                     <div class="demo-upload-list-cover">
-                        <Icon type="ios-eye-outline" @click.native="handleView(item)"></Icon>
+                        <Icon v-if="formatShow(item)" type="ios-eye-outline" @click.native="handleView(item)"></Icon>
+                        <Icon v-if="!formatShow(item)" type="md-download" @click.native="handleDown(item)"></Icon>
                         <Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
                     </div>
                 </template>
             </div>
             <span class="span-progress" v-if="showProgress"><i-progress class="my-progress" :percent="percentage" hide-info></i-progress></span>
 	        <span class="my-default" title="点击上传" @click="toChange"><Icon type="md-add" size="24"/></span>
-	        <input style="display:none" type="file" id="file" ref="file" @change="changeFile"/>
+	        <input style="display:none" type="file" id="file" multiple ref="file" @change="changeFile"/>
             <Modal title="图片预览" v-model="visible" draggable>
                 <img :src="imgName" v-if="visible" style="width: 100%">
             </Modal>
@@ -136,66 +137,80 @@ export default {
 				accessKeyId: this.oss.aki,
 				accessKeySecret: this.oss.aks,
 				stsToken: this.oss.sk,
-				bucket: this.oss.bucketName
+				bucket: this.oss.bucketName,
+				secure:true
 			});
-            let file = this.$refs.file.files[0];
+			let file = Array.from(this.$refs.file.files);
+            // let file = this.$refs.file.files[0];
             if(file){
+            	let bol = false;
             	if(this.type==11){
                     let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx$/i;
-	            	if(!reg.test(file.name)){
-	            		let file = this.$refs.file;
-		                file.value='';
-	                    return this.$Message.error('格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp');
-	            	}
+	            	bol = file.some( (ele, index) => {
+	            		if(!reg.test(ele.name)){
+		            		let fileInput = this.$refs.file;
+			                fileInput.value='';
+		                    this.$Message.error('格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp');
+		                    return true;
+	            	    }
+	            	});
+	            	
             	}else{
-            		let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$/i;
+            		let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx$/i;
 	            	if(this.uploadTxt=='图片或视频'){
-	            		reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp|\.mp4$/i;
+	            		reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx|\.mp4$/i;
 	            	}
-	            	if(!reg.test(file.name)){
-	            		let file = this.$refs.file;
-		                file.value='';
-		                let errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp';
-		                if(this.uploadTxt=='图片或视频'){
-		                	errorTxt = '图片格式只支持gif，jpeg，png，jpg，bmp,视频格式只支持mp4';
-		                }
-	                    return this.$Message.error(errorTxt);
-	            	}
+	            	bol = file.some( (ele, index) => {
+	            		if(!reg.test(ele.name)){
+		            		let fileInput = this.$refs.file;
+			                fileInput.value='';
+			                let errorTxt = '格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp';
+			                if(this.uploadTxt=='图片或视频'){
+			                	errorTxt = '格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp,视频格式只支持mp4';
+			                }
+		                    this.$Message.error(errorTxt);
+		                    return true;
+	            	    }
+	            	})
             	}
-				let random_name = this.random_string(6) + '_' + new Date().getTime() + '.' + file.name.split('.').pop();   // 随机命名
-				if(this.txt=='多选'){
-					this.showProgress = true;
-					while(this.percentage<100){
-                        this.percentage += 20;
-					}
-				}
-				client.multipartUpload(`${this.oss.dirPath}${random_name}`, file).then(result => {
-					this.showProgress = false;
-					this.percentage = 0;
-					let requestUrls = result.res.requestUrls[0];
-					let index1 = requestUrls.indexOf('uploadId');
-					let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
-					let myIndex = myUrl.indexOf('/img');
-					let ranUrl = myUrl.slice(myIndex+1);
-					if(myUrl.indexOf('mp4')!=-1){
-                        this.myUploadTxt = '视频';
-					}else{
-						this.myUploadTxt = '图片';
-					}
-					myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
-					if(this.txt=='多选' || this.type==11){
-						if(this.type==11 && this.uploadList.length>=1){
-							return this.$Message.error('附件只能上传一个');
+            	if(bol) return;
+				file.forEach( (item, index) => {
+					let random_name = this.random_string(6) + '_' + new Date().getTime() + '.' + item.name.split('.').pop();   // 随机命名
+					if(this.txt=='多选'){
+						this.showProgress = true;
+						while(this.percentage<100){
+	                        this.percentage += 20;
 						}
-                        this.uploadList.push(myUrl);   //绝对地址
-                        this.uploadList2.push(ranUrl); //相对地址
-					}else{
-						this.picUrl = myUrl;
-					    this.$emit('changePicUrl', ranUrl,myUrl);
 					}
-				}).catch(err => {
-					this.$Message.warning('文件上传出错');
+				    client.multipartUpload(`${this.oss.dirPath}${random_name}`, item).then(result => {
+						this.showProgress = false;
+						this.percentage = 0;
+						let requestUrls = result.res.requestUrls[0];
+						let index1 = requestUrls.indexOf('uploadId');
+						let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
+						let myIndex = myUrl.indexOf('/img');
+						let ranUrl = myUrl.slice(myIndex+1);
+						if(myUrl.indexOf('mp4')!=-1){
+	                        this.myUploadTxt = '视频';
+						}else{
+							this.myUploadTxt = '图片';
+						}
+						myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
+						if(this.txt=='多选' || this.type==11){
+							if(this.type==11 && this.uploadList.length>=1){
+								return this.$Message.error('附件只能上传一个');
+							}
+	                        this.uploadList.push(myUrl);   //绝对地址
+	                        this.uploadList2.push(ranUrl); //相对地址
+						}else{
+							this.picUrl = myUrl;
+						    this.$emit('changePicUrl', ranUrl,myUrl);
+						}
+					}).catch(err => {
+						this.$Message.warning('文件上传出错');
+					});	
 				});
+				
             }
 		},
 		handleView(name) {
@@ -211,6 +226,21 @@ export default {
         deleteBtn(index){
             this.uploadList.splice(index,1); //绝对地址
             this.uploadList2.splice(index,1); //相对地址
+        },
+        formatItem(item){
+            if(item.includes('.docx') || item.includes('.doc') || item.includes('.xls') || item.includes('.xlsx')){
+            	return 'https://carloan-gw.oss-cn-beijing.aliyuncs.com/imgs/docx.png';
+            }
+            return item;
+        },
+        formatShow(item){
+        	if(item.includes('.docx') || item.includes('.doc') || item.includes('.xls') || item.includes('.xlsx')){
+            	return false;
+            }
+            return true;
+        },
+        handleDown(item){
+        	window.open(item);
         }
 	}
 }

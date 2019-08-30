@@ -31,10 +31,10 @@
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
-            <span>
+            <!-- <span>
                 &nbsp;&nbsp;逾期天数: 
                 <Input v-model="search.overdueDaysZd" clearable placeholder="请输入逾期天数" style="width: 120px"></Input>
-            </span>
+            </span> -->
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
         <div class="listadmin">
@@ -84,7 +84,7 @@ export default {
                 mobile: '',
                 name: '',
                 period:'',
-                overdueDaysZd:'',
+                // overdueDaysZd:'',
                 pageNum: 1,
                 pageSize: 15
             },

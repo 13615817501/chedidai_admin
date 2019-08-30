@@ -15,7 +15,7 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <Modal width="650" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
+        <Modal width="680" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
             <div class="modify-modal" style="margin:15px 0;"> 
                 <div style="text-align:center;margin:10px 0 30px;">合同条目名称：<Input v-model.trim="name" placeholder="输入后自动匹配出合同条目" style="width: 200px"></Input></div>
                 <Table @on-selection-change="selectionChange" border ref="selection" :columns="columns4" :data="contractList" height="500"></Table>
@@ -30,6 +30,29 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="350" v-model="modifyModal2" title="修改" :mask-closable="false"> 
+            <div class="modify-modal" style="margin:15px 0;"> 
+                <div>
+                    <span style="display:inline-block;width:120px;padding-left:10px;">是否必须：</span><Select v-model="modify2.isRequired" class="item-input" placeholder="请选择">
+                            <Option :value="0">否</Option>
+                            <Option :value="1">是</Option>
+                        </Select>    
+                </div>
+                <div style="margin-top:10px;">
+                    <span style="display:inline-block;width:120px;padding-left:10px;">是否需要电子签：</span><Select v-model="modify2.isSign" class="item-input" placeholder="请选择">
+                            <Option :value="0">否</Option>
+                            <Option :value="1">是</Option>
+                        </Select>    
+                </div>
+                <div style="margin-top:10px;">
+                    <span style="display:inline-block;width:120px;padding-left:10px;">排序：</span><Input v-model="modify2.sort" clearable placeholder="请输入排序" style="width: 120px"></Input>
+                </div>
+            </div>  
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -45,6 +68,7 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
+            modifyModal2:false,
             modalTipTitle:'禁用该产品合同条目',
             tipModal:false,
             myTitle:'新增产品',
@@ -59,12 +83,18 @@ export default {
             contractList:[], //合同列表集合
             ItemId: '',
             isRequiredArr:[], //保存是否必须的选中的集合
+            isSignArr:[], //保存是否需要签名的选中的集合
             selection:[],  //被选中的集合
 			search:{
                 prodId: this.$route.query.prodId,
 			    pageNum: 1,
 			    pageSize:15
 			},
+            modify2:{
+                isSign: '', 
+                isRequired: '',
+                sort:''
+            },
             isInterestHeadEnum:[], //是否利息前置
             calInterestWayEnum:[], //计算利息方式
 			table_loading: false, //默认先显示加载
@@ -72,7 +102,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 100,
+                    width: 150,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -110,7 +140,27 @@ export default {
                                         this.item = params.row;
                                     }
                                 }
-                            }, '启用')
+                            }, '启用'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modifyModal2 = true;
+                                        this.id = params.row.id;
+                                        this.modify2 = {
+                                            isSign:params.row.isSign?1:0,
+                                            isRequired:params.row.isRequired?1:0,
+                                            sort:params.row.sort
+                                        }
+                                    }
+                                }
+                            }, '修改')
                         ]);
                     }
                 }, {
@@ -158,6 +208,15 @@ export default {
                             h('strong', params.row.isRequired?'是':'否')
                         ]);
                     }
+                },{
+                    title: '是否需要电签',
+                    key: 'isSign',
+                    minWidth: 80,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.isSign==0?'否':'是')
+                        ]);
+                    }
                 }, {
                     title: '排序',
                     key: 'sort',
@@ -195,7 +254,7 @@ export default {
                 },{
                     title: '合同条目ID',
                     key: 'id',
-                    minWidth: 40,
+                    minWidth: 70,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.id)
@@ -213,7 +272,7 @@ export default {
                 },{
                     title: '是否必须',
                     key: 'isRequired',
-                    minWidth: 40,
+                    minWidth: 60,
                     render: (h, params) => {
                          return h('div', [
                             h('Checkbox', {
@@ -237,6 +296,33 @@ export default {
                             })
                         ]);
                     }
+                },{
+                    title: '是否需要电签',
+                    key: 'isSign',
+                    minWidth: 90,
+                    render: (h, params) => {
+                         return h('div', [
+                            h('Checkbox', {
+                                props: {
+                                   value: params.row.isSign
+                                },
+                                on: {
+                                    'input': (event) => {
+                                        params.row.isSign = event;
+                                        if(params.row.isSign){
+                                            this.isSignArr.push({id:params.row.id,isSign:params.row.isSign});
+                                        }else{
+                                            this.isSignArr.forEach( (item, index) => {
+                                                if(params.row.id==item.id){
+                                                    this.isSignArr.splice(index,1);
+                                                }   
+                                            });
+                                        }
+                                    }
+                                }
+                            })
+                        ]);
+                    }
                 }
             ]
 		}
@@ -249,6 +335,7 @@ export default {
         ...mapState(['adjustHeight']) 
     },
 	activated(){
+        this.search.prodId = this.$route.query.prodId;
         this.getInitialList(this.search);
         this.getContractItemList();
 	},
@@ -259,6 +346,7 @@ export default {
                     this.contractList = res.list.filter(item => item.name.toLowerCase().indexOf(item.name.toLowerCase()) > -1);
                     this.contractList.map( (item, index) => {
                         item.isRequired = false;
+                        item.isSign = false;
                     });
                 })
             } else {
@@ -272,6 +360,7 @@ export default {
                 this.contractList = res.list;
                 this.contractList.map( (item, index) => {
                     item.isRequired = false;
+                    item.isSign = false;
                 });
             })
         },
@@ -308,11 +397,16 @@ export default {
         },
         confirmBtn(){
             this.selection.forEach( (item, sub) => {
-               this.isRequiredArr.forEach( (ele, index) => {
+                this.isRequiredArr.forEach( (ele, index) => {
                    if(item.id == ele.id){
                        item.isRequired = ele.isRequired;
                    }
-               });
+                });
+                this.isSignArr.forEach( (ele, index) => {
+                   if(item.id == ele.id){
+                       item.isSign = ele.isSign;
+                   }
+                });
             });
             if(!this.selection.length){
                 return this.$Message.error('暂无数据,请重新匹配后再操作 或 未选择合同条目,请选择后再操作');
@@ -326,9 +420,26 @@ export default {
                 this.modifyModal = false;
             })
         },
+        confirmBtn2(){
+            let formData = {...this.modify2};
+            if(!formData.sort){
+                return this.$Message.error('排序不能为空');
+            }
+            formData.isSign = formData.isSign==1?true:false;
+            formData.isRequired = formData.isRequired==1?true:false;
+            formData.id = this.id;
+            this.$axios.post('/fx?api=gate.prod.admin.mdfContProdMapping',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success('操作成功');
+                    this.getInitialList(this.search);
+                }
+                this.modifyModal2 = false;
+            })
+        },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
+            this.modifyModal2 = false;
             this.name = '';
         },
         tipComfirmBtn(num) {

@@ -148,6 +148,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '身份证号',
+                    key: 'identityCard',
+                    minWidth: 160,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.identityCard)
+                        ]);
+                    }
+                }, {
                     title: '手机号码',
                     key: 'userMobile',
                     minWidth: 120,
@@ -157,6 +166,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '银行卡号',
+                    key: 'bankCardNum',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankCardNum)
+                        ]);
+                    }
+                },{
                     title: '门店名',
                     key: 'storeName',
                     minWidth: 100,
@@ -208,15 +226,6 @@ export default {
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.amountMonthlyZd)
-                        ]);
-                    }
-                },{
-                    title: '银行卡号',
-                    key: 'bankCardNum',
-                    minWidth: 170,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.bankCardNum)
                         ]);
                     }
                 },{

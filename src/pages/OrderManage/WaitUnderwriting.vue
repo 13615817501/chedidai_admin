@@ -2,15 +2,14 @@
     <div id="customList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>待确认订单</BreadcrumbItem>
+	        <BreadcrumbItem>待发起核保</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
-            <span>
+             <span>
                 时间类型: 
                 <Select v-model="search.timeType" style="width:100px">
                     <Option :value="1">申请时间</Option>
-                    <Option :value="2">门店审核通过</Option>
-                    <Option :value="3">初审通过时间</Option>
+                    <Option :value="4">用户确认时间</Option>
                 </Select>
             </span>
             <span>
@@ -43,18 +42,11 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <CommonTipModal :modal="tipModal" @cancel="cancel" modalTipTitle="确认金额" @comfirmBtn="tipComfirmBtn" :item="item">
+        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
             <div style="text-align:center">
-                <p><span v-html="modalTipTitle"></span>吗?</p>
+                <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="280" v-model="downMoneyModal" title="下调金额" :mask-closable="false"> 
-            金额(元)：<Input v-model.trim="downMoney" clearable placeholder="请输入金额" style="width: 120px"></Input>
-            <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn4">确定</Button>
-                <Button @click="cancel">取消</Button>
-            </div> 
-        </Modal>
         <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn5" @cancel="cancel"></ChooseReason> 
     </div>
 </template>
@@ -72,24 +64,29 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
-            modalTipTitle:'确认金额',
-            tipModal:false,
-            downMoneyModal:false,
-            myTitle:'新增产品',
-            title:'',
-            orderId:'',
-            passModal:false,
+            backModal:false,
             ModalContent:[],
+            msg:'',
+            modalTipTitle:'已发起核保',
+            tipModal:false,
+            myTitle2:'退回门店',
+            myTitle:'新增产品',
             item:{},
+            myUploadList:[],
+            myUploadList2:[],
+            attachment:[], //附件大集合
+            passModal:false,
+            title:'',
+            isPass:1,
             bigimg:'',
             bannerPic:'',
             modalPreview:false,
             modal_loading:false,
             storeNames:[],
-            downMoney:'', //下调金额
             id:'',
-            prodList:[],
-			search: {
+            orderId:'',
+			prodList:[], //产品列表
+            search: {
                 timeType: 1,
                 timeInterval: '',
                 orderNumber: '',
@@ -99,7 +96,6 @@ export default {
                 pageNum: 1,
                 pageSize: 15
             },
-            orderId:'',
             labelEnum:[], //产品标签 
             isInterestHeadEnum:[], //是否利息前置
             calInterestWayEnum:[], //计算利息方式
@@ -127,7 +123,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 250,
+                    width: 180,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -142,29 +138,11 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.modalTipTitle = `确认金额<span style="color:red;"> ${params.row.amount} </span>元`;
                                         this.tipModal = true;
                                         this.item = params.row;
                                     }
                                 }
-                            }, '确认金额'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.downMoney = '';
-                                        this.downMoneyModal = true;
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '下调金额'),
+                            }, '已发起核保'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -176,7 +154,7 @@ export default {
                                 on: {
                                     click: () => {
                                         this.passModal = true;
-                                        this.title = '待确认拒绝';
+                                        this.title = '待发起核保拒绝';
                                         this.orderId = params.row.orderId;
                                     }
                                 }
@@ -184,105 +162,63 @@ export default {
                         ]);
                     }
                 },{
-					title: '订单号',
-					key: 'orderNumber',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.orderNumber)
-						]);
-					}
-				}, {
-                    title: '用户姓名',
-                    key: 'userName',
+                    title: '订单号',
+                    key: 'orderNumber',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.userName)
+                            h('strong', params.row.orderNumber)
                         ]);
                     }
                 }, {
+					title: '用户姓名',
+					key: 'userName',
+					minWidth: 160,
+					render: (h, params) => {
+						return h('div', [
+							h('strong', params.row.userName)
+						]);
+					}
+				}, {
                     title: '手机号码',
                     key: 'userMobile',
-                    minWidth: 120,
-                     render: (h, params) => {
+                    minWidth: 160,
+                    render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
                         ]);
                     }
                 }, {
-					title: '门店名',
-					key: 'storeName',
-					minWidth: 120,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.storeName)
-						]);
-					}
-				}, {
+                    title: '门店名',
+                    key: 'storeName',
+                    minWidth: 150,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                }, {
 					title: '产品名称',
 					key: 'prodName',
-					minWidth: 120,
+					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.prodName)
 						]);
 					}
 				}, {
-                    title: '金额(元)',
-                    key: 'amount',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.amount)
-                        ]);
-                    }
-                },  {
-                    title: '申请时间',
-                    key: 'createTime',
-                    minWidth: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.createTime)
-                        ]);
-                    }
-                }, {
-                    title: '初审人员',
-                    key: 'checkPassStaff',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.checkPassStaff)
-                        ]);
-                    }
-                }, {
-                    title: '初审通过时间',
-                    key: 'checkPassTime',
-                    minWidth: 150,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.checkPassTime)
-                        ]);
-                    }
-                }, {
-                    title: '核保状态',
-                    key: 'action',
-                    width: 120,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', {
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
-                        ]);
-                    }
-                }, {
+					title: '申请时间',
+					key: 'createTime',
+					minWidth: 150,
+					render: (h, params) => {
+						return h('div', [
+							h('strong', params.row.createTime)
+						]);
+					}
+				}, {
                     title: '订单详情',
                     key: 'action',
                     width: 150,
-                    align: 'center',
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
@@ -295,8 +231,8 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitConfirmList'}});  
-                                    } 
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitUnderwriting'}});  
+                                    }
                                 }
                             }, '详情'),
                         ]);
@@ -329,7 +265,7 @@ export default {
         },
 		getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.waitConfirmList',{params:formData}).then(res => {
+		    this.$axios.get('/fx?api=gate.order.admin.waitUnderwritingList',{params:formData}).then(res => {
 		    	if(res!=500){
 		    		this.certifyList = res.list;
 			        this.totalCount = res.page.totalCount;
@@ -339,16 +275,6 @@ export default {
 		    	this.table_loading = false;
 			})
 		},
-        getRefuseReasonList(){
-            this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {
-                if(res!=500){
-                    this.ModalContent = [];
-                    res.hub.forEach( (item, index) => {
-                        this.ModalContent.push(item.v);
-                    });
-                }
-            })
-        },
         pageChange(page){
 			this.search.pageNum = page;
             this.getInitialList(util.searchList(this.search,'timeInterval'));
@@ -357,27 +283,28 @@ export default {
         	this.search.pageNum = 1;
 			this.getInitialList(util.searchList(this.search,'timeInterval'));
 		},
-        addBtn(){
-            this.myTitle = '新增';
-            this.modifyModal = true;
-            this.modify = {
-                name:'',
-                storeId:'',
-                mobile:'',
-                idNum:'',
-                type: '1'
-            };
-        },
-        clickFaceImg(img){
-            this.bigimg = img;
-            this.modalPreview = true;
+        confirmBtn(){
+            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            let formData = {...this.modify};
+            let  myUrl = '/fx?api=gate.addOrUpdate.product';
+            if(this.myTitle == '修改'){
+                formData.id = this.id;
+            }
+            this.$axios.post(myUrl,formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.modifyModal = false;
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
         },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
-            this.backModal = false;
             this.passModal = false;
-            this.downMoneyModal = false;
+            this.backModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -386,16 +313,21 @@ export default {
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         },
-        confirmBtn4(){
-            this.modal_loading = true;
-            this.$axios.post('/fx?api=gate.order.admin.contractBackCheck',{orderId:this.orderId,msg:this.downMoney}).then(res => {
+        confirmBtn2(){
+            if(!this.msg){
+               return this.$Message.warning('请填写退回理由');
+            }
+            let myUrl = '/fx?api=gate.order.admin.gpsBackStore';
+            if(this.myTitle2 == '退回GPS安装'){
+                myUrl = '/fx?api=gate.order.admin.gpsBackInstall';
+            }
+            this.$axios.post(myUrl,{orderId:this.orderId,msg:this.msg,attachment:String(this.attachment)}).then(res => {
                 if(res!=500){
-                    this.$Message.success('操作成功');
+                    this.$Message.success('退回成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
-                this.modal_loading = false;
             })
-            this.downMoneyModal = false;
+            this.backModal = false;
         },
         confirmBtn5(num){
             if(num!=500){
@@ -403,6 +335,9 @@ export default {
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
             this.passModal = false;
+        },
+        changePicUrl(...arr){
+            this.attachment = arr[0];
         },
         getRefuseReasonList(){
             this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {

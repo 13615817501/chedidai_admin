@@ -166,26 +166,26 @@ export default {
                                     }
                                 }
                             }, '退回GPS安装'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.msg = '';
-                                        this.attachment = [];
-                                        this.myUploadList = [];
-                                        this.myUploadList2 = [];
-                                        this.backModal = true;
-                                        this.myTitle2 = '退回门店';
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '退回门店'),
+                            // h('Button', {
+                            //     props: {
+                            //         type: 'primary',
+                            //         size: 'small',
+                            //     },
+                            //     style: {
+                            //         'margin-left':'10px'
+                            //     },
+                            //     on: {
+                            //         click: () => {
+                            //             this.msg = '';
+                            //             this.attachment = [];
+                            //             this.myUploadList = [];
+                            //             this.myUploadList2 = [];
+                            //             this.backModal = true;
+                            //             this.myTitle2 = '退回门店';
+                            //             this.orderId = params.row.orderId;
+                            //         }
+                            //     }
+                            // }, '退回门店'),
                             h('Button', {
                                 props: {
                                     type: 'primary',

@@ -86,7 +86,12 @@ var router = new Router({
 	                name: 'CustomList',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/CustomManage/CustomList`),
-	            }, {
+	            },{
+	                path: '/CustomManage/RecmdList',
+	                name: 'RecmdList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/CustomManage/RecmdList`),
+	            },{
 	                path: '/CustomManage/CarList',
 	                name: 'CarList',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -136,6 +141,11 @@ var router = new Router({
 	                name: 'GPSInstall',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/OrderManage/GPSInstall`),
+	            },{
+	                path: '/OrderManage/WaitUnderwriting',
+	                name: 'WaitUnderwriting',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/OrderManage/WaitUnderwriting`),
 	            },{
 	                path: '/OrderManage/OrderList',
 	                name: 'OrderList',

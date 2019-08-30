@@ -1,8 +1,8 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>产品管理</BreadcrumbItem>
-            <BreadcrumbItem>{{$route.query.name=='WaitStoreList'?'待门店处理':$route.query.name=='待初审订单'?'WaitAuditingList':$route.query.name=='待确认订单'?'WaitConfirmList':''}}</BreadcrumbItem>
+	        <BreadcrumbItem>订单管理</BreadcrumbItem>
+            <BreadcrumbItem>{{myName2}}</BreadcrumbItem>
 	        <BreadcrumbItem>详情</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
@@ -19,23 +19,23 @@
                         <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
                     </tbody>
                 </table>  
-                <div style="margin-top:15px;" v-if="$route.query.name=='WaitStoreList'">
+                <div style="margin-top:15px;" v-if="$route.query.name=='WaitStoreList'|| $route.query.name=='WaitConfirmList'">
                     <div style="margin-top:15px;">
-                        <p>
+                        <p v-if="$route.query.name=='WaitStoreList'">
                             <span class="yajin">年检押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify1}" :readonly='!isModify1' v-model="modify.annualInspectionDeposit" style="width: 100px" :placeholder="isModify1?'请输入...':''" />
                             <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
                         </p>    
-                        <p>
+                        <p v-if="$route.query.name=='WaitStoreList'">
                         <span class="yajin">违章押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify2}" :readonly='!isModify2' v-model="modify.trafficDeposit" style="width: 100px" :placeholder="isModify2?'请输入...':''" />
                             <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
                         </p>   
                         <p>
-                            <span class="yajin">服务费(元)：</span>
+                            <span class="yajin">综合服务费(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify3}" :readonly='!isModify3' v-model="modify.serviceFee" style="width: 100px" :placeholder="isModify3?'请输入...':''" />
                             <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
-                        </p>   
+                        </p>  
                     </div>
                 </div> 
                 <div style="margin-top:15px;" v-if="$route.query.name=='WaitAuditingList'">
@@ -45,13 +45,15 @@
                     <p>Actual Amount：{{certifyList.actualAmount}}</p>   
                 </div> 
                 <div style="margin-top:15px;">
-                    <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':'失败'}}<Button style="margin-left:10px;" v-if="certifyList.underwritedStatus!=1?true:false" type="primary" size="small" @click="passStatus">操作</Button></p>
+                    <p>核保状态：{{certifyList.underwritedStatus==0?'未核保':certifyList.underwritedStatus==1?'成功':certifyList.underwritedStatus==2?'已发起核保':'失败'}}<Button style="margin-left:10px;" v-if="certifyList.isUnderwrited" type="primary" size="small" @click="passStatus">操作</Button></p>
                     <p v-if="certifyList.underwritedStatus">核保时间：{{certifyList.underwritedTime}}</p>    
                     <p v-if="certifyList.underwritedStatus">核保操作员：{{certifyList.underwritedStaff}}</p>    
                 </div>
                 <div style="margin-top:15px;">
                     <p>订单资料状态：{{certifyList.fileCollectStatus==0?'待寄回':certifyList.fileCollectStatus==1?'已寄回':''}}</p>
                 </div>
+                <span class="span-width" v-if="$route.query.name=='WaitConfirmList'"><span style="display:inline-block;">车辆评估报告：</span><ImgUpload :type="5" class="imgUpload display-before" :myPicUrl="myimgs1" @changePicUrl="changePicUrl"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="saveCarReportBtn">保存</Button><Button style="margin-left:8px;" type="primary" size="small" :loading="carImgloading" @click="downLoadimgCar">生成车辆评估报告</Button><Button style="margin-left:8px;" type="primary" size="small" @click="previewImgCar">预览车辆评估报告</Button></span>
+                <span class="span-width" v-if="$route.query.name!='WaitConfirmList' && myimgs1">车辆评估报告：<viewer class="viewer-span" :images="myimgs1?myimgs1.split(' '):[]"><img class="my-img" style="margin:0 15px;" :src="myimgs1" alt="车辆评估报告"></viewer></span>
             </div>
             <span style="display:inline-block;margin-left:100px;">
                 <Timeline>
@@ -76,9 +78,16 @@
                         </template>
                     </TimelineItem> 
                     <TimelineItem :color="certifyList.confirmBlock?'blue':'#ccc'">
-                        <p class="time" :style="{color:certifyList.confirmBlock?'#2d8cf0':'#515a6e'}">客户确认</p>
+                        <p class="time" :style="{color:certifyList.confirmBlock?'#2d8cf0':'#515a6e'}">确认金额</p>
                         <template v-if="certifyList.confirmBlock">
                         <p class="content">确认时间：{{certifyList.confirmBlock.time}}</p>
+                        </template>
+                    </TimelineItem> 
+                    <TimelineItem :color="certifyList.underwritingBlock?'blue':'#ccc'">
+                        <p class="time" :style="{color:certifyList.underwritingBlock?'#2d8cf0':'#515a6e'}">发起核保</p>
+                        <template v-if="certifyList.underwritingBlock">
+                        <p class="content">发起核保时间：{{certifyList.underwritingBlock.time}}</p>
+                        <p class="content">操作员：{{certifyList.underwritingBlock.staff}}</p>
                         </template>
                     </TimelineItem> 
                     <TimelineItem :color="certifyList.contractBlock?'blue':'#ccc'">
@@ -107,7 +116,7 @@
                 </Timeline>
             </span>
             <div style="margin-bottom:15px;">
-                <Button type="primary" icon="md-add" style="margin:15px 0;" @click="addBtn">新增订单备注</Button>
+                <Button v-if="$route.query.name!='OrderList' && $route.query.name!='StoreOrderList'" type="primary" icon="md-add" style="margin:15px 0;" @click="addBtn">新增订单备注</Button>
                 <Table border :columns="columns2" :data="certifyList2"></Table>
             </div>
         </div>
@@ -179,19 +188,22 @@ export default {
 		return {
             isPassModal:false,
             isPass:1,
-            orderId: '',
+            orderId: this.$route.query.orderId,
 			certifyList:{},
             carList:{}, //车辆信息对象
             modalTipTitle:'',
             modifyModal2:false,
             tipModal:false,
             item:{},
+            carImgloading:false,
             addModal:false,
             modifyMoneyModal:false,
             modal_loading:false,
             remark:'',
             prodId:'',
             autoId:'',
+            myimgs1:'', //绝对地址
+            myimgs11:'', //相对地址
             modelIdArr:[],
             dataObject:[],
             modifyMoney:{
@@ -279,7 +291,53 @@ export default {
         ImgUpload
     }, 
 	computed:{
-        ...mapState(['adjustHeight']) 
+        ...mapState(['adjustHeight']),
+        myName2(){
+            switch (this.$route.query.name) {
+                case 'OrderList':
+                    return '订单列表';
+                    break;
+                case 'StoreOrderList':
+                    return '门店订单列表';
+                    break;
+                case 'WaitClaimStore':
+                    return '门店认领';
+                    break;
+                case 'WaitStoreList':
+                    return '待门店处理';
+                    break;
+                case 'WaitClaimCheck':
+                    return '初审认领';
+                    break;
+                case 'WaitAuditingList':
+                    return '待初审订单';
+                    break;
+                case 'WaitConfirmList':
+                    return '待确认订单';
+                    break;
+                case 'SignContract':
+                    return '签署合同';
+                    break;
+                case 'GPSInstall':
+                    return '待GPS安装';
+                    break;
+                case 'WaitClaimCollect':
+                    return '贷后认领';
+                    break;
+                case 'GPSCheck':
+                    return '待GPS校验';
+                    break;
+                case 'WaitClaimCheckAgain':
+                    return '待复审认领';
+                    break;
+                case 'WaitCheckAgain':
+                    return '待复审订单';
+                    break;  
+                case 'WaitUnderwriting':
+                    return '待发起核保';
+                    break;          
+             } 
+        }
     },
 	activated(){
         this.getInitialList({orderId:this.$route.query.orderId});
@@ -311,6 +369,8 @@ export default {
                         trafficDeposit:res.trafficDeposit,
                         serviceFee:res.serviceFee
                     }
+                    this.myimgs1 = res.autoReportImgValue;
+                    this.myimgs11 = res.autoReportImg;
                     this.prodId = res.prodId;
                     this.autoRepositoryId = res.autoId;
                     if(this.$route.query.name=='WaitAuditingList'){
@@ -447,6 +507,29 @@ export default {
                 this.modal_loading = false;
             })
             this.isPassModal = false;
+        },
+        changePicUrl(...arr){ //arr为子组件向父组件传递的参数列表
+            this.myimgs11 = arr[0];
+        },
+        saveCarReportBtn(){
+            this.$axios.post('/fx?api=gate.upload.auto.report',{orderId:this.$route.query.orderId,resource:this.myimgs11}).then(res => {
+                if(res!=500){
+                    this.$Message.success('保存成功');
+                }
+            })
+        }, 
+        downLoadimgCar(){
+            this.carImgloading = true;
+            this.$axios.get('/fx?api=gate.download.order.printfVehicleAssessmentReport',{params:{orderId:this.$route.query.orderId}}).then(res => {
+                if(res!=500){
+                    this.$Message.success('打印成功');
+                    this.getInitialList({orderId:this.$route.query.orderId});
+                }
+                this.carImgloading = false;
+            })
+        },
+        previewImgCar(){
+            window.open(this.certifyList.autoReportUrl)
         }
 	}
 }
@@ -467,6 +550,12 @@ export default {
         color:red;
         left:-10px;
         top:3px;
+    }
+    .my-img{
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        vertical-align: middle;
     }
     .item-input,.common-width{
         width: 120px;
@@ -494,12 +583,22 @@ export default {
         font-size: 14px;
         font-weight: bold;
     }
+    .viewer-span{
+        display: inline-block;
+    }
     .content{
         padding-left: 15px;
     }
-    .yajin{
+    #imgUpload{
         display: inline-block;
         width: 80px;
+    }
+    .span-width /deep/ .item-comm.required:before{
+        content: '' !important;;
+    }
+    .yajin{
+        display: inline-block;
+        width: 100px;
         margin-top: 20px;
     }
     .item-input.txt /deep/ input{

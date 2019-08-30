@@ -170,7 +170,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitClaimStore'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitClaimCollect'}});
                                     }
                                 }
                             }, '详情'),

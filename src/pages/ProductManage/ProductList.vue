@@ -75,7 +75,7 @@
                     <span class="item-comm required">平台管理费费率(%)：</span><Input class="item-input" v-model="modify.platformServicePersent" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">综合服务费费率(%)：</span><Input class="item-input" v-model="modify.compositeServicePersent" placeholder="请输入..." />
+                    <!-- <span class="item-comm required">综合服务费费率(%)：</span><Input class="item-input" v-model="modify.compositeServicePersent" placeholder="请输入..." /> -->
                     <span class="item-comm required">保证金费率(%)：</span><Input class="item-input" v-model="modify.cashDepositPersent" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
@@ -104,12 +104,13 @@
                             <Option value="2">资方和中都</Option>
                             <Option value="3">中都</Option>
                         </Select>
+                    <span class="item-comm required">汇率(%)：</span><Input class="item-input" v-model="modify.exchangeRate" placeholder="请输入..." />
+                </div> 
+                <div class="item-div">
                     <span class="item-comm required">贷款还款日期方式：</span><Select v-model="modify.repayDateType" class="item-input" placeholder="请选择">
                             <Option value="1">固定时间</Option>
                             <Option value="2">合同生效日起算</Option>
-                        </Select>    
-                </div> 
-                <div class="item-div">
+                        </Select>  
                     <span v-show="modify.repayDateType=='1'">
                         <span class="item-comm required">贷款还款日：</span><Input class="item-input" v-model="modify.repayDate" placeholder="请输入..." />
                     </span>
@@ -177,7 +178,7 @@ export default {
                 intermediateServicePersent: '',
                 accountServicePersent: '',
                 platformServicePersent: '',
-                compositeServicePersent: '',
+                compositeServicePersent: '0',
                 cashDepositPersent: '',
                 gpsInstallExpenses: '',
                 flowExpenses: '',
@@ -187,7 +188,8 @@ export default {
                 transExpenses: '',
                 storeCommissionPersent: '',
                 hiestAmount: '',
-                loestAmount: ''
+                loestAmount: '',
+                exchangeRate: ''
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
@@ -250,8 +252,8 @@ export default {
                                         (async () => {
                                             try {
                                                 let detailProduct = await this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:params.row.id}});
-                                                let {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} = detailProduct;
-                                                this.modify = {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate} 
+                                                let {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate} = detailProduct;
+                                                this.modify = {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent:'0',cashDepositPersent,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate} 
                                                 this.picUrl = params.row.bannerPicValue;
                                                 if(this.modify.repayDateType=='2'){
                                                    this.modify.repayDate = '';
@@ -414,7 +416,7 @@ export default {
                 intermediateServicePersent: '',
                 accountServicePersent: '',
                 platformServicePersent: '',
-                compositeServicePersent: '',
+                compositeServicePersent: '0',
                 cashDepositPersent: '',
                 gpsInstallExpenses: '',
                 flowExpenses: '',
@@ -424,7 +426,8 @@ export default {
                 transExpenses: '',
                 storeCommissionPersent: '',
                 hiestAmount: '',
-                loestAmount: ''
+                loestAmount: '',
+                exchangeRate: ''
             }
             this.picUrl = '';
         },
@@ -433,7 +436,7 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.zfperiods || !this.modify.zfmonthRate || !this.modify.zdperiods || !this.modify.zdmonthRate || !this.modify.debtType || !this.modify.annualRate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount){
+            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.zfperiods || !this.modify.zfmonthRate || !this.modify.zdperiods || !this.modify.zdmonthRate || !this.modify.debtType || !this.modify.annualRate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount || !this.modify.exchangeRate){
                 return this.$Message.error("带 * 为必填项"); 
             }
             if(this.modify.repayDateType=='1' && !this.modify.repayDate){

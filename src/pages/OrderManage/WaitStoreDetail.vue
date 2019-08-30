@@ -2,7 +2,6 @@
     <div id="waitStoreDetail" class="common-id">
         <Breadcrumb>
             <BreadcrumbItem>订单管理</BreadcrumbItem>
-            <BreadcrumbItem>待门店处理</BreadcrumbItem>
             <BreadcrumbItem>详情</BreadcrumbItem>
         </Breadcrumb>
         <div class="modify-modal"> 
@@ -13,7 +12,7 @@
                 <span>车牌号：<span class="span11">{{modify1.plateNumber}}</span></span>
                 <span>车架号：<span class="span11">{{modify1.vin}}</span></span>
                 <span>发动机号：<span class="span11">{{modify1.enginner}}</span></span>
-                <span><span class="span11"><Button type="primary" :loading="carImgloading1"  @click="downLoadCarInfo"><Icon type="md-download" />下载车辆文件</Button></span></span>
+                <span><span class="span11"><Button type="primary" :loading="carImgloading1"  @click="downLoadCarInfo"><Icon type="md-download" />下载车辆文件</Button><Button style="margin-left:8px;" type="primary" :loading="carImgloading4"  @click="downLoadAllInfo"><Icon type="md-download" />下载所有资料照片</Button></span></span>
             </div>
             <div class="tab-top-title">
                 <span>
@@ -37,82 +36,159 @@
                                 </viewer>
                 </span> 
                 <span>
+                    <!-- <img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"> -->
+                    驾驶证正面：<viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="驾驶证正面">
+                                </viewer>
+                </span> 
+                <span>
+                    <!-- <img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"> -->
+                    驾驶证反面：<viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="驾驶证反面">
+                                </viewer>
+                </span> 
+                <span>
                     <!-- <img class="my-img" :src="modify5Img[2]" alt="绿本第1页" @click="clickFaceImg(modify5Img[2])"> -->
-                    绿本第1页：<viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="绿本第1页">
+                    绿本第1页：<viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="绿本第1页">
                                 </viewer>
                 </span> 
                 <span>
                     <!-- <img class="my-img" :src="modify5Img[3]" alt="绿本第2页" @click="clickFaceImg(modify5Img[3])"> -->
-                    绿本第2页：<viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="绿本第2页">
+                    绿本第2页：<viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="绿本第2页">
                                 </viewer>
                 </span> 
                 <span>
                     <!-- <img class="my-img" :src="modify5Img[4]" alt="绿本第3页" @click="clickFaceImg(modify5Img[4])"> -->
-                   绿本第3页：<viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="绿本第3页">
+                   绿本第3页：<viewer :images="modify5Img[6]?modify5Img[6].split(' '):[]"><img class="my-img" :src="modify5Img[6]" alt="绿本第3页">
                                 </viewer>
                 </span> 
                 <span>
                     <!-- <img class="my-img" :src="modify5Img[5]" alt="绿本第4页" @click="clickFaceImg(modify5Img[5])"> -->
-                    绿本第4页：<viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="绿本第4页">
+                    绿本第4页：<viewer :images="modify5Img[7]?modify5Img[7].split(' '):[]"><img class="my-img" :src="modify5Img[7]" alt="绿本第4页">
                                 </viewer>
                 </span> 
             </div>
             <Tabs v-model="activedName" @on-click="tabClick" style="font-size:14px;">
                 <TabPane label="客户信息" name="name1">
-                    <div class="name1-box" :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
-                        <div class="title-info">个人信息</div>
+                    <div class="name1-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
+                        <div class="title-info">个人信息<Button type="primary" v-if="isUpdate" size="small" style="margin-left:10px;" @click="modifyInfoBtn1">{{!ismodifyInfo?'修改':'保存'}}</Button></div>
                         <ul class="common-ul">
-                            <li><span>姓名：</span><span>{{certifyList.name}}</span></li>
-                            <li><span>身份证号：</span><span>{{certifyList.identityCard}}</span></li>
-                            <li><span>活体认证：</span><span>{{certifyList.isIdentity==1?'完成':'未完成'}}</span></li>
+                            <li><span class="item-comm required">姓名：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.name" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">身份证号：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.identityCard" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">活体认证：</span><Input class="item-input txt" readonly :value="'完成'"/></li>
                         </ul>
                         <ul class="common-ul">
-                            <li><span>银行卡号：</span><span>{{certifyList.cardNumber}}</span></li>
-                            <li><span>开户行：</span><span>{{certifyList.bankName}}</span></li>
-                            <li><span>银行预留手机号：</span><span>{{certifyList.bankMobile}}</span></li>
+                            <li><span class="item-comm required">银行卡号：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.cardNumber" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">开户行：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.bankName" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">银行预留手机：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.bankMobile" :placeholder="ismodifyInfo?'请输入...':''" /></li>
                         </ul>
                         <ul class="common-ul">
-                            <li><span>证件有效期：</span><span>{{certifyList.periodDate}}</span></li>
-                            <li><span>户籍地址：</span><span>{{certifyList.houseAddress}}</span></li>
-                            <li><span></span><span></span></li>
+                            <li><span class="item-comm required">证件开始时间：</span><DatePicker v-if="ismodifyInfo" v-model="modifyInfo.signDate" type="date" placeholder="证件有效期" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.signDate"/></li>
+                            <li><span class="item-comm required">证件有效期至：</span><DatePicker v-if="ismodifyInfo" v-model="periodDateTemporary" type="date" placeholder="证件有效期" class="item-input"></DatePicker><Tag style="margin-left:5px;" v-if="ismodifyInfo" checkable color="primary" :checked="checkedState" @on-change="longBtn">长期</Tag>
+                                <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.periodDate"/></li>
+                            <li><span class="item-comm required">户籍地址：</span><Input class="item-input" style="width:300px;" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.houseAddress" :placeholder="ismodifyInfo?'请输入...':''" /></li>
                         </ul>
                         <div class="title-info">补充信息</div>
                         <ul class="common-ul">
-                            <li><span>现住地址：</span><span>{{certifyList.nowAddress}}</span></li>
-                            <li><span>客户来源：</span><span>{{certifyList.sourceValue}}</span></li>
-                            <li><span>起始居住时间：</span><span>{{certifyList.startLiveDate}}</span></li>
-                            <li><span>婚姻状态：</span><span>{{certifyList.marryValue}}</span></li>
-                            <li><span>有无子女：</span><span>{{certifyList.hasChildValue}}</span></li>
-                            <li><span>供养亲属：</span><span>{{certifyList.supportRelate}}</span></li>
-                            <li><span>本市地址电话：</span><span>{{certifyList.localMobile}}</span></li>
-                            <li><span>学历背景：</span><span>{{certifyList.educateValue}}</span></li>
-                            <li><span>单位名称：</span><span>{{certifyList.companyName}}</span></li>
-                            <li><span>单位地址：</span><span>{{certifyList.companyAddress}}</span></li>
-                            <li><span>职位级别：</span><span>{{certifyList.level}}</span></li>
+                            <li><span class="item-comm required">现住地址：</span><ChinaArea2 v-if="ismodifyInfo" @change="chinaAreaChange1" :parProvince="modifyInfo.nowProvice" :parCity="modifyInfo.nowCity" :parArea="modifyInfo.nowArea"></ChinaArea2><Input style="margin-left:8px;" class="item-input" v-if="ismodifyInfo" v-model="modifyInfo.nowUpdateAddress" placeholder="请输入..." /><Input class="item-input txt" style="width:400px;" v-if="!ismodifyInfo" readonly :value="modifyInfo.nowAddress"/></li>
+                            <li><span class="item-comm required">客户来源：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.source" class="item-input">
+                                    <Option value="1">中介</Option>
+                                    <Option value="2">客户推荐</Option>
+                                    <Option value="3">陌生拜访</Option>
+                                    <Option value="4">小区推广</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.source=='1'?'中介':modifyInfo.source=='2'?'客户推荐':modifyInfo.source=='3'?'陌生拜访':modifyInfo.source=='4'?'小区推广':''"/></li>
+                            <li><span class="item-comm required">起始居住时间：</span><DatePicker v-if="ismodifyInfo" v-model="modifyInfo.startLiveDate" type="date" placeholder="起始居住时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.startLiveDate"/></li>
+                            <li><span class="item-comm required">婚姻状态：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.marry" class="item-input">
+                                    <Option value="1">已婚</Option>
+                                    <Option value="2">未婚</Option>
+                                    <Option value="3">离异</Option>
+                                    <Option value="4">再婚</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.marry=='1'?'已婚':modifyInfo.marry=='2'?'未婚':modifyInfo.marry=='3'?'离异':modifyInfo.marry=='4'?'再婚':''"/></li>
+                            <li><span class="item-comm required">有无子女：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.hasChild" class="item-input">
+                                    <Option value="1">有</Option>
+                                    <Option value="2">无</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.hasChild=='1'?'有':modifyInfo.hasChild=='2'?'无':''"/></li>
+                            <li><span class="item-comm required">供养亲属：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.supportRelate" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">本市地址电话：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.localMobile" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">学历背景：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.educate" class="item-input">
+                                    <Option value="1">硕土以上</Option>
+                                    <Option value="2">本科</Option>
+                                    <Option value="3">专科</Option>
+                                    <Option value="4">高中以下</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.educate=='1'?'硕土以上':modifyInfo.educate=='2'?'本科':modifyInfo.educate=='3'?'专科':modifyInfo.educate=='4'?'高中以下':''"/></li>
+                            <li><span class="item-comm required">单位名称：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.companyName" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">单位地址：</span><ChinaArea2 v-if="ismodifyInfo" @change="chinaAreaChange2" :parProvince="modifyInfo.companyProvice" :parCity="modifyInfo.companyCity" :parArea="modifyInfo.companyArea"></ChinaArea2><Input style="margin-left:8px;" class="item-input" v-if="ismodifyInfo" v-model="modifyInfo.companyUpdateAddress" placeholder="'请输入...'" /><Input class="item-input txt" style="width:400px;" v-if="!ismodifyInfo" readonly :value="modifyInfo.companyAddress"/></li>
+                            <li><span class="item-comm required">职位级别：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.level" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">信用卡额度(万元)：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.creditQuota" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">暂住证：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.isTempcer" class="item-input">
+                                    <Option value="0">无</Option>
+                                    <Option value="1">有</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.isTempcer=='0'?'无':modifyInfo.isTempcer=='1'?'有':''"/></li>
                         </ul>
                         <ul class="common-ul">
-                            <li><span>月基本薪资：</span><span>{{certifyList.baseSalary}}</span></li>
-                            <li><span>其他收入：</span><span>{{certifyList.otherSalary}}</span></li>
-                            <li><span>起始服务时间：</span><span>{{certifyList.startWorkTime}}</span></li>
-                            <li><span>企业类型：</span><span>{{certifyList.companyType}}</span></li>
-                            <li><span>单位电话：</span><span>{{certifyList.companyMobile}}</span></li>
-                            <li><span>住址拥有情况：</span><span>{{certifyList.ownHouseValue}}</span></li>
-                            <li><span>名下其他财产：</span><span>{{certifyList.otherProperty}}</span></li>
-                            <li><span>电子邮箱：</span><span>{{certifyList.email}}</span></li>
-                            <li><span>房产：</span><span>{{certifyList.houseProperty}}</span></li>
-                            <li><span>所属部门：</span><span>{{certifyList.dept}}</span></li>
-                            <li><span>公司性质：</span><span>{{certifyList.nature}}</span></li>
+                            <li><span class="item-comm required">月基本薪资：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.baseSalary" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">其他收入：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.otherSalary" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">起始服务时间：</span><DatePicker v-if="ismodifyInfo" v-model="modifyInfo.startWorkTime" type="date" placeholder="起始服务时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.startWorkTime"/></li>
+                            <li><span class="item-comm required">企业类型：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.companyType" class="item-input">
+                                    <Option value="1">非私营业主</Option>
+                                    <Option value="2">个体</Option>
+                                    <Option value="3">私营独资</Option>
+                                    <Option value="4">私营有限责任</Option>
+                                    <Option value="5">私营股份有限</Option>
+                                    <Option value="6">港资/外资</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.companyType=='1'?'非私营业主':modifyInfo.companyType=='2'?'个体':modifyInfo.companyType=='3'?'私营独资':modifyInfo.companyType=='4'?'私营有限责任':modifyInfo.companyType=='5'?'私营股份有限':modifyInfo.companyType=='6'?'港资/外资':''"/></li>
+                            <li><span class="item-comm required">单位电话：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.companyMobile" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">住址拥有情况：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.ownHouse" class="item-input">
+                                    <Option value="1">自有</Option>
+                                    <Option value="2">直系亲属房屋</Option>
+                                    <Option value="3">租住</Option>
+                                    <Option value="4">单位分配</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.ownHouse=='1'?'自有':modifyInfo.ownHouse=='2'?'直系亲属房屋':modifyInfo.ownHouse=='3'?'租住':modifyInfo.ownHouse=='4'?'单位分配':''"/></li>
+                            <li><span class="item-comm required">名下其他财产：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.otherProperty" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">电子邮箱：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.email" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">房产：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.houseProperty" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">所属部门：</span><Input class="item-input" :class="{txt:!ismodifyInfo}" :readonly='!ismodifyInfo' v-model="modifyInfo.dept" :placeholder="ismodifyInfo?'请输入...':''" /></li>
+                            <li><span class="item-comm required">公司性质：</span><Select v-if="ismodifyInfo" v-model="modifyInfo.nature" class="item-input">
+                                    <Option value="1">机关及事业单位</Option>
+                                    <Option value="2">国有股份</Option>
+                                    <Option value="3">外资</Option>
+                                    <Option value="4">合资</Option>
+                                    <Option value="5">民营</Option>
+                                    <Option value="6">私营</Option>
+                                    <Option value="7">个体</Option>
+                                    <Option value="8">社会团体</Option>
+                                </Select>
+                            <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.nature=='1'?'机关及事业单位':modifyInfo.nature=='2'?'国有股份':modifyInfo.nature=='3'?'外资':modifyInfo.nature=='4'?'合资':modifyInfo.nature=='5'?'民营':modifyInfo.nature=='6'?'私营':modifyInfo.nature=='7'?'个体':modifyInfo.nature=='8'?'社会团体':''"/></li>
+                            <li><span class="item-comm required">来本市时间：</span><DatePicker v-if="ismodifyInfo" v-model="modifyInfo.firstCome" type="year" placeholder="来本市时间" class="item-input"></DatePicker>
+                                <Input class="item-input txt" v-if="!ismodifyInfo" readonly :value="modifyInfo.firstCome"/></li>
                         </ul>
-                        <div class="title-info">联系人信息</div>
-                        <span v-for="(item,index) in contacts" :key="index">
+                        <div v-for="(item,index) in contacts" :key="index">
+                            <div class="title-info">第{{index+1}}联系人</div>
+                            <Button type="primary" style="display:block;margin-left:25px;" size="small" v-if="isUpdate"  @click="modifyContact(item,index)">{{!ismodifyContact[index]?'修改':'保存'}}</Button>
                             <ul class="common-ul">
-                                <li><span>姓名：</span><span>{{item.concatName}}</span></li>
-                                <li><span>关系：</span><span>{{item.concatRelationValue}}</span></li>
-                                <li><span>工作单位：</span><span>{{item.company}}</span></li>
-                                <li><span>单位/家庭住址：</span><span>{{item.pca}}</span></li>
-                                <li><span>联系电话：</span><span>{{item.concatMobile}}</span></li>
+                                <li><span  class="item-comm required"  style="width:120px;">姓名：</span><Input class="item-input" :class="{txt:!ismodifyContact[index]}" :readonly='!ismodifyContact[index]' v-model="item.concatName" :placeholder="ismodifyContact[index]?'请输入...':''" /></li>
+                                <li><span class="item-comm required"  style="width:120px;">关系：</span><Select v-if="ismodifyContact[index]" v-model="item.concatRelation" class="item-input">
+                                    <Option value="1">配偶</Option>
+                                    <Option value="2">父母</Option>
+                                    <Option value="3">子女</Option>
+                                    <Option value="4">朋友</Option>
+                                    <Option value="5">兄弟姐妹</Option>
+                                    <Option value="9">其他</Option>
+                                </Select>
+                                    <Input class="item-input txt" v-if="!ismodifyContact[index]" readonly :value="item.concatRelationValue"/></li>
+                                <li><span class="item-comm required"  style="width:120px;">工作单位：</span><Input class="item-input" :class="{txt:!ismodifyContact[index]}" :readonly='!ismodifyContact[index]' v-model="item.company" :placeholder="ismodifyContact[index]?'请输入...':''" /></li>
+                                <li><span class="item-comm required" style="width:120px;">单位/家庭住址：</span><ChinaArea2 v-if="ismodifyContact[index]" @change="chinaAreaChange3($event)" :parProvince="item.province" :parCity="item.city" :parArea="item.area"></ChinaArea2><Input style="margin-left:8px;" class="item-input" v-if="ismodifyContact[index]" v-model="item.address" placeholder="请输入..." /><Input class="item-input txt" style="width:400px;" v-if="!ismodifyContact[index]" readonly :value="item.pca"/></li>
+                                <li><span class="item-comm required" style="width:120px;">联系电话：</span><Input class="item-input" :class="{txt:!ismodifyContact[index]}" :readonly='!ismodifyContact[index]' v-model="item.concatMobile" :placeholder="ismodifyContact[index]?'请输入...':''" /></li>
                             </ul>
-                        </span>
+                        </div>
                         <div class="title-info">基础材料</div>
                         <div class="original-img">
                             <span style="margin-left:0;">
@@ -127,7 +203,7 @@
                     </div>
                 </TabPane>
                 <TabPane label="车辆信息" name="name2">
-                    <div class="name2-box" :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
+                    <div class="name2-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
                         <!-- 行驶证信息 -->
                         <div class="title-info">行驶证信息<Button type="primary" v-if="name=='WaitStoreList'" :ghost="!ismodify1" style="margin-left:100px;" size="small" @click="modify1Btn">{{ismodify1?'保存':'修改'}}</Button></div>   
                         <div class="item-div">
@@ -179,7 +255,7 @@
                             <span class="item-comm">燃油种类：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.oilType" :placeholder="ismodify2?'请输入...':''" />
                         </div> 
                         <div class="item-div">
-                            <span class="item-comm required">排量/功率(kw)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.work" :placeholder="ismodify2?'请输入...':''" />
+                            <span class="item-comm required">排量/功率(ml/kw)：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.work" :placeholder="ismodify2?'请输入...':''" />
                             <span class="item-comm">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.madeFactory" :placeholder="ismodify2?'请输入...':''" />
                             <span class="item-comm">转向形式：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.turnType" :placeholder="ismodify2?'请输入...':''" />
                         </div> 
@@ -214,9 +290,12 @@
                             <span class="item-comm">签发机关：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.issueGov" :placeholder="ismodify2?'请输入...':''" />
                             <span class="item-comm">发证日期：</span><DatePicker v-if="ismodify2" v-model="modify2.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify2" readonly :value="modify2.issueDate"/>
+                        </div> 
+                        <div class="item-div">
+                             <span class="item-comm required">证书编号：</span><Input class="item-input" :class="{txt:!ismodify2}" :readonly='!ismodify2' v-model="modify2.certificateNumber" :placeholder="ismodify2?'请输入...':''"/>
                         </div>  
-                        <!-- 绿本变迁记录  -->
-                        <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">绿本变迁记录 </span><Icon type="md-add-circle"  v-if="ismodify3" @click="addItem" size="18" style="cursor:pointer;position:absolute;left:85px;top:1px;" title="新增"/><Button type="primary" v-if="name=='WaitStoreList'" style="margin-left:82px;" size="small" :ghost="!ismodify3" @click="modify3Btn">{{ismodify3?'保存':'修改'}}</Button></div>
+                        <!-- 登记摘要信息栏  -->
+                        <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span><Icon type="md-add-circle"  v-if="ismodify3" @click="addItem" size="18" style="cursor:pointer;position:absolute;left:140px;top:3px;" title="新增"/><Button type="primary" v-if="name=='WaitStoreList'" style="margin-left:31px;" size="small" :ghost="!ismodify3" @click="modify3Btn">{{ismodify3?'保存':'修改'}}</Button></div>
                         <span v-for="(item,index) in carRegisterRecords" :key="index">
                             <div class="item-div">
                                 <span class="item-comm required">拥有者：</span><Input class="item-input" :class="{txt:!ismodify3}" :readonly='!ismodify3' v-model="item.owner" :placeholder="ismodify3?'请输入...':''" />
@@ -232,7 +311,7 @@
                             </div>  
                         </span>  
                         <!-- 车辆报告  -->
-                        <div class="title-info">车辆报告 <Button type="primary" style="margin-left:110px;" v-if="name=='WaitStoreList'" :ghost="!ismodify4" size="small" @click="modify4Btn">{{ismodify4?'保存':'修改'}}</Button></div>
+                        <div class="title-info">车辆报告 <Button type="primary" style="margin-left:110px;" v-if="name=='WaitStoreList' || name=='WaitConfirmList'" :ghost="!ismodify4" size="small" @click="modify4Btn">{{ismodify4?'保存':'修改'}}</Button></div>
                         <div class="item-div">
                             <span class="item-comm required">车牌号：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.plateNumber" :placeholder="ismodify4?'请输入...':''" />
                             <span class="item-comm required">登记证编号：</span><Input class="item-input" :class="{txt:!ismodify4}" :readonly='!ismodify4' v-model="modify4.registerNumber" :placeholder="ismodify4?'请输入...':''" />
@@ -282,11 +361,10 @@
                                 <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify4" v-model="modify4.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.highEndDate"/>
                             </span>    
-                            <span class="item-comm required">有无商业险 ：</span><Select v-if="ismodify4" v-model="modify4.hasBusyInsurance" class="item-input">
+                            <span class="item-comm required">有无商业险：</span><Select v-if="ismodify4" v-model="modify4.hasBusyInsurance" class="item-input">
                                     <Option value="0">无</Option>
                                     <Option value="1">有</Option>
                                 </Select>
-                            <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
                             <span v-show="modify4.hasBusyInsurance=='1'">    
                                 <Input class="item-input txt" v-if="!ismodify4" readonly :value="modify4.hasBusyInsurance=='0'?'无':modify4.hasBusyInsurance=='1'?'有':''"/>
                                 <span class="item-comm required">有效期开始时间：</span><DatePicker v-if="ismodify4" v-model="modify4.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
@@ -372,11 +450,13 @@
                         <div class="title-info">车辆证件照片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[0]" :type="5" @changePicUrl="changePicUrl(arguments,'行驶证正面')">行驶证正面：</ImgUpload></span>  
-                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[1]" :type="5" @changePicUrl="changePicUrl($event,'行驶证反面')">行驶证反面：</ImgUpload></span>    
-                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[2]" :type="5" @changePicUrl="changePicUrl($event,'绿本第1页')">绿本第1页：</ImgUpload></span>   
-                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[3]" :type="5" @changePicUrl="changePicUrl($event,'绿本第2页')">绿本第2页：</ImgUpload></span>   
-                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[4]" :type="5" @changePicUrl="changePicUrl($event,'绿本第3页')">绿本第3页：</ImgUpload></span>   
-                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[5]" :type="5" @changePicUrl="changePicUrl($event,'绿本第4页')">绿本第4页：</ImgUpload></span> 
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[1]" :type="5" @changePicUrl="changePicUrl($event,'行驶证反面')">行驶证反面：</ImgUpload></span>  
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[2]" :type="5" @changePicUrl="changePicUrl(arguments,'驾驶证正面')">驾驶证正面：</ImgUpload></span>  
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[3]" :type="5" @changePicUrl="changePicUrl($event,'驾驶证反面')">驾驶证反面：</ImgUpload></span>      
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[4]" :type="5" @changePicUrl="changePicUrl($event,'绿本第1页')">绿本第1页：</ImgUpload></span>   
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[5]" :type="5" @changePicUrl="changePicUrl($event,'绿本第2页')">绿本第2页：</ImgUpload></span>   
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[6]" :type="5" @changePicUrl="changePicUrl($event,'绿本第3页')">绿本第3页：</ImgUpload></span>   
+                            <span class="span-width"><ImgUpload :myPicUrl="modify5Img[7]" :type="5" @changePicUrl="changePicUrl($event,'绿本第4页')">绿本第4页：</ImgUpload></span> 
                             <Button type="primary"  size="small" @click="modify5Btn">保存</Button>    
                         </div>
                         <div v-if="name!='WaitStoreList'">
@@ -389,31 +469,43 @@
                             <span class="span-width">
                                 <span class="my-title-comm">行驶证反面：</span>
                                     <!-- <img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"> -->
-                                <viewer :images="modify5Img[1]?modify5Img[1].split(' '):[]"><img class="my-img" :src="modify5Img[1]" alt="行驶证正面">
+                                <viewer :images="modify5Img[1]?modify5Img[1].split(' '):[]"><img class="my-img" :src="modify5Img[1]" alt="行驶证反面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">驾驶证正面：</span>
+                                <!-- <img class="my-img" :src="modify5Img[0]" alt="行驶证正面" @click="clickFaceImg(modify5Img[0])"> -->
+                                <viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="驾驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">驾驶证反面：</span>
+                                    <!-- <img class="my-img" :src="modify5Img[1]" alt="行驶证反面" @click="clickFaceImg(modify5Img[1])"> -->
+                                <viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="驾驶证反面">
                                 </viewer>
                             </span>  
                             <span class="span-width">
                                 <span class="my-title-comm">绿本第1页：</span>
                                 <!-- <img class="my-img" :src="modify5Img[2]" alt="绿本第1页" @click="clickFaceImg(modify5Img[2])"> -->
-                                <viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="行驶证正面">
+                                <viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="绿本第1页">
                                 </viewer>
                             </span>  
                             <span class="span-width">
                                 <span class="my-title-comm">绿本第2页：</span>
                                     <!-- <img class="my-img" :src="modify5Img[3]" alt="绿本第2页" @click="clickFaceImg(modify5Img[3])"> -->
-                                    <viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="行驶证正面">
+                                    <viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="绿本第2页">
                                 </viewer>
                                 </span>  
                             <span class="span-width">
                                 <span class="my-title-comm">绿本第3页：</span>
                                 <!-- <img class="my-img" :src="modify5Img[4]" alt="绿本第3页" @click="clickFaceImg(modify5Img[4])"> -->
-                                <viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="行驶证正面">
+                                <viewer :images="modify5Img[6]?modify5Img[6].split(' '):[]"><img class="my-img" :src="modify5Img[6]" alt="绿本第3页">
                                 </viewer>
                             </span>  
                             <span class="span-width">
                                 <span class="my-title-comm">绿本第4页：</span>
                                 <!-- <img class="my-img" :src="modify5Img[5]" alt="绿本第4页" @click="clickFaceImg(modify5Img[5])"> -->
-                                <viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="行驶证正面">
+                                <viewer :images="modify5Img[7]?modify5Img[7].split(' '):[]"><img class="my-img" :src="modify5Img[7]" alt="绿本第4页">
                                 </viewer>
                             </span> 
                         </div>     
@@ -440,7 +532,7 @@
                     </div>
                 </TabPane>
                 <TabPane label="认证信息" name="name3">
-                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
                         <div class="title-info">违章照片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="5" :txt="'多选'" :myUploadList="myimgs8" :myUploadList2="myimgs88" @changePicUrl="changePicUrl8"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('违章照片')">保存</Button></span>   
@@ -510,7 +602,7 @@
                             <viewer :images="myimgs14"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs14" :src="src" :key="index" alt="人保征信授权书"></viewer>
                         </div>
                         <div class="title-info" style="margin:18px 0 2;">补充材料</div>
-                        <span class="span-width1" v-if="name=='WaitStoreList'"><ImgUpload :type="5" class="imgUpload"  :myUploadList="myimgs15" :myUploadList2="myimgs155" :txt="'多选'" @changePicUrl="changePicUrl15"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('补充材料')">保存</Button>  </span>
+                        <span class="span-width1" v-if="name=='WaitStoreList'"><ImgUpload :type="5" class="imgUpload"  :myUploadList="myimgs15" :myUploadList2="myimgs155" :txt="'多选'" @changePicUrl="changePicUrl15"></ImgUpload><Button class="btn-margin"  style="margin-top:12px;margin-bottom:12px;" type="primary" size="small" @click="modifyCommonBtn('补充材料')">保存</Button>  </span>
                         <span v-if="name!='WaitStoreList'">
                             <!-- <img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"> -->
                             <viewer :images="myimgs15"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs15" :src="src" :key="index" alt="补充材料"></viewer>
@@ -518,19 +610,19 @@
                     </div>
                 </TabPane>
                 <TabPane label="合同信息" name="name4">
-                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
-                        <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button>  
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
+                        <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button class="btn-margin" :loading="carImgloading5" type="primary" size="small" v-if="$route.query.name2=='SignContract'" @click="downContract">合同生成</Button>
                         <template v-for="item in contractList">
-                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button v-if="!item.flowId" class="btn-margin" type="dashed" size="small" @click="applySeal(item)">申请电签</Button><Button v-if="item.flowId" class="btn-margin" type="dashed" size="small" @click="sealDetail(item.flowId)">电签详情</Button></div>
+                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button class="btn-margin" type="dashed" size="small" @click="previewDown(item.contractId)">打印合同</Button></div>
                         <div>
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="6" :txt="'多选'" :myUploadList="formatImg(item.imgs,'绝对')" :myUploadList2="formatImg(item.imgs,'相对')" @changePicUrl="changePicUrl300"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyContractBtn(item.contractId)">保存</Button></span>   
                         </div>
                         </template>
                     </div>
-                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
-                        <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button>  
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
+                        <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button v-if="!contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="applySeal">申请电签</Button><Button v-if="contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="sealDetail">电签详情</Button>   
                         <template v-for="item in contractList">
-                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button v-if="item.flowId" class="btn-margin" type="dashed" size="small" @click="sealDetail(item.flowId)">电签详情</Button></div>
+                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
                         <div>
                             <span>
                                 <!-- <img :src="img.aurl" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img.aurl)"> -->
@@ -541,8 +633,8 @@
                     </div>
                 </TabPane>
                 <TabPane label="设备管理" name="name5">
-                    <div :style="{height:adjustHeight-90+'px','overflow-y': 'scroll'}">
-                        <Button type="primary" size="small" @click="addDevice" v-if="$route.query.name2=='WaitStoreList'">新增订单设备</Button>
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
+                        <Button type="primary" size="small" @click="addDevice" v-if="$route.query.name2=='GPSInstall'">新增订单设备</Button>
                         <template v-for="item in deviceList">
                         <div class="deviceInfo">
                             <span style="min-width:150px;">设备编号：{{item.deviceNum}}</span>
@@ -603,10 +695,10 @@
                     <span class="item-comm required" style="width:80px;">使用场景：</span><Input class="item-input" v-model="applySealModify.scene" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required" style="width:80px;">甲方关键字：</span><Input class="item-input" v-model="applySealModify.firstPartKey" placeholder="请输入..." />
+                    <span class="item-comm required" style="width:80px;">公司签名：</span><Input class="item-input" v-model="applySealModify.firstPartKey" placeholder="请输入..." />
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required" style="width:80px;">乙方关键字：</span><Input class="item-input" v-model="applySealModify.secondPartKey" placeholder="请输入..." />
+                    <span class="item-comm required" style="width:80px;">客户签名：</span><Input class="item-input" v-model="applySealModify.secondPartKey" placeholder="请输入..." />
                 </div>
             </div>
             <div slot="footer">
@@ -614,7 +706,7 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
-        <Modal width="440" v-model="applySealDetModal" title="申请电签" :mask-closable="false"> 
+        <Modal width="440" v-model="applySealDetModal" title="电签详情" :mask-closable="false"> 
             <div class="modify-modal"> 
                 <div class="item-div">状态：{{sealDetailObj.status}}</div>
                 <div class="item-div">电签时间：{{sealDetailObj.startTime}}</div>
@@ -642,23 +734,29 @@ import util from '@/util/util'
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
 import CommonTipModal from '@/components/CommonTipModal'    
 import ModalPic from '@/components/ModalPic'    
+import ChinaArea2 from '@/components/ChinaArea2' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
     name: 'WaitStoreDetail',
     data () {
         return {
+            myUrl:process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093',
             mat:'',
             myTitle:'新增订单设备',
             myTitle2:'添加/修改订单设备',
             item:{},
+            periodDateTemporary:'',
+            contractFlowId:'',
             carImgloading1:false,
             carImgloading2:false,
+            carImgloading3:false,
+            carImgloading4:false,
+            carImgloading5:false,
             modalTipTitle:'电签归档',
             tipModal:false,
             applySealModal:false,
             applySealDetModal:false,
-            applySealObj:{},
             sealDetailObj:{},
             signDetail:[],
             modifyModal:false,
@@ -668,6 +766,7 @@ export default {
             name: '',   //保存从哪个页面跳转进来的路由name值
             bigimg:'',
             id:'',
+            checkedState:false,
             deviceId:'', //设备ID
             ismodify1:false,  //true 为修改模式
             ismodify2:false,  //true 为修改模式
@@ -717,6 +816,7 @@ export default {
                 secondPartKey:''
             },
             modify1: {  //行驶证信息
+                orderId:this.$route.query.orderId,
                 autoRepositoryId: '',
                 plateNumber: '',
                 carType: '',
@@ -737,6 +837,7 @@ export default {
                 record: ''
             },
             modify2: {   //绿本
+                orderId:this.$route.query.orderId,
                 autoRepositoryId:'',
                 type: '',
                 brand: '',
@@ -767,9 +868,11 @@ export default {
                 getWay: '',
                 outDate: '',
                 issueGov: '',
-                issueDate: ''
+                issueDate: '',
+                certificateNumber:''
             },
             modify4: {     //车辆报告
+                orderId:this.$route.query.orderId,
                 autoRepositoryId:'',
                 plateNumber: '',
                 registerNumber: '',
@@ -815,13 +918,16 @@ export default {
                 remark: ''
             },
             modify5: {
+                orderId:this.$route.query.orderId,
                 autoRepositoryId:'',
                 mainTravel: '', //行驶证正面
                 viceTravel: '',  //行驶证反面
                 register1: '',  //绿本第1页
                 register2: '', //绿本第2页
                 register3: '', //绿本第3页
-                register4: '' //绿本第4页
+                register4: '', //绿本第4页
+                travelerFront: '', //驾驶证主页
+                travelerBack: '' //驾驶证副页
             },
             modify6: {
                 deviceNum:'',
@@ -836,6 +942,57 @@ export default {
             insurancePics:'',  //车辆保险
             certifyList:{},    //客户信息集合
             certifyListCar:{}, //车辆信息集合
+            ismodifyInfo:false, //true 为修改模式
+            isUpdate: null,
+            modifyInfo: {
+                bankMobile: '',
+                bankName: '',
+                cardNumber: '',
+                baseSalary: '',
+                houseProperty: '',
+                otherProperty: '',
+                otherSalary: '',
+                ownHouse: '',
+                companyMobile: '',
+                companyProvice: '',
+                companyCity: '',
+                companyArea: '',
+                companyUpdateAddress: '',
+                companyAddress: '',
+                companyName: '',
+                companyType: '',
+                dept: '',
+                level: '',
+                nature: '',
+                startWorkTime: '',
+                educate: '',
+                hasChild: '',
+                localMobile: '',
+                startLiveDate: '',
+                supportRelate: '',
+                nowProvice: '',
+                nowCity: '',
+                nowArea: '',
+                nowUpdateAddress: '',
+                nowAddress: '',
+                email: '',
+                name: '',
+                source: '',
+                houseAddress: '',
+                identityCard: '',
+                periodDate: '',
+                marry: '',
+                creditQuota: '',
+                isTempcer: '',
+                firstCome: '',
+                signDate: '',
+            },
+            infoContent: {
+                province: '',
+                city: '',
+                area: ''
+            },
+            ismodifyContact:[false,false,false], //true 为修改模式
             contacts:[],       //客户信息联系信息集合
             modalPreview:false,
             activeName:'',
@@ -869,14 +1026,15 @@ export default {
             myimgs16:'',
             myimgs300:[], //相对地址
             myimgs3000:[], //绝对地址
-            carRegisterRecords:[],  //绿本变迁记录集合
+            carRegisterRecords:[],  //登记摘要信息栏集合
             imgsbox:[],  //人法、失信截图集合
         }
     },
     components:{
         ImgUpload,
         ModalPic,
-        CommonTipModal
+        CommonTipModal,
+        ChinaArea2
     }, 
     computed:{
         ...mapState(['adjustHeight']) 
@@ -889,7 +1047,7 @@ export default {
         this.ismodify3 = false;  
         this.ismodify4 = false; 
         this.activedName = this.$route.query.activedName;
-        this.getInitialPersonList({userId:this.$route.query.userId});
+        this.getInitialPersonList({userId:this.$route.query.userId,orderId:this.$route.query.orderId});
         this.getInitialCarList({autoRepositoryId:this.$route.query.autoId});
         this.getFile({autoRepositoryId:this.$route.query.autoId});
         this.getDeviceList({orderId:this.$route.query.orderId});
@@ -903,6 +1061,58 @@ export default {
             this.$axios.get('/fx?api=gate.order.admin.person.detail',{params:formData}).then(res => {
                 if(res!=500){
                     this.certifyList = res;
+                    let info = res;
+                    this.isUpdate = info.isUpdate;
+                    this.modifyInfo = {
+                        bankMobile: info.bankMobile,
+                        bankName: info.bankName,
+                        cardNumber: info.cardNumber,
+                        baseSalary: info.baseSalary,
+                        houseProperty: info.houseProperty,
+                        otherProperty: info.otherProperty,
+                        otherSalary: info.otherSalary,
+                        ownHouse: info.ownHouse,
+                        companyMobile: info.companyMobile,
+                        companyProvice: info.companyProvice,
+                        companyCity: info.companyCity,
+                        companyArea: info.companyArea,
+                        companyUpdateAddress: info.companyUpdateAddress,
+                        companyAddress: info.companyAddress,
+                        companyName: info.companyName,
+                        companyType: info.companyType,
+                        dept: info.dept,
+                        level: info.level,
+                        nature: info.nature,
+                        startWorkTime: info.startWorkTime,
+                        educate: info.educate,
+                        hasChild: info.hasChild,
+                        localMobile: info.localMobile,
+                        startLiveDate: info.startLiveDate,
+                        supportRelate: info.supportRelate,
+                        nowProvice: info.nowProvice,
+                        nowCity: info.nowCity,
+                        nowArea: info.nowArea,
+                        nowUpdateAddress: info.nowUpdateAddress,
+                        nowAddress: info.nowAddress,
+                        email: info.email,
+                        name: info.name,
+                        source: info.source,
+                        houseAddress: info.houseAddress,
+                        identityCard: info.identityCard,
+                        periodDate: info.periodDate,
+                        marry: info.marry,
+                        creditQuota: info.creditQuota,
+                        isTempcer: info.isTempcer,
+                        firstCome: info.firstCome,
+                        signDate: info.signDate
+                    };
+                    if(this.modifyInfo.periodDate=='长期'){
+                        this.periodDateTemporary = '';
+                        this.checkedState = true;
+                    }else{
+                        this.periodDateTemporary = this.modifyInfo.periodDate;
+                        this.checkedState = false;
+                    }
                     this.contacts = res.contacts;
                     this.identityInfo = [res.identityFrontValue,res.identityBackValue,res.bankFrontValue,res.bankBackValue];  //基础材料集合
                     this.$store.commit('change_height');
@@ -912,7 +1122,8 @@ export default {
         getContractList(formData ){
             this.$axios.get('/fx?api=gate.order.admin.contractQuery',{params:formData}).then(res => {
                 if(res!=500){
-                    this.contractList = res;
+                    this.contractList = res.list;
+                    this.contractFlowId = res.flowId;
                     this.contractList.forEach( (item,index)=>{
                         let imgsArr = [];
                         item.imgs.map( (ele, index) => {
@@ -947,6 +1158,7 @@ export default {
                     this.certifyListCar = res;
                     let {carTravelerDetailVO,autoRepositoryDetailVO,carRegisterDetailVO,carRegisterRecordDetailVOs,reportVO} = this.certifyListCar;
                     this.modify1 = {
+                        orderId:this.$route.query.orderId,
                         autoRepositoryId: res.autoRepositoryId,
                         plateNumber: carTravelerDetailVO.plateNumber,
                         carType: carTravelerDetailVO.carType,
@@ -967,6 +1179,7 @@ export default {
                         record: carTravelerDetailVO.record,
                     };
                     this.modify2 = {
+                        orderId:this.$route.query.orderId,
                         autoRepositoryId:res.autoRepositoryId,
                         type: carRegisterDetailVO.type,
                         brand: carRegisterDetailVO.brand,
@@ -997,9 +1210,11 @@ export default {
                         getWay: carRegisterDetailVO.getWay,
                         outDate: carRegisterDetailVO.outDate,
                         issueGov: carRegisterDetailVO.issueGov,
-                        issueDate: carRegisterDetailVO.issueDate
+                        issueDate: carRegisterDetailVO.issueDate,
+                        certificateNumber: carRegisterDetailVO.certificateNumber
                     };
                     this.modify4 = {
+                        orderId:this.$route.query.orderId,
                         autoRepositoryId:res.autoRepositoryId,
                         plateNumber:reportVO.plateNumber,
                         registerNumber:reportVO.registerNumber,
@@ -1045,15 +1260,18 @@ export default {
                         remark: reportVO.remark
                     };
                     this.modify5 = {
+                        orderId:this.$route.query.orderId,
                         autoRepositoryId:res.autoRepositoryId,
                         mainTravel:autoRepositoryDetailVO.mainTravel,  //行驶证正面
                         viceTravel:autoRepositoryDetailVO.viceTravel,
                         register1:autoRepositoryDetailVO.register1,
                         register2:autoRepositoryDetailVO.register2,
                         register3:autoRepositoryDetailVO.register3,
-                        register4:autoRepositoryDetailVO.register4
+                        register4:autoRepositoryDetailVO.register4,
+                        travelerFront:autoRepositoryDetailVO.travelerFront,
+                        travelerBack:autoRepositoryDetailVO.travelerBack
                     };
-                    this.modify5Img = [autoRepositoryDetailVO.mainTravelValue,autoRepositoryDetailVO.viceTravelValue,autoRepositoryDetailVO.register1Value,autoRepositoryDetailVO.register2Value,autoRepositoryDetailVO.register3Value,autoRepositoryDetailVO.register4Value];
+                    this.modify5Img = [autoRepositoryDetailVO.mainTravelValue,autoRepositoryDetailVO.viceTravelValue,autoRepositoryDetailVO.travelerFrontValue,autoRepositoryDetailVO.travelerBackValue,autoRepositoryDetailVO.register1Value,autoRepositoryDetailVO.register2Value,autoRepositoryDetailVO.register3Value,autoRepositoryDetailVO.register4Value];
                     this.carPicsmyUploadList = [];
                     this.carPicsmyUploadList2 =[];
                     this.insurancePicsmyUploadList = [];
@@ -1066,7 +1284,13 @@ export default {
                         this.insurancePicsmyUploadList.push(item.value);
                         this.insurancePicsmyUploadList2.push(item.key);
                     });
-                    this.carRegisterRecords = [...carRegisterRecordDetailVOs];
+                    this.carRegisterRecords = carRegisterRecordDetailVOs.length ?
+                        [...carRegisterRecordDetailVOs] : [{
+                            owner: "", //拥有者
+                            registerGov: "", //登记机关
+                            registerDate: "", //登记日期
+                            registerNumber: "" //登记编号
+                        }], //登记摘要信息栏集合;
                     this.$store.commit('change_height');
                 }
             })
@@ -1118,13 +1342,103 @@ export default {
                 }
             })
         },
+        longBtn(checked, name){
+            this.checkedState = checked;
+        },
+        previewDown(contractId){  //单个打印合同
+            this.$axios.post('/fx?api=gate.contract.print',{orderId:this.$route.query.orderId,id:contractId}).then(res => {
+                if(res!=500){
+                    this.$Message.success("打印成功"); 
+                    this.getContractList({orderId:this.$route.query.orderId});
+                }
+            })  
+        },
+        modifyInfoBtn1(){
+            if(this.ismodifyInfo){
+                this.modifyInfo.periodDate = this.periodDateTemporary?moment(this.periodDateTemporary).format("YYYY-MM-DD"):'';
+                // this.modifyInfo.periodDate = this.modifyInfo.periodDate?moment(this.modifyInfo.periodDate).format("YYYY-MM-DD"):'';
+                if(this.checkedState){
+                    this.modifyInfo.periodDate = '长期';
+                }
+                this.modifyInfo.startLiveDate = this.modifyInfo.startLiveDate?moment(this.modifyInfo.startLiveDate).format("YYYY-MM-DD"):'';
+                this.modifyInfo.startWorkTime = this.modifyInfo.startWorkTime?moment(this.modifyInfo.startWorkTime).format("YYYY-MM-DD"):'';
+                this.modifyInfo.firstCome = this.modifyInfo.firstCome?moment(this.modifyInfo.firstCome).format("YYYY"):'';
+                this.modifyInfo.signDate = this.modifyInfo.signDate?moment(this.modifyInfo.signDate).format("YYYY-MM-DD"):'';
+                let formData = {...this.modifyInfo};
+                formData.uid = this.$route.query.userId;
+                formData.orderId = this.$route.query.orderId;
+                let bol = false;
+                for (let key in formData) {
+                    if(!formData[key]){
+                        bol = true;
+                    }
+                }
+                if(bol) return this.$Message.error("带 * 为必填项");  
+                this.$axios.post('/fx?api=gate.order.admin.person.updatePersonDetail',formData).then(res => {
+                    if(res!=500){
+                        this.$Message.success("保存成功"); 
+                        this.getInitialPersonList({userId:this.$route.query.userId,orderId:this.$route.query.orderId});
+                    }
+                })     
+            }
+            this.ismodifyInfo = !this.ismodifyInfo;
+        },
+        modifyContact(item,index){
+            if(this.ismodifyContact[index]){
+                let formData = {...this.infoContent};
+                formData.id = item.id;
+                formData.userId = this.$route.query.userId;
+                formData.orderId = this.$route.query.orderId;
+                formData.concatName = item.concatName;
+                formData.concatRelation = item.concatRelation;
+                formData.company = item.company;
+                formData.address = item.address;
+                formData.concatMobile = item.concatMobile;
+                let bol = false;
+                for (let key in formData) {
+                    if(!formData[key]){
+                        bol = true;
+                    }
+                }
+                if(bol) return this.$Message.error("带 * 为必填项");  
+                this.$axios.post('/fx?api=gate.order.admin.person.updateContacts',formData).then(res => {
+                    if(res!=500){
+                        this.$Message.success("保存成功"); 
+                        this.getInitialPersonList({userId:this.$route.query.userId,orderId:this.$route.query.orderId});
+                    }
+                })
+            }else{
+                this.infoContent = {
+                    province: item.province,
+                    city: item.city,
+                    area: item.area
+                }
+            }
+            this.ismodifyContact[index] = !this.ismodifyContact[index];
+            this.$forceUpdate();
+        },
         modifyContractBtn(contractId){
             this.$axios.post('/fx?api=gate.order.admin.uploadContract',{orderId:this.$route.query.orderId,contractId:contractId,imgs:String(this.myimgs300)}).then(res => {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
-                    // this.ismodify2 = !this.ismodify2;
+                    this.getContractList({orderId:this.$route.query.orderId}); 
                 }
             })
+        },
+        chinaAreaChange1(data){
+            this.modifyInfo.nowProvice = data.province;
+            this.modifyInfo.nowCity = data.city;
+            this.modifyInfo.nowArea = data.area;
+        }, 
+        chinaAreaChange2(data){
+            this.modifyInfo.companyProvice  = data.province;
+            this.modifyInfo.companyCity  = data.city;
+            this.modifyInfo.companyArea = data.area;
+        },
+        chinaAreaChange3(arr){
+            this.infoContent.province = arr.province;
+            this.infoContent.city = arr.city;
+            this.infoContent.area = arr.area;
         },
         modify1Btn(){
             this.modify1.travelerRegisterDate = this.modify1.travelerRegisterDate?moment(this.modify1.travelerRegisterDate).format("YYYY-MM-DD"):'';
@@ -1181,7 +1495,7 @@ export default {
                 this.carRegisterRecords.forEach( (ele, index) => {
                    ele.registerDate = moment(ele.registerDate).format("YYYY-MM-DD");
                 });
-                this.$axios.post('/fx?api=gate.order.car.register.record.update',{autoRepositoryId:this.modify1.autoRepositoryId,carRegisterRecords:JSON.stringify(this.carRegisterRecords)}).then(res => {
+                this.$axios.post('/fx?api=gate.order.car.register.record.update',{orderId:this.$route.query.orderId,autoRepositoryId:this.modify1.autoRepositoryId,carRegisterRecords:JSON.stringify(this.carRegisterRecords)}).then(res => {
                     if(res!=500){
                         this.$Message.success("保存成功"); 
                         this.ismodify3 = !this.ismodify3;
@@ -1244,6 +1558,7 @@ export default {
                 return this.$Message.warning("至少需要一张图片"); 
             }
             let formData = {
+                orderId:this.$route.query.orderId,
                 autoRepositoryId: this.$route.query.autoId,
                 entityType:'orderCar',
                 filePath: String(this.imgs1)
@@ -1252,13 +1567,14 @@ export default {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
                 }
-            })
+            }) 
         },
         modify7Btn(){
             if(!this.imgs2.length){
                 return this.$Message.warning("至少需要一张图片"); 
             }
             let formData = {
+                orderId:this.$route.query.orderId,
                 autoRepositoryId: this.$route.query.autoId,
                 entityType:'orderInsurance',
                 filePath: String(this.imgs2)
@@ -1267,6 +1583,16 @@ export default {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
                 }
+            })
+        },
+        downContract(){ //打印合同
+            this.carImgloading5 = true;
+            this.$axios.post('/fx?api=gate.contract.print',{orderId:this.$route.query.orderId}).then(res => {
+                if(res!=500){
+                    this.$Message.success("打印成功"); 
+                    this.getContractList({orderId:this.$route.query.orderId});
+                }
+                this.carImgloading5 = false;
             })
         },
         downLoadContract(){
@@ -1279,7 +1605,7 @@ export default {
             })
         },
         modifyCommonBtn(txt){
-            let formData = {autoRepositoryId: this.$route.query.autoId};
+            let formData = {orderId:this.$route.query.orderId,autoRepositoryId: this.$route.query.autoId};
             let myUrl = '/fx?api=gate.order.car.file.update';
             switch (txt) {
                 case '违章照片':
@@ -1405,6 +1731,17 @@ export default {
                 this.carImgloading1 = false;
             })
         },
+        downLoadAllInfo(){
+            // this.carImgloading4 = true;
+            // this.$axios.get('/fx?api=gate.download.order.file',{params:{orderId:this.$route.query.orderId}}).then(res => {
+            //     if(res!=500){
+            //         window.open(res.filePath);
+            //     }
+            //     this.carImgloading4 = false;
+            // })
+            let formDataString = encodeURIComponent(JSON.stringify({orderId:this.$route.query.orderId}));
+            window.open(`${this.myUrl}/file/download?api=gate.download.order.file&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${formDataString}`);
+        },
         confirmBtn(){
             let formData = {};
             let  myUrl = '/fx?api=gate.order.admin.person.update';
@@ -1448,6 +1785,12 @@ export default {
                     break;
                 case '行驶证反面':
                     this.modify5.viceTravel = arr[0];
+                    break;
+                case '驾驶证正面':
+                    this.modify5.travelerFront = arr[0][0];
+                    break;
+                case '驾驶证反面':
+                    this.modify5.travelerBack = arr[0];
                     break;
                 case '绿本第1页':
                     this.modify5.register1 = arr[0];
@@ -1528,6 +1871,9 @@ export default {
             });
         },
         deleteItem(index){
+            if(this.carRegisterRecords.length<=1){
+                return this.$Message.info("至少需要一项"); 
+            }
             this.carRegisterRecords.splice(index,1);
         },
         backBtn(){
@@ -1571,17 +1917,17 @@ export default {
                  this.modifyModal2 = false;
             })
         },
-        applySeal(item){  //申请电签
-            this.applySealModal = true;
-            this.applySealObj = item;
-            this.applySealModify = {
-                scene:'',
-                firstPartKey:'',
-                secondPartKey:''
-            }
+        applySeal(){  //申请电签
+            // this.applySealModal = true;
+            // this.applySealModify = {
+            //     scene:'',
+            //     firstPartKey:'',
+            //     secondPartKey:''
+            // }
+            this.applySealConfirm();
         },
-        sealDetail(flowId){  //电签详情
-            this.$axios.get('/fx?api=gate.contract.seal.query',{params:{flowId:flowId}}).then(res => {
+        sealDetail(){  //电签详情
+            this.$axios.get('/fx?api=gate.contract.seal.query',{params:{flowId:this.contractFlowId}}).then(res => {
                 if(res!=500){
                     this.sealDetailObj = res; 
                     this.signDetail = res.signDetail; 
@@ -1590,21 +1936,29 @@ export default {
             this.applySealDetModal = true;
         },
         applySealConfirm(){   
-            if(!this.applySealModify.scene || !this.applySealModify.firstPartKey || !this.applySealModify.secondPartKey){
-                return this.$Message.error("带 * 为必填项"); 
-            }
-            let formData = {...this.applySealModify};
-            formData.orderId = this.$route.query.orderId;
-            formData.orderContractId = this.applySealObj.id;
-            this.modal_loading = true;
-            this.$axios.post('/fx?api=gate.contract.seal.apply',formData).then(res => {
+            // if(!this.applySealModify.scene || !this.applySealModify.firstPartKey || !this.applySealModify.secondPartKey){
+            //     return this.$Message.error("带 * 为必填项"); 
+            // }
+            // let formData = {...this.applySealModify};
+            // formData.orderId = this.$route.query.orderId;
+            // this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.contract.seal.apply',{orderId:this.$route.query.orderId}).then(res => {
                 if(res!=500){
                     this.$Message.success("操作成功"); 
                     this.getContractList({orderId:this.$route.query.orderId});
                 }
-                this.modal_loading = false;
-                this.applySealModal = false;
+                // this.modal_loading = false;
+                // this.applySealModal = false;
             })
+        },
+        previewContract(){
+            this.carImgloading3 = true;
+            this.$axios.get('/fx?api=gate.electron.contract.query',{params:{orderId:this.$route.query.orderId}}).then(res => {
+                if(res!=500){
+                    window.open(res.url);
+                }
+                this.carImgloading3 = false;
+            }) 
         },
         applySealDetConfirm(){
              this.applySealDetModal = false;
@@ -1651,7 +2005,7 @@ export default {
     .item-comm{
         position: relative;
         display: inline-block;
-        width: 100px;
+        width: 125px;
         margin-left: 15px; 
     }
      .my-title-comm{
@@ -1675,6 +2029,12 @@ export default {
         .span11{
             color: red;
         }
+    }
+    #chinaArea{
+        display: inline-block;
+    }
+    ul.common-ul li{
+       margin-top: 10px; 
     }
     .imgs-imgsArr>div{
         display: inline-block;
@@ -1710,6 +2070,9 @@ export default {
         display: inline-block;
         width: 50%;
     }
+    .tab-top-title>span{
+        vertical-align: top;
+    }
     .my-img{
         width: 60px;
         height: 60px;
@@ -1741,11 +2104,11 @@ export default {
     }
     ul.common-ul{
         display: inline-block;
+        margin-left:20px;
         margin-right:100px;
         list-style: none;
         >li>span:first-child{
             display: inline-block;
-            padding-left:15px;
             text-align: right;
         }
     }
@@ -1759,7 +2122,7 @@ export default {
     }
     .span-width{
         display: inline-block;
-        width: 200px;
+        width: 160px;
         margin-top: 10px;
         margin-left: 25px;
     }
