@@ -512,7 +512,7 @@
                         <div class="title-info">车辆照片</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload :type="5" :myUploadList="carPicsmyUploadList" :myUploadList2="carPicsmyUploadList2" :txt="'多选'" @changePicUrl="changePicUrl2">车辆照片：</ImgUpload></span>  
-                            <Button type="primary"  size="small" @click="modify6Btn">保存</Button>  
+                            <Button type="primary"  size="small" @click="commonModifyBtn(imgs1,'orderCar')">保存</Button>  
                         </div>
                         <div v-if="name!='WaitStoreList'">
                             <!--  <img :src="img" alt="车辆照片" class="my-img" style="margin:0 15px;" v-for="img in carPicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)"> -->
@@ -522,11 +522,30 @@
                         <div class="title-info">车辆保单</div>
                         <div v-if="name=='WaitStoreList'">
                             <span class="span-width1"><ImgUpload :txt="'多选'" :myUploadList="insurancePicsmyUploadList" :myUploadList2="insurancePicsmyUploadList2" :type="5" @changePicUrl="changePicUrl3">车辆保单:</ImgUpload></span>  
-                            <Button type="primary" size="small" @click="modify7Btn">保存</Button> 
+                            <Button type="primary" size="small" @click="commonModifyBtn(imgs2,'orderInsurance')">保存</Button> 
                         </div>
                         <div v-if="name!='WaitStoreList'">
                             <!-- <img :src="img" alt="车辆保单" class="my-img" style="margin:0 15px;" v-for="img in insurancePicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)"> -->
                              <viewer :images="insurancePicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in insurancePicsmyUploadList" :src="src" :key="index" alt="车辆保单">
+                                </viewer>
+                        </div>
+                       <!--  <div class="title-info">门店车300</div>
+                        <div v-if="name=='WaitStoreList'">
+                            <span class="span-width1"><ImgUpload :txt="'多选'" :myUploadList="storePicsmyUploadList" :myUploadList2="storePicsmyUploadList2" :type="5" @changePicUrl="changePicUrl4">门店车300:</ImgUpload></span>  
+                            <Button type="primary" size="small" @click="commonModifyBtn(imgs3,'car300Store')">保存</Button> 
+                        </div>
+                        <div v-if="name!='WaitStoreList'">
+                             <viewer :images="insurancePicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in insurancePicsmyUploadList" :src="src" :key="index" alt="车辆保单">
+                                </viewer>
+                        </div> -->
+                        <div class="title-info">初审车300</div>
+                        <div v-if="name=='WaitAuditingList'">
+                            <span class="span-width1"><ImgUpload :txt="'多选'" :myUploadList="auditPicsmyUploadList" :myUploadList2="auditPicsmyUploadList2" :type="5" @changePicUrl="changePicUrl5">门店车300:</ImgUpload></span>  
+                            <Button type="primary" size="small" @click="commonModifyBtn(imgs4,'car300Audit')">保存</Button> 
+                        </div>
+                        <div v-if="name!='WaitAuditingList'">
+                            <!-- <img :src="img" alt="车辆保单" class="my-img" style="margin:0 15px;" v-for="img in insurancePicsmyUploadList" :key="Math.random()" @click="clickFaceImg(img)"> -->
+                             <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车辆保单">
                                 </viewer>
                         </div>
                     </div>
@@ -626,7 +645,11 @@
                         <div>
                             <span>
                                 <!-- <img :src="img.aurl" alt="合同信息" class="my-img" style="margin:0 15px;" v-for="img in item.imgs" :key="Math.random()" @click="clickFaceImg(img.aurl)"> -->
-                                <viewer :images="item.imgsArr"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in item.imgsArr" :src="src" :key="index" alt="合同信息"></viewer>
+                                <viewer style="display:inline-block;" :images="item.imgsArr2"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in item.imgsArr2" :src="src" :key="index" alt="合同信息"></viewer>
+                                <span v-for="(file,index) in item.files2" class="span-imgs-title">
+                                    <img class="my-img" style="margin:0 15px;" src="https://carloan-gw.oss-cn-beijing.aliyuncs.com/imgs/docx.png" alt="合同信息">
+                                    <div @click="toDownBtn(file)"><Icon type="md-download" color="#fff"></Icon></div>
+                                </span>
                             </span>
                         </div>
                         </template>
@@ -776,6 +799,10 @@ export default {
             carPicsmyUploadList2:[], //相对地址
             insurancePicsmyUploadList:[],
             insurancePicsmyUploadList2:[],
+            // storePicsmyUploadList:[],
+            // storePicsmyUploadList2:[],
+            auditPicsmyUploadList:[],
+            auditPicsmyUploadList2:[],
             modify8myUploadList:[],  
             modify8myUploadList2:[],  
             contractList:[],
@@ -998,6 +1025,8 @@ export default {
             activeName:'',
             imgs1:[], //车辆照片
             imgs2:[], //车辆保单
+            // imgs3:[], //门店车300
+            imgs4:[], //初审车300
             imgs8:[],
             imgs9:[],
             imgs10:[],
@@ -1125,11 +1154,19 @@ export default {
                     this.contractList = res.list;
                     this.contractFlowId = res.flowId;
                     this.contractList.forEach( (item,index)=>{
-                        let imgsArr = [];
+                        let [imgsArr,imgsArr2,files2] = [[],[],[]];
                         item.imgs.map( (ele, index) => {
                             imgsArr.push(ele.aurl);
                         });
+                        item.imgs2.map( (ele, index) => {
+                            imgsArr2.push(ele.aurl);
+                        });
+                        item.files.map( (ele, index) => {
+                            files2.push(ele.aurl);
+                        });
                         item.imgsArr = imgsArr;
+                        item.imgsArr2 = imgsArr2;
+                        item.files2 = files2;
                         return item;
                     })
                     this.$store.commit('change_height');
@@ -1276,6 +1313,10 @@ export default {
                     this.carPicsmyUploadList2 =[];
                     this.insurancePicsmyUploadList = [];
                     this.insurancePicsmyUploadList2 = [];
+                    // this.storePicsmyUploadList = [];
+                    // this.storePicsmyUploadList2 = []; 
+                    this.auditPicsmyUploadList = [];
+                    this.auditPicsmyUploadList2 = [];
                     res.carPics.forEach( (item, index) => {
                         this.carPicsmyUploadList.push(item.value);
                         this.carPicsmyUploadList2.push(item.key);
@@ -1283,6 +1324,14 @@ export default {
                     res.insurancePics.forEach( (item, index) => {
                         this.insurancePicsmyUploadList.push(item.value);
                         this.insurancePicsmyUploadList2.push(item.key);
+                    });
+                    // res.car300StorePics.forEach( (item, index) => {
+                    //     this.storePicsmyUploadList.push(item.value);
+                    //     this.storePicsmyUploadList2.push(item.key);
+                    // });
+                    res.car300AuditPics.forEach( (item, index) => {
+                        this.auditPicsmyUploadList.push(item.value);
+                        this.auditPicsmyUploadList2.push(item.key);
                     });
                     this.carRegisterRecords = carRegisterRecordDetailVOs.length ?
                         [...carRegisterRecordDetailVOs] : [{
@@ -1553,37 +1602,21 @@ export default {
                 }
             })
         },
-        modify6Btn(){
-            if(!this.imgs1.length){
+        commonModifyBtn(imgs,txt){
+            if(!imgs.length){
                 return this.$Message.warning("至少需要一张图片"); 
             }
             let formData = {
                 orderId:this.$route.query.orderId,
                 autoRepositoryId: this.$route.query.autoId,
-                entityType:'orderCar',
-                filePath: String(this.imgs1)
+                entityType:txt,
+                filePath: String(imgs)
             };
             this.$axios.post('/fx?api=gate.order.car.file.update',formData).then(res => {
                 if(res!=500){
                     this.$Message.success("保存成功"); 
                 }
             }) 
-        },
-        modify7Btn(){
-            if(!this.imgs2.length){
-                return this.$Message.warning("至少需要一张图片"); 
-            }
-            let formData = {
-                orderId:this.$route.query.orderId,
-                autoRepositoryId: this.$route.query.autoId,
-                entityType:'orderInsurance',
-                filePath: String(this.imgs2)
-            };
-            this.$axios.post('/fx?api=gate.order.car.file.update',formData).then(res => {
-                if(res!=500){
-                    this.$Message.success("保存成功"); 
-                }
-            })
         },
         downContract(){ //打印合同
             this.carImgloading5 = true;
@@ -1693,6 +1726,9 @@ export default {
                     this.$Message.success("保存成功"); 
                 }
             })
+        },
+        toDownBtn(file){
+            window.open(file);
         },
         clickFaceImg(img){
             this.bigimg = img;
@@ -1811,6 +1847,12 @@ export default {
         },
         changePicUrl3(...arr){
             this.imgs2 = arr;
+        }, 
+        // changePicUrl4(...arr){
+        //     this.imgs3 = arr;
+        // },  
+        changePicUrl5(...arr){
+            this.imgs4 = arr;
         },
         changePicUrl8(...arr){
             this.imgs8 = arr;
@@ -2035,6 +2077,25 @@ export default {
     }
     ul.common-ul li{
        margin-top: 10px; 
+    }
+    .span-imgs-title{
+        display: inline-block;
+        position: relative;
+        >div{
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            top:0;
+            left:15px;
+            line-height: 60px;
+            text-align: center;
+            background:rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+            display: none;
+        } 
+        &:hover>div{
+            display: inline-block;
+        } 
     }
     .imgs-imgsArr>div{
         display: inline-block;

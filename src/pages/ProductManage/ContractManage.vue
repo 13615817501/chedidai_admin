@@ -15,7 +15,7 @@
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
         </div>
-        <Modal width="680" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
+        <Modal width="900" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
             <div class="modify-modal" style="margin:15px 0;"> 
                 <div style="text-align:center;margin:10px 0 30px;">合同条目名称：<Input v-model.trim="name" placeholder="输入后自动匹配出合同条目" style="width: 200px"></Input></div>
                 <Table @on-selection-change="selectionChange" border ref="selection" :columns="columns4" :data="contractList" height="500"></Table>
@@ -249,12 +249,12 @@ export default {
             columns4: [
                 {
                     type: 'selection',
-                    width: 100,
+                    width: 50,
                     align: 'center'
                 },{
                     title: '合同条目ID',
                     key: 'id',
-                    minWidth: 70,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.id)
@@ -272,7 +272,7 @@ export default {
                 },{
                     title: '是否必须',
                     key: 'isRequired',
-                    minWidth: 60,
+                    minWidth:90,
                     render: (h, params) => {
                          return h('div', [
                             h('Checkbox', {
@@ -299,7 +299,7 @@ export default {
                 },{
                     title: '是否需要电签',
                     key: 'isSign',
-                    minWidth: 90,
+                    minWidth: 110,
                     render: (h, params) => {
                          return h('div', [
                             h('Checkbox', {
@@ -321,6 +321,24 @@ export default {
                                     }
                                 }
                             })
+                        ]);
+                    }
+                }, {
+                    title: '创建时间',
+                    key: 'createTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+                }, {
+                    title: '路径',
+                    key: 'resource',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.resource)
                         ]);
                     }
                 }
