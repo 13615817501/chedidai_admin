@@ -1,17 +1,22 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-	        <BreadcrumbItem>签署合同</BreadcrumbItem>
-	    </Breadcrumb>
+            <BreadcrumbItem>放款管理</BreadcrumbItem>
+            <BreadcrumbItem>划扣失败列表</BreadcrumbItem>
+        </Breadcrumb>
         <div class="search-box">
              <span>
                 时间类型: 
-                <Select v-model="search.timeType" style="width:100px">
+                <Select v-model="search.timeType" style="width:120px">
                     <Option :value="1">申请时间</Option>
                     <Option :value="2">门店审核通过</Option>
-                    <Option :value="3">审核通过时间</Option>
-                    <Option :value="4">确认时间</Option>
+                    <Option :value="3">初审通过时间</Option>
+                    <Option :value="4">用户确认时间</Option>
+                    <Option :value="5">复审通过时间</Option>
+                    <Option :value="6">合同签署时</Option>
+                    <Option :value="7">GPS安装时间</Option>
+                    <Option :value="8">抵押完成时间</Option>
+                    <Option :value="9">首款完成时间</Option>
                 </Select>
             </span>
             <span>
@@ -36,9 +41,9 @@
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
-            <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
+            <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
-	    <div class="listadmin">
+        <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
@@ -49,10 +54,23 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <Modal width="280" v-model="downMoneyModal" title="下调金额" :mask-closable="false"> 
-            金额(元)：<Input v-model.trim="downMoney" clearable placeholder="请输入金额" style="width: 120px"></Input>
+        <Modal width="280" v-model="modifyModal" title="划扣" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">首款金额：</span><Select v-model="modify.flag" placeholder="请选择" style="width: 150px">
+                            <Option :value="1">成功</Option>
+                            <Option :value="3">失败</Option>
+                        </Select>
+                </div>
+                <div class="item-div" v-show="modify.flag==1">
+                    <span class="item-comm required" style="width:60px;">划扣金额：</span><Input v-model.trim="modify.amount" clearable placeholder="请输入划扣金额" style="width: 150px"></Input>
+                </div>
+                <div class="item-div">
+                    <span class="item-comm" style="width:60px;">失败原因：</span><Input v-model="modify.msg" clearable placeholder="请输入失败原因" style="width: 150px"></Input>
+                </div>
+            </div>
             <div slot="footer">
-                <Button type="primary" :loading="modal_loading" @click="confirmBtn4">确定</Button>
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
@@ -73,32 +91,31 @@ import ImgUpload from '@/components/ImgUpload' //公用的提示组件
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
-	name: 'CustomList',
-	props:[],
-	data () {
-		return {
-			totalCount: 0,
+    name: 'CustomList',
+    props:[],
+    data () {
+        return {
+            msg: '',
+            attachment: [],
+            myUploadList:[],
+            myUploadList2: [],
+            backModal: false,
+            backModalTitle: '反馈',
+            orderId:'',
+            totalCount: 0,
             modifyModal:false,
-            downMoneyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
-            backModal:false,
-            backModalTitle:'退回门店',
-            myUploadList:[],
-            myUploadList2:[],
             myTitle:'新增产品',
             item:{},
             bigimg:'',
-            msg:'',
-            attachment:[],
             bannerPic:'',
-            downMoney:'', //下调金额
             modalPreview:false,
             modal_loading:false,
             storeNames:[],
             id:'',
             orderId:'',
-			prodList:[], //产品列表
+            prodList:[], //产品列表
             search: {
                 timeType: 1,
                 timeInterval: '',
@@ -117,47 +134,20 @@ export default {
                 remoteMethod: this.remoteMethod
             },
             modify: {
-                name: '',
-                label: '',
-                bannerPic: '',
-                monthRate: '',
-                term: '',
-                jrongRate: '',
-                incidental: '',
-                accident: '',
-                flowAmount: '',
-                defaultAmount: '',
-                defaultYear: '',
-                isInterestHead: '',
-                calInterestWay: ''
+                flag: 1,
+                amount: '',
+                msg: ''
             },
-			table_loading: false, //默认先显示加载
-			certifyList:[],
+            table_loading: false, //默认先显示加载
+            certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 170,
+                    width: 100,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
                         return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                    
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.modalTipTitle = '通过该签署合同';
-                                        this.tipModal = true;
-                                        this.item = params.row;
-                                    }
-                                }
-                            }, '通过'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -174,49 +164,41 @@ export default {
                                         this.myUploadList = [];
                                         this.myUploadList2 = [];
                                         this.backModal = true;
-                                        this.backModalTitle = '退回门店';
+                                        this.backModalTitle = '反馈';
                                         this.orderId = params.row.orderId;
                                     }
                                 }
-                            }, '退回门店'),
-                            // h('Button', {
-                            //     props: {
-                            //         type: 'primary',
-                            //         size: 'small',
-                                    
-                            //     },
-                            //     style: {
-                            //         'margin-left':'10px',
-                            //     },
-                            //     on: {
-                            //         click: () => {
-                            //             this.downMoney = '';
-                            //             this.downMoneyModal = true;
-                            //             this.orderId = params.row.orderId;
-                            //         }
-                            //     }
-                            // }, '下调金额')
+                            }, '反馈'),
                         ]);
                     }
                 }, {
-					title: '订单号',
-					key: 'orderNumber',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.orderNumber)
-						]);
-					}
-				}, {
+                    title: '订单号',
+                    key: 'orderNumber',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.orderNumber)
+                        ]);
+                    }
+                }, {
                     title: '用户姓名',
                     key: 'userName',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userName)
                         ]);
                     }
                 }, {
+                    title: '身份证号',
+                    key: 'identityCard',
+                    minWidth: 160,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.identityCard)
+                        ]);
+                    }
+                },{
                     title: '手机号码',
                     key: 'userMobile',
                     minWidth: 120,
@@ -226,92 +208,126 @@ export default {
                         ]);
                     }
                 }, {
-					title: '门店名',
-					key: 'storeName',
-					minWidth: 120,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.storeName)
-						]);
-					}
-				}, {
-					title: '产品名称',
-					key: 'prodName',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.prodName)
-						]);
-					}
-				},{
-                    title: '申请时间',
-                    key: 'createTime',
+                    title: '银行卡号',
+                    key: 'bankCardNum',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankCardNum)
+                        ]);
+                    }
+                }, {
+                    title: '银行分行号',
+                    key: 'bankName',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankName)
+                        ]);
+                    }
+                }, {
+                    title: '门店名',
+                    key: 'storeName',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                }, {
+                    title: '产品名称',
+                    key: 'prodName',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.prodName)
+                        ]);
+                    }
+                },{
+                    title: '贷款金额',
+                    key: 'amount',
+                    minWidth: 130,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.amount)
+                        ]);
+                    }
+                }, {
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 130,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
+                        ]);
+                    }
+                },{
+                    title: '银行分行号',
+                    key: 'bankName',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankName)
+                        ]);
+                    }
+                },{
+                    title: '划扣状态',
+                    key: 'deductStatus',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?`失败 (${params.row.deductFailReason})`:'')
+                        ]);
+                    }
+                },{
+                    title: '需要划扣金额(元)',
+                    key: 'deductAmount',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.deductAmount)
+                        ]);
+                    }
+                },{
+                    title: '复审通过时间',
+                    key: 'checkAgainTime',
                     minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.createTime)
+                            h('strong', params.row.checkAgainTime)
                         ]);
                     }
-                }, {
-                    title: '初审人员',
-                    key: 'checkPassStaff',
-                    minWidth: 90,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.checkPassStaff)
-                        ]);
-                    }
-                }, {
-                    title: '初审通过时间',
-                    key: 'checkPassTime',
+                },{
+                    title: '首款通过时间',
+                    key: 'loanFirstTime',
                     minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.checkPassTime)
+                            h('strong', params.row.loanFirstTime)
                         ]);
                     }
-                }, {
-                    title: '核保状态',
-                    key: 'action',
-                    width: 120,
-                    align: 'center',
+                },{
+                    title: '首款操作员',
+                    key: 'loanFirstStaff',
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', {
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                            },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':'已发起核保'),
+                            h('strong', params.row.loanFirstStaff)
                         ]);
                     }
-                }, {
-                    title: '退回原因',
-                    key: 'reason',
-                    minWidth: 200,
+                },{
+                    title: '订单状态',
+                    key: 'statusValue',
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.reason),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                    display:params.row.reasonAttachment?'inline-block':'none'
-                                },
-                                on: {
-                                    click: () => {
-                                        window.open(params.row.reasonAttachment);
-                                    }
-                                }
-                            }, '附件'),
+                            h('strong', params.row.statusValue)
                         ]);
                     }
-                }, {
+                },{
                     title: '订单详情',
                     key: 'action',
-                    width: 150,
+                    width: 100,
                     align: 'center',
                     render: (h, params) => {
                         return h('div', [
@@ -325,27 +341,50 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'SignContract'}});  
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DeductFailList'}});
                                     }
                                 }
                             }, '详情'),
                         ]);
                     }
+                },{
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DeductFailList'}});
+                                    } 
+                                }
+                            }, '详情'),
+                        ]);
+                    }
                 }
-			]
-		}
-	},
+            ]
+        }
+    },
     components:{
         CommonTipModal,
         ImgUpload
     }, 
-	computed:{
+    computed:{
         ...mapState(['adjustHeight']) 
     },
-	activated(){
+    activated(){
         this.getInitialList(util.searchList(this.search,'timeInterval'));
-	},
-	methods: {
+    },
+    methods: {
         remoteMethod(query) { //远程请求
             if (query != '') {
                 this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
@@ -355,26 +394,26 @@ export default {
                 this.prodList = [];
             }
         },
-		getInitialList(formData){ 
+        getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.waitContractList',{params:formData}).then(res => {
-		    	if(res!=500){
-		    		this.certifyList = res.list;
-			        this.totalCount = res.page.totalCount;
-			        this.search.pageNum = res.page.currentPage;
-			        this.$store.commit('change_height');
-		    	}
-		    	this.table_loading = false;
-			})
-		},
+            this.$axios.get('/fx?api=gate.order.admin.deductFailList',{params:formData}).then(res => {
+                if(res!=500){
+                    this.certifyList = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.search.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+                this.table_loading = false;
+            })
+        },
         pageChange(page){
-			this.search.pageNum = page;
-            this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.search.pageNum = page;
+             this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
-        	this.search.pageNum = 1;
-			this.getInitialList(util.searchList(this.search,'timeInterval'));
-		},
+            this.search.pageNum = 1;
+             this.getInitialList(util.searchList(this.search,'timeInterval'));
+        },
         addBtn(){
             this.myTitle = '新增';
             this.modifyModal = true;
@@ -391,28 +430,24 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
-                return this.$Message.error("带 * 为必填项"); 
+            if(this.modify.flag == 1 && !this.modify.amount){
+                return this.$Message.error('带 * 为必填项');
             }
             let formData = {...this.modify};
-            let  myUrl = '/fx?api=gate.addOrUpdate.product';
-            if(this.myTitle == '修改'){
-                formData.id = this.id;
-            }
-            this.$axios.post(myUrl,formData).then(res => {
+            formData.orderId = this.orderId;
+            this.modal_loading = true;
+            this.$axios.get('/fx?api=gate.order.admin.deducted',{params:formData}).then(res => {
                 if(res!=500){
-                    this.$Message.success("操作成功"); 
-                    this.modifyModal = false;
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));  
+                    this.$Message.success('操作成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
+                this.modal_loading = false;
+                this.modifyModal = false;
             })
         },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
-            this.tipModal = false;
-            this.isPassModal = false;
-            this.downMoneyModal = false;
             this.backModal = false;
         },
         tipComfirmBtn(num) {
@@ -422,37 +457,26 @@ export default {
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         },
-        confirmBtn4(){
-            this.modal_loading = true;
-            this.$axios.post('/fx?api=gate.order.admin.contractBackCheck',{orderId:this.orderId,msg:this.downMoney}).then(res => {
-                if(res!=500){
-                    this.$Message.success('操作成功');
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
-                }
-                this.modal_loading = false;
-            })
-            this.downMoneyModal = false;
-        },
         changePicUrl(...arr){
             this.attachment = arr[0];
         },
         confirmBtn2(){
             if(!this.msg){
-               return this.$Message.warning('请填写退回理由');
+               return this.$Message.warning('请填写理由');
             }
             let formData = {};
             formData.orderId = this.orderId;
-            formData.msg = this.msg;
-            formData.attachment = String(this.attachment);
-            this.$axios.post('/fx?api=gate.order.admin.contractBackStore',formData).then(res => {
+            formData.content = this.msg;
+            formData.imgs = String(this.attachment);
+            this.$axios.post('/fx?api=gate.order.admin.deductFeedback',formData).then(res => {
                 if(res!=500){
                     this.$Message.success('操作成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
             })
             this.backModal = false;
-        },
-	}
+        }
+    }
 }
 </script>
 <style lang="less" scoped>

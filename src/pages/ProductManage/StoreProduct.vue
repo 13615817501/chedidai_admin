@@ -69,7 +69,7 @@ export default {
 		return {
 			totalCount: 0,
             modifyModal:false,
-            modalTipTitle:'禁用该员工',
+            modalTipTitle:'下架该门店产品',
             tipModal:false,
             myTitle:'新增产品',
             item:{},
@@ -106,7 +106,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 100,
+                    width: 150,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -160,7 +160,41 @@ export default {
                                         this.item = params.row;
                                     }
                                 }
-                            }, '删除')
+                            }, '删除'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display: params.row.status==0?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.tipModal = true;
+                                        this.modalTipTitle = '上架该门店产品';
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '上架'),
+                            h('Button', {
+                                props: {
+                                    type: 'error',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                     display: params.row.status==1?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.tipModal = true;
+                                        this.modalTipTitle = '下架该门店产品';
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '下架')
                         ]);
                     }
                 }, {

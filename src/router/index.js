@@ -112,6 +112,21 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/Claim`),
 	            },{
+	                path: '/LoanManage/DeductUpload',
+	                name: 'DeductUpload',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/DeductUpload`),
+	            },{
+	                path: '/LoanManage/DeductFailList',
+	                name: 'DeductFailList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/DeductFailList`),
+	            },{
+	                path: '/LoanManage/DeductFailFeedbackList',
+	                name: 'DeductFailFeedbackList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/LoanManage/DeductFailFeedbackList`),
+	            },{
 	                path: '/LoanManage/PendingLoan',
 	                name: 'PendingLoan',
 	                meta: { auth: true }, // 为true需要登录才能查看

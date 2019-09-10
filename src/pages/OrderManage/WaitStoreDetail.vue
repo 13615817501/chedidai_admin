@@ -624,13 +624,18 @@
                         <span class="span-width1" v-if="name=='WaitStoreList'"><ImgUpload :type="5" class="imgUpload"  :myUploadList="myimgs15" :myUploadList2="myimgs155" :txt="'多选'" @changePicUrl="changePicUrl15"></ImgUpload><Button class="btn-margin"  style="margin-top:12px;margin-bottom:12px;" type="primary" size="small" @click="modifyCommonBtn('补充材料')">保存</Button>  </span>
                         <span v-if="name!='WaitStoreList'">
                             <!-- <img :src="img" alt="补充材料" class="my-img" style="margin:0 15px;" v-for="img in myimgs15" :key="Math.random()" @click="clickFaceImg(img)"> -->
-                            <viewer :images="myimgs15"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs15" :src="src" :key="index" alt="补充材料"></viewer>
+                            <viewer style="display:inline-block;" :images="myimgs15"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in myimgs15Imgs" :src="src" :key="index" alt="补充材料"></viewer>
+                            <span v-for="(file,index) in myimgs15Files" class="span-imgs-title">
+                                    <img class="my-img" style="margin:0 15px;" src="https://carloan-gw.oss-cn-beijing.aliyuncs.com/imgs/docx.png" alt="补充材料">
+                                    <div @click="toDownBtn(file)"><Icon type="md-download" color="#fff"></Icon></div>
+                                </span>
                         </span>
                     </div>
                 </TabPane>
                 <TabPane label="合同信息" name="name4">
                     <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
                         <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button class="btn-margin" :loading="carImgloading5" type="primary" size="small" v-if="$route.query.name2=='SignContract'" @click="downContract">合同生成</Button>
+                            <span class="span-width1">音频：<ImgUpload :txt="'多选'" :myUploadList="myimgs99" :myUploadList2="myimgs991" class="imgUpload" :type="5" @changePicUrl="changePicUrl99"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('音频')">保存</Button></span>
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button class="btn-margin" type="dashed" size="small" @click="previewDown(item.contractId)">打印合同</Button></div>
                         <div>
@@ -639,7 +644,11 @@
                         </template>
                     </div>
                     <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
-                        <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button v-if="!contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="applySeal">申请电签</Button><Button v-if="contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="sealDetail">电签详情</Button>   
+                        <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button v-if="!contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="applySeal">申请电签</Button><Button v-if="contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="sealDetail">电签详情</Button>
+                        <span v-for="(audio,index) in audiosArr" class="span-imgs-title" :key="Math.random()">
+                            <img class="my-img" style="margin:0 15px;" src="https://carloan-bm.oss-cn-hangzhou.aliyuncs.com/imgs/radio_icon.png" alt="音频">
+                            <div @click="toDownBtn(audio)"><Icon type="md-download" color="#fff"></Icon></div>
+                        </span>   
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
                         <div>
@@ -789,6 +798,7 @@ export default {
             name: '',   //保存从哪个页面跳转进来的路由name值
             bigimg:'',
             id:'',
+            audiosArr:[],
             checkedState:false,
             deviceId:'', //设备ID
             ismodify1:false,  //true 为修改模式
@@ -1037,6 +1047,7 @@ export default {
             imgs14:[],
             imgs15:[],
             imgs16:[],
+            imgs99:[],
             myimgs8:[], //绝对地址
             myimgs88:[], //相对地址
             myimgs9:'',  //绝对地址
@@ -1055,8 +1066,12 @@ export default {
             myimgs16:'',
             myimgs300:[], //相对地址
             myimgs3000:[], //绝对地址
+            myimgs99:[],  //绝对地址 
+            myimgs991:[], //相对地址
             carRegisterRecords:[],  //登记摘要信息栏集合
             imgsbox:[],  //人法、失信截图集合
+            myimgs15Files:[], 
+            myimgs15Imgs:[]
         }
     },
     components:{
@@ -1080,10 +1095,10 @@ export default {
         this.getInitialCarList({autoRepositoryId:this.$route.query.autoId});
         this.getFile({autoRepositoryId:this.$route.query.autoId});
         this.getDeviceList({orderId:this.$route.query.orderId});
-        if(this.$route.query.name2!='WaitStoreList' && this.$route.query.name2!='WaitAuditingList' && this.$route.query.name2!='WaitConfirmList'){
-            this.contractList = [];
-            this.getContractList({orderId:this.$route.query.orderId});
-        }
+        // if(this.$route.query.name2!='WaitStoreList' && this.$route.query.name2!='WaitAuditingList' && this.$route.query.name2!='WaitConfirmList'){
+        this.contractList = [];
+        this.getContractList({orderId:this.$route.query.orderId});
+        // }
     },
     methods: {
         getInitialPersonList(formData){ 
@@ -1153,6 +1168,10 @@ export default {
                 if(res!=500){
                     this.contractList = res.list;
                     this.contractFlowId = res.flowId;
+                    this.audiosArr = [];
+                    res.audios.forEach((item,index)=>{
+                        this.audiosArr.push(item.value);
+                    })
                     this.contractList.forEach( (item,index)=>{
                         let [imgsArr,imgsArr2,files2] = [[],[],[]];
                         item.imgs.map( (ele, index) => {
@@ -1168,6 +1187,12 @@ export default {
                         item.imgsArr2 = imgsArr2;
                         item.files2 = files2;
                         return item;
+                    })
+                    this.myimgs99 = [];
+                    this.myimgs991 = [];
+                    res.audios.forEach((item,index)=>{
+                        this.myimgs99.push(item.value);
+                        this.myimgs991.push(item.key);
                     })
                     this.$store.commit('change_height');
                 }
@@ -1383,10 +1408,18 @@ export default {
                     });
                     this.myimgs15 = [];
                     this.myimgs155 = [];
+                    this.myimgs15Files = [];
+                    this.myimgs15Imgs = [];
                     this.myimgs16 = res.modelBackValue; //绝对地址
                     res.orderSupple.forEach( (item, index) => {
-                        this.myimgs15.push(item.value);
-                        this.myimgs155.push(item.key);
+                        this.myimgs15.push(item.value);  //绝对地址
+                        this.myimgs155.push(item.key);   //相对地址
+                    });
+                    res.orderSuppleFiles.forEach( (item, index) => {
+                        this.myimgs15Files.push(item.value);
+                    });
+                    res.orderSuppleImgs.forEach( (item, index) => {
+                        this.myimgs15Imgs.push(item.value);
                     });
                 }
             })
@@ -1402,6 +1435,9 @@ export default {
                 }
             })  
         },
+        changePicUrl99(...arr){
+            this.imgs99 = arr;
+        }, 
         modifyInfoBtn1(){
             if(this.ismodifyInfo){
                 this.modifyInfo.periodDate = this.periodDateTemporary?moment(this.periodDateTemporary).format("YYYY-MM-DD"):'';
@@ -1719,7 +1755,15 @@ export default {
                     myUrl = '/fx?api=gate.order.car.file.update';
                     formData.entityType = 'orderSupple';
                     formData.filePath = String(this.imgs15);
-                    break;   
+                    break; 
+                case '音频':
+                    if(!this.imgs99.length){
+                        return this.$Message.warning("请选上传音频"); 
+                    }
+                    myUrl = '/fx?api=gate.order.car.file.update';
+                    formData.entityType = 'audio';
+                    formData.filePath = String(this.imgs99);
+                    break;       
             }
             this.$axios.post(myUrl,formData).then(res => {
                 if(res!=500){

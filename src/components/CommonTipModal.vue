@@ -156,6 +156,17 @@
                 }else if(this.modalTipTitle.includes('确认金额')){
                     formUrl = '/fx?api=gate.order.confirm';  
                     formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='上架该门店产品'){
+                    formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
+                    formData.id = this.item.id;
+                    formData.status = 1;
+                }else if(this.modalTipTitle=='下架该门店产品'){
+                    formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
+                    formData.id = this.item.id;
+                    formData.status = 0;
+                }else if(this.modalTipTitle=='删除该划扣记录'){
+                    formUrl = '/fx?api=gate.order.excle.deleteDeductUpload';  
+                    formData.id = this.item.id;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

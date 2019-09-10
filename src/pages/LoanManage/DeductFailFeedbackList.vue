@@ -1,14 +1,22 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>放款管理</BreadcrumbItem>
-	        <BreadcrumbItem>还款划扣</BreadcrumbItem>
-	    </Breadcrumb>
+            <BreadcrumbItem>放款管理</BreadcrumbItem>
+            <BreadcrumbItem>划扣失败反馈</BreadcrumbItem>
+        </Breadcrumb>
         <div class="search-box">
              <span>
                 时间类型: 
                 <Select v-model="search.timeType" style="width:120px">
-                    <Option :value="16">还款时间</Option>
+                    <Option :value="1">申请时间</Option>
+                    <Option :value="2">门店审核通过</Option>
+                    <Option :value="3">初审通过时间</Option>
+                    <Option :value="4">用户确认时间</Option>
+                    <Option :value="5">复审通过时间</Option>
+                    <Option :value="6">合同签署时</Option>
+                    <Option :value="7">GPS安装时间</Option>
+                    <Option :value="8">抵押完成时间</Option>
+                    <Option :value="9">首款完成时间</Option>
                 </Select>
             </span>
             <span>
@@ -20,6 +28,12 @@
                 <Input v-model="search.orderNumber" clearable placeholder="请输入订单号" style="width: 120px"></Input>
             </span>
             <span>
+                &nbsp;&nbsp;产品: 
+                <Select v-model="search.prodId" placeholder="输入后选择匹配产品" clearable remote filterable :remote-method='remoteMethod' style="width: 150px">
+                    <Option v-for="(option, index) in prodList" :value="option.id" :label="option.name" :key="option.id"></Option>
+                </Select>
+            </span>
+            <span>
                 &nbsp;&nbsp;手机号: 
                 <Input v-model="search.mobile" clearable placeholder="请输入手机号" style="width: 120px"></Input>
             </span>
@@ -27,17 +41,9 @@
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
-            <span>
-                &nbsp;&nbsp;期数: 
-                <Input v-model="search.period" clearable placeholder="请输入期数" style="width: 120px"></Input>
-            </span>
-            <span>
-                &nbsp;&nbsp;逾期天数: 
-                <Input v-model="search.overdueDaysZd" clearable placeholder="请输入逾期天数" style="width: 120px"></Input>
-            </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
         </div> 
-	    <div class="listadmin">
+        <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
@@ -48,20 +54,42 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="280" v-model="modifyModal" title="划扣" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:60px;">首款金额：</span><Select v-model="modify.flag" placeholder="请选择" style="width: 150px">
+                            <Option :value="1">成功</Option>
+                            <Option :value="3">失败</Option>
+                        </Select>
+                </div>
+                <div class="item-div" v-show="modify.flag==1">
+                    <span class="item-comm required" style="width:60px;">划扣金额：</span><Input v-model.trim="modify.amount" clearable placeholder="请输入划扣金额" style="width: 150px"></Input>
+                </div>
+                <div class="item-div">
+                    <span class="item-comm" style="width:60px;">失败原因：</span><Input v-model="modify.msg" clearable placeholder="请输入失败原因" style="width: 150px"></Input>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <ModalPic :modal="modalPreview" :bigimg="bigimg" @cancel="cancel"></ModalPic>
     </div>
 </template>
 <script>
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
+import ModalPic from '@/components/ModalPic' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
-	name: 'CustomList',
-	props:[],
-	data () {
-		return {
-			totalCount: 0,
+    name: 'CustomList',
+    props:[],
+    data () {
+        return {
+            totalCount: 0,
             modifyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
@@ -73,39 +101,36 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            orderId:'',
             prodList:[], //产品列表
-			search: {
-                timeType: 16,
+            search: {
+                timeType: 1,
                 timeInterval: '',
                 orderNumber: '',
+                prodId: '',
                 mobile: '',
                 name: '',
-                period:'',
-                overdueDaysZd:'',
                 pageNum: 1,
                 pageSize: 15
             },
-            modify: {
-                name: '',
-                label: '',
-                bannerPic: '',
-                monthRate: '',
-                term: '',
-                jrongRate: '',
-                incidental: '',
-                accident: '',
-                flowAmount: '',
-                defaultAmount: '',
-                defaultYear: '',
-                isInterestHead: '',
-                calInterestWay: ''
+            labelEnum:[], //产品标签 
+            isInterestHeadEnum:[], //是否利息前置
+            calInterestWayEnum:[], //计算利息方式
+            remoteSetting: {
+                remote: true,
+                remoteMethod: this.remoteMethod
             },
-			table_loading: false, //默认先显示加载
-			certifyList:[],
+            modify: {
+                flag: 1,
+                amount: '',
+                msg: ''
+            },
+            table_loading: false, //默认先显示加载
+            certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 120,
+                    width: 100,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -121,15 +146,19 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.tipModal = true;
-                                        this.modalTipTitle = '还款划扣';
-                                        this.item = params.row;
+                                        this.modifyModal = true;
+                                        this.orderId = params.row.orderId;
+                                        this.modify = {
+                                            flag: 1,
+                                            amount: '',
+                                            msg: ''
+                                        }
                                     }
                                 }
-                            }, '还款')
+                            }, '划扣'),
                         ]);
                     }
-                },{
+                }, {
                     title: '订单号',
                     key: 'orderNumber',
                     minWidth: 160,
@@ -141,7 +170,7 @@ export default {
                 }, {
                     title: '用户姓名',
                     key: 'userName',
-                    minWidth: 90,
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userName)
@@ -156,7 +185,7 @@ export default {
                             h('strong', params.row.identityCard)
                         ]);
                     }
-                }, {
+                },{
                     title: '手机号码',
                     key: 'userMobile',
                     minWidth: 120,
@@ -174,7 +203,16 @@ export default {
                             h('strong', params.row.bankCardNum)
                         ]);
                     }
-                },{
+                }, {
+                    title: '银行分行号',
+                    key: 'bankName',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankName)
+                        ]);
+                    }
+                }, {
                     title: '门店名',
                     key: 'storeName',
                     minWidth: 100,
@@ -186,14 +224,14 @@ export default {
                 }, {
                     title: '产品名称',
                     key: 'prodName',
-                    minWidth: 120,
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.prodName)
                         ]);
                     }
                 },{
-                    title: '合同金额(元)',
+                    title: '贷款金额',
                     key: 'amount',
                     minWidth: 130,
                     render: (h, params) => {
@@ -202,66 +240,87 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '划扣总金额(元)',
-                    key: 'amountMonthly',
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
                     minWidth: 130,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.amountMonthly)
+                            h('strong', params.row.firstLoanAmount)
                         ]);
                     }
-                },{
-                    title: '划扣金额资方(元)',
-                    key: 'amountMonthlyCapital',
-                    minWidth: 130,
+                }, {
+                    title: '划扣状态',
+                    key: 'deductStatus',
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.amountMonthlyCapital)
+                            h('strong', params.row.deductStatus==0?'待划扣':params.row.deductStatus==1?'成功':params.row.deductStatus==2?`门店处理失败反馈 (${params.row.deductFailReason})`:params.row.deductStatus==3?`失败反馈门店 (${params.row.deductFailReason})`:'')
                         ]);
                     }
                 },{
-                    title: '划扣金额众信(元)',
-                    key: 'amountMonthlyZd',
-                    minWidth: 130,
+                    title: '需要划扣金额(元)',
+                    key: 'deductAmount',
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.amountMonthlyZd)
+                            h('strong', params.row.deductAmount)
                         ]);
                     }
                 },{
-                    title: '银行分行号',
-                    key: 'bankName',
-                    minWidth: 130,
+                    title: '反馈时间',
+                    key: 'feedbackTime',
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.bankName)
+                            h('strong', params.row.feedbackTime)
                         ]);
                     }
                 },{
-                    title: '还款日期',
-                    key: 'limitPayTime',
-                    minWidth: 130,
+                    title: '反馈说明',
+                    key: 'content',
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.limitPayTime)
+                            h('strong', params.row.content)
                         ]);
                     }
                 },{
-                    title: '订单状态 ',
-                    key: 'status',
+                    title: '图片',
+                    key: 'imgs',
+                    minWidth: 250,
+                    render: (h, params) => {
+                        let arr = []
+                        params.row.imgs.forEach( (item, index) => {
+                            arr.push(h('img', {
+                                domProps: {
+                                    src: item.v,
+                                },
+                                slot: "content",
+                                style: {
+                                    width: "50px",
+                                    height: '50px',
+                                    'vertical-align': 'middle',
+                                    margin: '5px',
+                                    cursor:"pointer"
+                                },
+                                on: {
+                                    click: () => {
+                                        if(item.v){
+                                            this.clickFaceImg(item.v);
+                                        }
+                                    }
+                                }
+                            }, ''));
+                        });
+                        return h('div', arr);
+                    }
+                },{
+                    title: '订单状态',
+                    key: 'statusValue',
                     minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.status==13?'待还款':params.row.status==14?'逾期':'')
-                        ]);
-                    }
-                },{
-                    title: '期数 ',
-                    key: 'period',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.period)
+                            h('strong', params.row.statusValue)
                         ]);
                     }
                 },{
@@ -281,7 +340,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'RepaymentDeduction'}});
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DeductFailFeedbackList'}});
                                     }
                                 }
                             }, '详情'),
@@ -304,47 +363,57 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'RepaymentDeduction'}});
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'DeductFailFeedbackList'}});
                                     }
                                 }
                             }, '详情'),
                         ]);
                     }
                 }
-			]
-		}
-	},
+            ]
+        }
+    },
     components:{
         CommonTipModal,
-        ImgUpload
+        ImgUpload,
+        ModalPic
     }, 
-	computed:{
+    computed:{
         ...mapState(['adjustHeight']) 
     },
-	activated(){
+    activated(){
         this.getInitialList(util.searchList(this.search,'timeInterval'));
-	},
-	methods: {
-		getInitialList(formData){ 
+    },
+    methods: {
+        remoteMethod(query) { //远程请求
+            if (query != '') {
+                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
+                    this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
+                })
+            } else {
+                this.prodList = [];
+            }
+        },
+        getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.order.admin.deductMonthlyList',{params:formData}).then(res => {
-		    	if(res!=500){
-		    		this.certifyList = res.list;
-			        this.totalCount = res.page.totalCount;
-			        this.search.pageNum = res.page.currentPage;
-			        this.$store.commit('change_height');
-		    	}
-		    	this.table_loading = false;
-			})
-		},
+            this.$axios.get('/fx?api=gate.order.admin.deductFeedbackList',{params:formData}).then(res => {
+                if(res!=500){
+                    this.certifyList = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.search.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+                this.table_loading = false;
+            })
+        },
         pageChange(page){
-			this.search.pageNum = page;
+            this.search.pageNum = page;
              this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
-        	this.search.pageNum = 1;
-			 this.getInitialList(util.searchList(this.search,'timeInterval'));
-		},
+            this.search.pageNum = 1;
+             this.getInitialList(util.searchList(this.search,'timeInterval'));
+        },
         addBtn(){
             this.myTitle = '新增';
             this.modifyModal = true;
@@ -361,25 +430,25 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
-                return this.$Message.error("带 * 为必填项"); 
+            if(this.modify.flag == 1 && !this.modify.amount){
+                return this.$Message.error('带 * 为必填项');
             }
             let formData = {...this.modify};
-            let  myUrl = '/fx?api=gate.addOrUpdate.product';
-            if(this.myTitle == '修改'){
-                formData.id = this.id;
-            }
-            this.$axios.post(myUrl,formData).then(res => {
+            formData.orderId = this.orderId;
+            this.modal_loading = true;
+            this.$axios.get('/fx?api=gate.order.admin.deducted',{params:formData}).then(res => {
                 if(res!=500){
-                    this.$Message.success("操作成功"); 
-                    this.modifyModal = false;
+                    this.$Message.success('操作成功');
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
+                this.modal_loading = false;
+                this.modifyModal = false;
             })
         },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
+            this.modalPreview = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -388,7 +457,7 @@ export default {
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         }
-	}
+    }
 }
 </script>
 <style lang="less" scoped>

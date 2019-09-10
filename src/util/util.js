@@ -410,6 +410,15 @@ let util = {
             case 'RepaymentDeduction':
                 return 'LoanManage';
                 break;  
+            case 'DeductFailList':
+                return 'LoanManage';
+                break; 
+            case 'DeductUpload':
+                return 'LoanManage';
+                break;  
+            case 'DeductFailFeedbackList':
+                return 'LoanManage';
+                break;          
             case 'PendingRepayment':
                 return 'AfterLoanManage';
                 break; 

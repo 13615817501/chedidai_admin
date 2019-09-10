@@ -156,7 +156,7 @@ export default {
 	            	});
 	            	
             	}else{
-            		let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx$/i;
+            		let reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx$|\.wav$|\.mp3$|\.cda$|\.m4a/i;
 	            	if(this.uploadTxt=='图片或视频'){
 	            		reg = /\.jpg$|\.jpeg$|\.gif$|\.png$|\.bmp$|\.doc$|\.docx$|\.xls$|\.xlsx|\.mp4$/i;
 	            	}
@@ -164,7 +164,7 @@ export default {
 	            		if(!reg.test(ele.name)){
 		            		let fileInput = this.$refs.file;
 			                fileInput.value='';
-			                let errorTxt = '格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp';
+			                let errorTxt = '格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp，wav，mp3，cda，m4a';
 			                if(this.uploadTxt=='图片或视频'){
 			                	errorTxt = '格式只支持doc，docx，xls，xlsx，gif，jpeg，png，jpg，bmp,视频格式只支持mp4';
 			                }
@@ -230,12 +230,16 @@ export default {
         formatItem(item){
             if(item.includes('.docx') || item.includes('.doc') || item.includes('.xls') || item.includes('.xlsx')){
             	return 'https://carloan-gw.oss-cn-beijing.aliyuncs.com/imgs/docx.png';
+            }else if(item.includes('.wav') || item.includes('.cda') || item.includes('.mp3')|| item.includes('.m4a')){
+                return 'https://carloan-bm.oss-cn-hangzhou.aliyuncs.com/imgs/radio_icon.png';
             }
             return item;
         },
         formatShow(item){
         	if(item.includes('.docx') || item.includes('.doc') || item.includes('.xls') || item.includes('.xlsx')){
             	return false;
+            }else if(item.includes('.wav') || item.includes('.cda') || item.includes('.mp3')|| item.includes('.m4a')){
+                return false;
             }
             return true;
         },
