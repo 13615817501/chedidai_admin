@@ -467,7 +467,7 @@ let util = {
         }
     },
     testPhone(num) {
-        let regPhone = /^1[34578]\d{9}$/;
+        let regPhone = /^1\d{10}$/;
         return regPhone.test(num);
     },
     testIdNum(num) {

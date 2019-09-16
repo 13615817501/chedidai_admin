@@ -434,10 +434,9 @@
             	if(this.addModalTitle=="新增" && !this.passwd){
             		 return this.$Message.error('带 * 项不能为空');
             	}
-            	let regPhone = /^1[34578]\d{9}$/;
-            	if(!regPhone.test(this.add.mobile)){
+            	if(!util.testPhone(this.add.mobile)){
                     return this.$Message.error('手机格式有误');
-            	}
+            	};
             	if(!util.testIdNum(this.add.idCard)){
                     return this.$Message.error('身份证格式有误');
             	};

@@ -21,7 +21,6 @@
 	        :is-fold="props.isFold"
 	        :expand-type="props.expandType"
 	        select-type="radio"
-	        :style="{height:adjustHeight+150+'px',overflow:'auto'}"
 	        expand-key="name">
 	            <template slot="roles" slot-scope="scope">
 		            <Tag v-for="role in scope.row.roles" :key="role.k" color="blue">{{role.v}}</Tag>
@@ -201,6 +200,13 @@ export default {
                 this.roleIdsValueArr = [];
                 this.myroleId = '';
         	}
+        },
+        adjustHeight(newVal,oldVal){
+            let table = this.$refs.table;
+            $(table.$el).find('.zk-table__body-wrapper').css({
+            	'height':newVal+150,
+            	'overflow':'auto'
+            });
         }
 	},
 	methods: {
@@ -223,6 +229,7 @@ export default {
             // console.log(option); 
         },
         addBtnFun(id){
+        	this.myTitle = '新增';
             this.pid = id;
             this.salesForm = {
 				name: '',
@@ -366,5 +373,12 @@ export default {
     }
     .item-width{
     	width: 200px;
+    }
+    .listadmin.zk-table /deep/ .zk-table__header-wrapper{
+    	position: absolute;
+    	z-index: 100;
+    }
+    .listadmin.zk-table /deep/ .zk-table__body-wrapper{
+    	padding-top: 41px;
     }
 </style>
