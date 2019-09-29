@@ -41,7 +41,10 @@
 				let formData = {
                     orderId: this.orderId,
 	            };
-	            let myUrl = '';
+	            let myUrl = '/fx?api=gate.order.admin.refuse';
+	            if(this.title=='待发起核保拒绝'||this.title=='待复审拒绝'||this.title=='待确认拒绝'){
+                    formData.content = this.activeState!='其他'?this.activeState:this.otherInput;
+	            }
 	            switch (this.title) {
 	            	case '待审核拒绝':
 	            		myUrl = '/fx?api=gate.order.admin.refuse';

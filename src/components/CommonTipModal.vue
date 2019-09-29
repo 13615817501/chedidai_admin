@@ -42,7 +42,7 @@
                     formData.status = '0';
                 }else if(this.modalTipTitle=='删除该门店产品'){
                     formUrl = '/fx?api=gate.admin.store.delProdMapping';  //这里还需要修改
-                    formData.id = this.item.id;
+                    formData.ids = this.item.id;
                 }else if(this.modalTipTitle=='删除该产品组'){
                     formUrl = '/fx?api=gate.delete.productGroup.admin';  //这里还需要修改
                     formData.id = this.item.id;
@@ -158,15 +158,30 @@
                     formData.orderId = this.item.orderId;
                 }else if(this.modalTipTitle=='上架该门店产品'){
                     formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
-                    formData.id = this.item.id;
+                    formData.ids = this.item.id;
                     formData.status = 1;
                 }else if(this.modalTipTitle=='下架该门店产品'){
                     formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
-                    formData.id = this.item.id;
+                    formData.ids = this.item.id;
                     formData.status = 0;
                 }else if(this.modalTipTitle=='删除该划扣记录'){
                     formUrl = '/fx?api=gate.order.excle.deleteDeductUpload';  
                     formData.id = this.item.id;
+                }else if(this.modalTipTitle=='删除该资料'){
+                    formUrl = '/fx?api=gate.file.delete';  
+                    formData.id = this.item.id;
+                    formData.orderId = this.item.orderId;
+                }else if(this.modalTipTitle=='批量删除该门店产品'){
+                    formUrl = '/fx?api=gate.admin.store.delProdMapping';  
+                    formData.ids = this.adminId;
+                }else if(this.modalTipTitle=='批量上架该门店产品'){
+                    formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
+                    formData.ids = this.adminId;
+                    formData.status = 1;
+                }else if(this.modalTipTitle=='批量下架该门店产品'){
+                    formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
+                    formData.ids = this.adminId;
+                    formData.status = 0;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

@@ -52,6 +52,7 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn5" @cancel="cancel"></ChooseReason> 
         <Modal width="400" v-model="backModal" :title="backModalTitle" :mask-closable="false"> 
             <span class="item-comm required">填写理由：</span><Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
             <div style="margin:10px 0;">上传附件：<ImgUpload style="margin-top:5px;" :type="11" class="imgUpload" :myUploadList="myUploadList" :myUploadList2="myUploadList2" @changePicUrl="changePicUrl"></ImgUpload></div>
@@ -66,6 +67,7 @@
 import util from '@/util/util'
 import CommonTipModal from '@/components/CommonTipModal' //公用的提示组件 
 import ImgUpload from '@/components/ImgUpload' //公用的提示组件 
+import ChooseReason from '@/components/ChooseReason'  
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
@@ -92,6 +94,10 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            title:'',
+            orderId:'',
+            ModalContent:'',
+            passModal: false,
 			prodList:[], //产品列表
             search: {
                 timeType: 1,
@@ -185,13 +191,8 @@ export default {
                                 },
                                 on: {
                                     click: () => {
-                                        this.msg = '';
-                                        this.attachment = [];
-                                        this.myUploadList = [];
-                                        this.myUploadList2 = [];
-                                        this.backModal = true;
-                                        this.myTitle2 = '拒绝该复审订单';
-                                        this.backModalTitle = '拒绝';
+                                        this.passModal = true;
+                                        this.title = '待复审拒绝';
                                         this.orderId = params.row.orderId;
                                     }
                                 }
@@ -346,12 +347,14 @@ export default {
 	},
     components:{
         CommonTipModal,
-        ImgUpload
+        ImgUpload,
+        ChooseReason
     }, 
 	computed:{
         ...mapState(['adjustHeight']) 
     },
 	activated(){
+        this.getRefuseReasonList();
         this.getInitialList(util.searchList(this.search,'timeInterval'));
 	},
 	methods: {
@@ -443,10 +446,28 @@ export default {
                 }
             })
         },
+        confirmBtn5(num){
+            if(num!=500){
+                this.$Message.success('操作成功');
+                this.getInitialList(util.searchList(this.search,'timeInterval'));
+            }
+            this.passModal = false;
+        },
+        getRefuseReasonList(){
+            this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {
+                if(res!=500){
+                    this.ModalContent = [];
+                    res.hub.forEach( (item, index) => {
+                        this.ModalContent.push(item.v);
+                    });
+                }
+            })
+        },
         cancel(){
             this.tipModal = false;
             this.modifyModal = false;
             this.backModal = false;
+            this.passModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;

@@ -110,6 +110,15 @@
                     <span class="item-comm required">汇率(%)：</span><Input class="item-input" v-model="modify.exchangeRate" placeholder="请输入..." />
                 </div> 
                 <div class="item-div">
+                    <span class="item-comm">资方：</span><Input class="item-input" v-model="modify.capital" placeholder="请输入..." />
+                    <!-- <span class="item-comm">承保方：</span><Input class="item-input" v-model="modify.insurer" placeholder="请输入..." /> -->
+                    <span class="item-comm required">贷款用途：</span><Select v-model="modify.purpose" class="item-input" placeholder="请选择">
+                            <Option value="1">消费</Option>
+                            <Option value="2">租车</Option>
+                            <Option value="6">租车分期</Option>
+                        </Select>
+                </div> 
+                <div class="item-div">
                     <span class="item-comm required">贷款还款日期方式：</span><Select v-model="modify.repayDateType" class="item-input" placeholder="请选择">
                             <Option value="1">固定时间</Option>
                             <Option value="2">合同生效日起算</Option>
@@ -121,6 +130,17 @@
             </div>
             <div slot="footer">
                 <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
+        <Modal width="300" v-model="copyModal" title="复制"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:80px;" >产品名称：</span><Input class="item-input" v-model="fullName" placeholder="请输入..." />
+                </div>  
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
@@ -148,6 +168,7 @@ export default {
             modifyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
+            copyModal:false,
             myTitle:'新增产品',
             item:{},
             bigimg:'',
@@ -156,6 +177,7 @@ export default {
             modal_loading:false,
             storeNames:[],
             id:'',
+            fullName: '',
 			search:{
                 mobile:'',
                 name:'',
@@ -193,14 +215,17 @@ export default {
                 hiestAmount: '',
                 loestAmount: '',
                 exchangeRate: '',
-                accountStrategy:''
+                accountStrategy:'',
+                capital:'',
+                // insurer:'',
+                purpose:''
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 220,
+                    width: 280,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -223,6 +248,24 @@ export default {
                                     }
                                 }
                             }, '下架'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display: params.row.status=='1'?  'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.fullName = '';
+                                        this.id = params.row.id;
+                                        this.copyModal = true;
+                                    }
+                                }
+                            }, '复制'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -256,8 +299,8 @@ export default {
                                         (async () => {
                                             try {
                                                 let detailProduct = await this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:params.row.id}});
-                                                let {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate} = detailProduct;
-                                                this.modify = {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent:'0',cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate} 
+                                                let {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate,capital,purpose} = detailProduct;
+                                                this.modify = {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent:'0',cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate,capital,purpose} 
                                                 this.picUrl = params.row.bannerPicValue;
                                                 if(this.modify.repayDateType=='2'){
                                                    this.modify.repayDate = '';
@@ -439,6 +482,22 @@ export default {
             this.bigimg = img;
             this.modalPreview = true;
         },
+        confirmBtn2(){
+            if(!this.fullName){
+                return this.$Message.error("请输入产品名称"); 
+            }
+            let formData = {
+                id: this.id,
+                fullName: this.fullName
+            };
+            this.$axios.post('/fx?api=gate.copy.product',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.copyModal = false;
+                    this.getInitialList(this.search);    
+                }
+            })
+        },
         confirmBtn(){
             if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.zfperiods || !this.modify.zfmonthRate || !this.modify.zdperiods || !this.modify.zdmonthRate || !this.modify.debtType || !this.modify.annualRate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount || !this.modify.exchangeRate || !this.modify.accountStrategy){
                 return this.$Message.error("带 * 为必填项"); 
@@ -464,6 +523,7 @@ export default {
             this.tipModal = false;
             this.modifyModal = false;
             this.modalPreview = false;
+            this.copyModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;

@@ -20,11 +20,12 @@
 	        :tree-type="props.treeType"
 	        :is-fold="props.isFold"
 	        :expand-type="props.expandType"
+            :row-key="rowKey"
 	        select-type="radio"
 	        expand-key="name">
 	            <template slot="roles" slot-scope="scope">
-		            <Tag v-for="role in scope.row.roles" :key="role.k" color="blue">{{role.v}}</Tag>
-		        </template>
+                    <Tag v-for="role in scope.row.roles" :key="role.k" color="blue">{{role.v}}</Tag>
+                </template>  
 	            <template slot="province" slot-scope="scope">
 		            <span>{{scope.row.province?scope.row.province.name:''}}</span>
 		        </template> 
@@ -202,14 +203,17 @@ export default {
         	}
         },
         adjustHeight(newVal,oldVal){
-            let table = this.$refs.table;
-            $(table.$el).find('.zk-table__body-wrapper').css({
-            	'height':newVal+150,
-            	'overflow':'auto'
-            });
+            this.tableAdjustHeight();
         }
 	},
 	methods: {
+        tableAdjustHeight(){
+            let table = this.$refs.table;
+            $(table.$el).find('.zk-table__body-wrapper').css({
+                'height': this.adjustHeight + 150,
+                'overflow':'auto'
+            });
+        },
 		getRoleList(){
             this.$axios.get('/fx?api=gate.auth.roleList').then(res => {
 		    	if(res!=500){
@@ -222,6 +226,7 @@ export default {
 		    	if(res!=500){
 		    		this.myData = res;
 			        this.$store.commit('change_height');
+                    this.tableAdjustHeight();
 		    	}
 			})
 		},
@@ -342,6 +347,9 @@ export default {
             this.roleIdsArr.splice(index,1);
             this.roleIdsValueArr.splice(this.roleIdsValueArr.indexOf(role.value),1);
             this.salesForm.roleIds = this.roleIdsValueArr.join(',');
+        },
+        rowKey(row,rowIndex){
+            console.log(row,rowIndex);
         }
 	}
 }

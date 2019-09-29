@@ -5,7 +5,7 @@
             <BreadcrumbItem>资料回寄</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">
-             <span>
+            <!-- <span>
                 时间类型: 
                 <Select v-model="search.timeType" style="width:120px">
                     <Option :value="16">还款时间</Option>
@@ -14,7 +14,7 @@
             <span>
                 &nbsp;&nbsp;时间区间: 
                 <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
-            </span>
+            </span> -->
             <span>
                 &nbsp;&nbsp;订单号: 
                 <Input v-model="search.orderNumber" clearable placeholder="请输入订单号" style="width: 120px"></Input>
@@ -23,19 +23,27 @@
                 &nbsp;&nbsp;手机号: 
                 <Input v-model="search.mobile" clearable placeholder="请输入手机号" style="width: 120px"></Input>
             </span>
-            <span>
+           <!--  <span>
                 &nbsp;&nbsp;期数: 
                 <Input v-model="search.period" clearable placeholder="请输入期数" style="width: 120px"></Input>
-            </span>
+            </span> -->
             <span>
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
-            <span>
+           <!--  <span>
                 &nbsp;&nbsp;逾期天数: 
                 <Input v-model="search.overdueDaysZd" clearable placeholder="请输入逾期天数" style="width: 120px"></Input>
+            </span>  -->
+            <span>
+                &nbsp;&nbsp;资料寄回是否完成: 
+                <Select v-model="search.fileCollectStatus" style="width:120px" clearable>
+                    <Option :value="0">未完成</Option>
+                    <Option :value="1">已完成</Option>
+                </Select>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+            <Button type="primary" icon="md-download" style="margin-left:10px;" @click="downLoad">导出</Button>
         </div> 
         <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
@@ -61,6 +69,8 @@ export default {
     props:[],
     data () {
         return {
+            myUrl:process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093',
+            mat:'',
             totalCount: 0,
             modalTipTitle:'资料回寄完成',
             tipModal:false,
@@ -68,13 +78,14 @@ export default {
             modal_loading:false,
             orderId:'',
             search: {
-                timeType: 16,
-                timeInterval: '',
+                // timeType: 16,
+                // timeInterval: '',
                 orderNumber: '',
                 mobile: '',
                 name: '',
-                period:'',
-                overdueDaysZd:'',
+                // period:'',
+                // overdueDaysZd:'',
+                fileCollectStatus:'',
                 pageNum: 1,
                 pageSize: 15
             },
@@ -92,7 +103,7 @@ export default {
                                 props: {
                                     type: 'primary',
                                     size: 'small',
-                                    
+                                    disabled: params.row.fileCollectStatus==1?true:false
                                 },
                                 style: {
                                     'margin-left':'10px',
@@ -135,6 +146,33 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '放款日期',
+                    key: 'loanTime',
+                    minWidth: 120,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.loanTime)
+                        ]);
+                    }
+                },  {
+                    title: '身份证号',
+                    key: 'identityCard',
+                    minWidth: 120,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.identityCard)
+                        ]);
+                    }
+                },  {
+                    title: '车牌号',
+                    key: 'plateNumber',
+                    minWidth: 120,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.plateNumber)
+                        ]);
+                    }
+                },  {
                     title: '门店名',
                     key: 'storeName',
                     minWidth: 120,
@@ -219,7 +257,8 @@ export default {
         ...mapState(['adjustHeight']) 
     },
     activated(){
-        this.getInitialList(util.searchList(this.search,'timeInterval'));
+        this.mat = localStorage.getItem('mat');
+        this.getInitialList(this.search);
     },
     methods: {
         getInitialList(formData){ 
@@ -236,11 +275,11 @@ export default {
         },
         pageChange(page){
             this.search.pageNum = page;
-            this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(this.search);
         },
         searchList() {
             this.search.pageNum = 1;
-             this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(this.search);
         },
         cancel(){
             this.tipModal = false;
@@ -249,8 +288,11 @@ export default {
             this.tipModal = false;
             if (num != 500) {
                 this.$Message.success('操作成功');
-                this.getInitialList(util.searchList(this.search,'timeInterval'));
+                this.getInitialList(this.search);
             }
+        },
+        downLoad(){
+            window.open(`${this.myUrl}/file/download?api=gate.order.admin.docsRebackList.export&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(this.search))}`);
         }
     }
 }

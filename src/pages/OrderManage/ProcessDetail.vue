@@ -8,13 +8,13 @@
         <div class="search-box">
             <Button type="primary" @click="backBtn"><Icon type="ios-arrow-back"/>返回</Button>
         </div> 
-	    <div class="listadmin" :style="{height:adjustHeight+120+'px',overflow:'auto'}">
+	    <div class="listadmin" :style="{height:adjustHeight+100+'px',overflow:'auto'}">
             <div style="display:inline-block;vertical-align:top;">
                 <table border="1" style="border-color:#ddd;text-align:center;line-height:38px;" cellspacing="1">
                     <tbody>
                         <tr><td>客户姓名：{{certifyList.userName}}</td><td>客户电话：{{certifyList.userMobile}}</td><td>合同金额：{{certifyList.amount}}</td><td> <Button type="primary" size="small" style="margin:0 10px;" @click="custominfoBtn">客户认证信息</Button></td></tr>
                         <tr><td colspan="2">贷款车辆：{{certifyList.autoModelName}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="modifyCarInfoBtn" v-if="$route.query.name=='WaitAuditingList'">修改车型</Button></td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="carinfoBtn">车辆认证信息</Button></td></tr>
-                        <tr><td>产品：{{certifyList.prodName}}</td><td>贷款期数：{{certifyList.periods}}</td><td>还款方式：{{certifyList.type=='1'?'先息后本':certifyList.type=='2'?'等额本息':'等本等息'}}</td><td> <Button type="primary" size="small"  style="margin:0 10px;" @click="commoninfoBtn">认证信息</Button></td></tr>
+                        <tr><td>产品：{{certifyList.prodName}}</td><td>贷款期数：{{certifyList.periods}}</td><td>还款方式：{{certifyList.type=='1'?'先息后本':certifyList.type=='2'?'等额本息':'等本等息'}}</td><td> <Button type="primary" size="small"  style="margin:0 10px;" @click="commoninfoBtn">资料信息</Button></td></tr>
                         <tr><td>门店编码：{{certifyList.storeNum}}</td><td>门店客服：{{certifyList.storeCt}}</td><td>门店电话：{{certifyList.storeCtm}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" @click="deviceinfoBtn">设备管理</Button></td></tr>
                         <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
                     </tbody>
@@ -24,17 +24,17 @@
                         <p v-if="$route.query.name=='WaitStoreList'">
                             <span class="yajin">年检押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify1}" :readonly='!isModify1' v-model="modify.annualInspectionDeposit" style="width: 100px" :placeholder="isModify1?'请输入...':''" />
-                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
+                            <Button type="primary" v-if="certifyList.status!=10" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
                         </p>    
                         <p v-if="$route.query.name=='WaitStoreList'">
                         <span class="yajin">违章押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify2}" :readonly='!isModify2' v-model="modify.trafficDeposit" style="width: 100px" :placeholder="isModify2?'请输入...':''" />
-                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
+                            <Button type="primary" size="small"  v-if="certifyList.status!=10" style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
                         </p>   
                         <p>
                             <span class="yajin">综合服务费(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify3}" :readonly='!isModify3' v-model="modify.serviceFee" style="width: 100px" :placeholder="isModify3?'请输入...':''" />
-                            <Button type="primary" size="small"  style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
+                            <Button type="primary" size="small"  v-if="certifyList.status!=10" style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
                         </p>  
                     </div>
                 </div> 
@@ -389,7 +389,7 @@ export default {
         carinfoBtn(){  //车辆认证信息
             this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name2',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
         }, 
-        commoninfoBtn(){  //认证信息
+        commoninfoBtn(){  //资料信息
             this.$router.push({name:'WaitStoreDetail',query:{pageNum:this.$route.query.pageNum,name:'ProcessDetail',userId:this.certifyList.userId,autoId:this.certifyList.autoId,activedName:'name3',orderId:this.$route.query.orderId,name2:this.$route.query.name}});
         }, 
         deviceinfoBtn(){  //设备信息

@@ -265,6 +265,30 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '退回原因',
+                    key: 'reason',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.reason),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                    display:params.row.reasonAttachment?'inline-block':'none'
+                                },
+                                on: {
+                                    click: () => {
+                                        window.open(params.row.reasonAttachment);
+                                    }
+                                }
+                            }, '附件'),
+                        ]);
+                    }
+                }, {
                     title: '核保状态',
                     key: 'action',
                     width: 120,

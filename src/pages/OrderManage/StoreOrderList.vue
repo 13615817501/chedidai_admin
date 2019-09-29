@@ -47,6 +47,28 @@
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
             </span>
+            <span>
+                &nbsp;&nbsp;状态: 
+                <Select v-model="search.status" style="width:100px" clearable>
+                    <Option :value="1">待门店审核</Option>
+                    <Option :value="2">待初审</Option>
+                    <Option :value="3">待确认</Option>
+                    <Option :value="4">待发起核保</Option>
+                    <Option :value="5">拒绝</Option>
+                    <Option :value="6">取消</Option>
+                    <Option :value="7">等待合同签署</Option>
+                    <Option :value="8">等待GPS安装校验</Option>
+                    <Option :value="9">待复审</Option>
+                    <Option :value="10">复审退回</Option>
+                    <Option :value="11">待放首款</Option>
+                    <Option :value="12">待放款</Option>
+                    <Option :value="13">待还款</Option>
+                    <Option :value="14">逾期</Option>
+                    <Option :value="15">资产处置</Option>
+                    <Option :value="16">结清</Option>
+                    <Option :value="20">合同退回</Option>
+                </Select>
+            </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
         </div> 
 	    <div class="listadmin">
@@ -116,6 +138,7 @@ export default {
                 prodId: '',
                 mobile: '',
                 name: '',
+                status: '',
                 pageNum: 1,
                 pageSize: 15
             },

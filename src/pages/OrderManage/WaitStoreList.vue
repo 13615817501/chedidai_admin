@@ -40,7 +40,19 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
-        <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn" @cancel="cancel"></ChooseReason> 
+        <ChooseReason :title="title" :orderId="orderId" :modal="passModal" :ModalContent="ModalContent" @get-status="confirmBtn" @cancel="cancel"></ChooseReason>
+        <Modal v-model="modifyModal" title="修改" :mask-closable="false" width="360" :closable="false">
+            <div style="text-align:center">
+                产品：
+                <Select v-model="prodId" placeholder="请选择" style="width: 150px">
+                    <Option v-for="(option, index) in storeProduct" :value="option.key" :label="option.value" :key="option.key"></Option>
+                </Select>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn2">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div>
+        </Modal> 
     </div>
 </template>
 <script>
@@ -58,9 +70,13 @@ export default {
 			totalCount: 0,
             modalTipTitle:'禁用该员工',
             tipModal:false,
+            modifyModal:false,
             myTitle:'新增产品',
             title:'待门店处理拒绝',
+            prodId:'',
             passModal: false,
+            modal_loading:false,
+            storeProduct:[],
             ModalContent:[],
             item:{},
             orderId:'',
@@ -80,7 +96,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 190,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -118,6 +134,23 @@ export default {
                                     }
                                 }
                             }, '拒绝'),
+                            h('Button', {
+                                props: {
+                                    type: 'error',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.orderId = params.row.orderId;
+                                        this.prodId = params.row.prodId;
+                                        this.getStoreProduct({storeId:params.row.storeId});
+                                        this.modifyModal = true;
+                                    }
+                                }
+                            }, '修改')
                         ]);
                     }
                 }, {
@@ -246,6 +279,13 @@ export default {
        }
     },
 	methods: {
+        getStoreProduct(formData){
+            this.$axios.get('/fx?api=gate.all.store.product',{params:formData}).then(res => {
+                if(res!=500){
+                    this.storeProduct = res.list;  
+                }
+            })
+        },
         getRefuseReasonList(){
             this.$axios.get('/fx?api=gate.base.menus',{params:{nerg:5}}).then(res => {
                 if(res!=500){
@@ -303,7 +343,22 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
-        }
+        },
+        confirmBtn2(){
+            this.modal_loading = true;
+            let formData = {
+                id: this.orderId,
+                prodId: this.prodId
+            };
+            this.$axios.post('/fx?api=gate.order.product.update',formData).then(res => {
+                if(res!=500){
+                   this.$Message.success('修改成功');
+                   this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+                this.modal_loading = false;
+                this.modifyModal = false;
+            })
+        },
 	}
 }
 </script>

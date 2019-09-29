@@ -301,6 +301,11 @@ var router = new Router({
 	                name: 'Distribution',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/Finance/Distribution`),
+	            },{
+	                path: '/Finance/OrderCollectList',
+	                name: 'OrderCollectList',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/Finance/OrderCollectList`),
 	            }
 	        ]
 	    },{

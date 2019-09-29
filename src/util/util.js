@@ -463,7 +463,10 @@ let util = {
                 break; 
             case 'Distribution':
                 return 'Finance';
-                break;                 
+                break; 
+            case 'OrderCollectList':
+                return 'Finance';
+                break;                         
         }
     },
     testPhone(num) {

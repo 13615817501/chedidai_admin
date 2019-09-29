@@ -15,9 +15,12 @@
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
            <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
+           <Button type="primary" style="margin-left:10px;" @click="deleteBtnBatch">删除</Button>
+           <Button type="primary" style="margin-left:10px;" @click="upBtnBatch">上架</Button>
+           <Button type="primary" style="margin-left:10px;" @click="downBtnBatch">下架</Button>
         </div> 
 	    <div class="listadmin">
-            <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
+            <Table @on-selection-change="selectionChange" ref="selection" border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
             <Page :current="search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
@@ -30,9 +33,12 @@
                     </Select>
                 </div>
                 <div class="item-div">
-                    <span class="item-comm required">产品名称：</span><Select ref="selectProd" v-model="modify.prodId" label-in-value filterable v-bind="remoteSetting" placeholder="请搜索匹配.." class="common-width" @on-change="changeFun" clearable>
+                    <span class="item-comm required">产品名称：</span><Select ref="selectProd" v-model="prodId" label-in-value filterable v-bind="remoteSetting" placeholder="请搜索匹配.." class="common-width" @on-change="changeFun" clearable>
                         <Option v-for="(option, index) in prodList" :value="option.id" :label="option.name" :key="option.id"></Option>
                     </Select>
+                    <div style="margin-top:5px;">
+                        <Tag v-for="(role,index) in prodIdsArr" :key="role.value" closable @on-close="handleClose(role,index)">{{role.label}}</Tag>
+                    </div>
                 </div>
                 <!-- <div class="item-div">
                     <span class="item-comm">服务费类型：</span><Select clearable v-model="modify.serviceType" class="item-input" placeholder="请选择">
@@ -49,7 +55,7 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
-        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
+        <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item" :adminId="selectionIds">
             <div style="text-align:center">
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
@@ -80,6 +86,8 @@ export default {
             prodList:[],
             storeList:[],
             id:'',
+            selection: [],
+            selectionIds: '',
 			search:{
                 storeName:'',
                 prodName:'',
@@ -97,9 +105,12 @@ export default {
                 remote: true,
                 remoteMethod: this.remoteMethod2
             },
+            prodId: '',
+            prodIdsArr:[], //存放所有产品的数组
+            prodIdsValueArr:[], //存放所有产品的数组
             modify: {
                 storeId:'',
-                prodId:'',
+                prodIds:'',
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
@@ -198,6 +209,10 @@ export default {
                         ]);
                     }
                 }, {
+                    type: 'selection',
+                    width: 50,
+                    align: 'center'
+                }, {
                     title: '门店名称',
                     key: 'storeName',
                     minWidth: 160,
@@ -284,9 +299,12 @@ export default {
         addBtn(){
             this.myTitle = '新增';
             this.modifyModal = true;
+            this.prodId = '';
+            this.prodIdsArr = [];
+            this.prodIdsValueArr = [];
             this.modify = {
                 storeId:'',
-                prodId:'',
+                prodIds:'',
             };
         },
         clickFaceImg(img){
@@ -312,7 +330,7 @@ export default {
             }
         },
         confirmBtn(){
-            if(!this.modify.prodId || !this.modify.storeId ){
+            if(!this.modify.prodIds || !this.modify.storeId ){
                 return this.$Message.error("带 * 为必填项"); 
             }
             let formData = {...this.modify};
@@ -340,17 +358,56 @@ export default {
                 this.getInitialList(this.search);
             }
         },
-        changeFun(obj){
-            if(!obj){
+        changeFun(Option){
+            if(!Option){  //v-model置为空后option会变为undefined,所以先判断
                 return;
-            }
-            this.modify.prodId = obj.value;
+            } 
+            let bol = this.prodIdsArr.some(item =>{
+                return item.label == Option.label;
+            });
+            if(!bol){
+                this.prodIdsArr.push(Option);
+                this.prodIdsValueArr.push(Option.value);
+            } 
+            this.prodId = null;
+            this.modify.prodIds = this.prodIdsValueArr.join(',');
+        },
+        handleClose(role,index){
+            this.prodIdsArr.splice(index,1);
+            this.prodIdsValueArr.splice(this.prodIdsValueArr.indexOf(role.value),1);
+            this.modify.prodIds  = this.prodIdsValueArr.join(',');
         },
         changeFun2(obj){
             if(!obj){
                 return;
             }
             this.modify.storeId = obj.value;
+        },
+        deleteBtnBatch(){ //批量删除
+            this.commGetIds();
+            this.modalTipTitle = '批量删除该门店产品';
+        },  
+        upBtnBatch(){  //批量上架
+            this.commGetIds();
+            this.modalTipTitle = '批量上架该门店产品';
+        },  
+        downBtnBatch(){  //批量下架
+            this.commGetIds();
+            this.modalTipTitle = '批量下架该门店产品';
+        },
+        commGetIds(){
+            if(!this.selection.length){
+                return this.$Message.error('至少选择一项');
+            }
+            let arrIds = [];
+            this.selection.forEach( (item, index) => {
+                arrIds.push(item.id);
+            }); 
+            this.selectionIds = String(arrIds);
+            this.tipModal = true;
+        },
+        selectionChange(selection){
+            this.selection = selection;
         }
 	}
 }

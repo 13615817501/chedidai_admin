@@ -4,14 +4,18 @@
             <BreadcrumbItem>订单管理</BreadcrumbItem>
             <BreadcrumbItem>详情</BreadcrumbItem>
         </Breadcrumb>
+        <div v-if="spinState" class="progress-box">
+            <i-progress  :percent="percent" :stroke-width="10"/>
+        </div>
+        <!-- <Spin fix v-if="spinState"></Spin> -->
         <div class="modify-modal"> 
             <Button type="primary" @click="backBtn"><Icon type="ios-arrow-back" />返回</Button>
             <div class="tab-top-title">
-                <span>姓名：<span class="span11">{{modifyInfo1.name}}</span></span>
-                <span>身份证：<span class="span11">{{modifyInfo1.identityCard}}</span></span>
-                <span>车牌号：<span class="span11">{{modify100.plateNumber}}</span></span>
-                <span>车架号：<span class="span11">{{modify100.vin}}</span></span>
-                <span>发动机号：<span class="span11">{{modify100.enginerNumber}}</span></span>
+                <span>姓名：<span class="span11">{{topInfo.name}}</span></span>
+                <span>身份证：<span class="span11">{{topInfo.identityCard}}</span></span>
+                <span>车牌号：<span class="span11">{{topInfo.plateNumber}}</span></span>
+                <span>车架号：<span class="span11">{{topInfo.vin}}</span></span>
+                <span>发动机号：<span class="span11">{{topInfo.enginerNumber}}</span></span>
                 <span><span class="span11"><Button type="primary" :loading="carImgloading1"  @click="downLoadCarInfo"><Icon type="md-download" />下载车辆文件</Button><Button style="margin-left:8px;" type="primary" :loading="carImgloading4"  @click="downLoadAllInfo"><Icon type="md-download" />下载所有资料照片</Button></span></span>
             </div>
             <div class="tab-top-title">
@@ -458,7 +462,7 @@
                 <TabPane label="车辆信息" name="name2">
                     <div class="name2-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitStoreList'&& isReturn">
                         <!-- 基础信息 -->
-                        <div class="title-info">基础信息<Button type="primary" :ghost="!ismodify100" style="margin-left:100px;" size="small" @click="modify100Btn">{{ismodify100?'保存':'修改'}}</Button></div>   
+                        <div class="title-info">基础信息<Button type="primary" :ghost="!ismodify100" v-if="isCarUpdate" style="margin-left:100px;" size="small" @click="modify100Btn">{{ismodify100?'保存':'修改'}}</Button></div>   
                         <div class="item-div">
                             <span class="item-comm required" :class="{mark:formatMark('identityCard')}">身份证号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('identityCard')}" :readonly="!ismodify100 || !formatMark('identityCard')" v-model="modify100.identityCard" :placeholder="(ismodify100 && formatMark('identityCard'))?'请输入...':''"  />
                             <span class="item-comm required" :class="{mark:formatMark('certificateNumber')}">证书编号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('certificateNumber')}" :readonly="!ismodify100 || !formatMark('certificateNumber')" v-model="modify100.certificateNumber" :placeholder="(ismodify100 && formatMark('certificateNumber'))?'请输入...':''"/>
@@ -477,50 +481,50 @@
                             <Input class="item-input txt" v-if="!ismodify100 || !formatMark('source')" readonly :value="modify100.source=='1'?'国产':modify100.source=='2'?'进口':''"/>
                             <span class="item-comm required" :class="{mark:formatMark('giveDate')}">发证日期(行驶证)：</span><DatePicker v-if="ismodify100 && formatMark('giveDate')" v-model="modify100.giveDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify100 || !formatMark('giveDate')" readonly :value="modify100.giveDate"/>
-                            <span class="item-comm" :class="{mark:formatMark('issueDate')}">发证日期(绿本)：</span><DatePicker v-if="ismodify100 && formatMark('issueDate')" v-model="modify100.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify100 || !formatMark('issueDate')" readonly :value="modify100.issueDate"/>
+                            <!-- <span class="item-comm" :class="{mark:formatMark('issueDate')}">发证日期(绿本)：</span><DatePicker v-if="ismodify100 && formatMark('issueDate')" v-model="modify100.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
+                            <Input class="item-input txt" v-if="!ismodify100 || !formatMark('issueDate')" readonly :value="modify100.issueDate"/> -->
+                            <span class="item-comm required" :class="{mark:formatMark('enginerNumber')}">发动机号码：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('enginerNumber')}" :readonly="!ismodify100 || !formatMark('enginerNumber')" v-model="modify100.enginerNumber" :placeholder="(ismodify100 && formatMark('enginerNumber'))?'请输入...':''" />
                         </div>   
                         <div class="item-div"> 
-                            <span class="item-comm required" :class="{mark:formatMark('enginerNumber')}">发动机号码：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('enginerNumber')}" :readonly="!ismodify100 || !formatMark('enginerNumber')" v-model="modify100.enginerNumber" :placeholder="(ismodify100 && formatMark('enginerNumber'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('enginerModel')}">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('enginerModel')}" :readonly="!ismodify100 || !formatMark('enginerModel')" v-model="modify100.enginerModel" :placeholder="(ismodify100 && formatMark('enginerModel'))?'请输入...':''" />
+                            <!-- <span class="item-comm" :class="{mark:formatMark('enginerModel')}">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('enginerModel')}" :readonly="!ismodify100 || !formatMark('enginerModel')" v-model="modify100.enginerModel" :placeholder="(ismodify100 && formatMark('enginerModel'))?'请输入...':''" /> -->
                             <span class="item-comm" :class="{mark:formatMark('oilType')}">燃油种类：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('oilType')}" :readonly="!ismodify100 || !formatMark('oilType')" v-model="modify100.oilType" :placeholder="(ismodify100 && formatMark('oilType'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('displace')}">排量(ml)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('displace')}" :readonly="!ismodify100 || !formatMark('displace')" v-model="modify100.displace" :placeholder="(ismodify100 && formatMark('displace'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('madeFactory')}">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('madeFactory')}" :readonly="!ismodify100 || !formatMark('madeFactory')" v-model="modify100.madeFactory" :placeholder="(ismodify100 && formatMark('madeFactory'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('record')}">检验记录：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('record')}" :readonly="!ismodify100 || !formatMark('record')" v-model="modify100.record" :placeholder="(ismodify100 && formatMark('record'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('turnType')}">转向形式：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('turnType')}" :readonly="!ismodify100 || !formatMark('turnType')" v-model="modify100.turnType" :placeholder="(ismodify100 && formatMark('turnType'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('wheelDistance')}">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelDistance')}" :readonly="!ismodify100 || !formatMark('wheelDistance')" v-model="modify100.wheelDistance" :placeholder="(ismodify100 && formatMark('wheelDistance'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('wheelCount')}">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelCount')}" :readonly="!ismodify100 || !formatMark('wheelCount')" v-model="modify100.wheelCount" :placeholder="(ismodify100 && formatMark('wheelCount'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('wheelNormal')}">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelNormal')}" :readonly="!ismodify100 || !formatMark('wheelNormal')" v-model="modify100.wheelNormal" :placeholder="(ismodify100 && formatMark('wheelNormal'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('steelCount')}">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('steelCount')}" :readonly="!ismodify100 || !formatMark('steelCount')" v-model="modify100.steelCount" :placeholder="(ismodify100 && formatMark('steelCount'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('wheelbase')}">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelbase')}" :readonly="!ismodify100 || !formatMark('wheelbase')" v-model="modify100.wheelbase" :placeholder="(ismodify100 && formatMark('wheelbase'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('axesCount')}">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('axesCount')}" :readonly="!ismodify100 || !formatMark('axesCount')" v-model="modify100.axesCount" :placeholder="(ismodify100 && formatMark('axesCount'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('size')}">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('size')}" :readonly="!ismodify100 || !formatMark('size')" v-model="modify100.size" :placeholder="(ismodify100 && formatMark('size'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('verandaSize')}">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('verandaSize')}" :readonly="!ismodify100 || !formatMark('verandaSize')" v-model="modify100.verandaSize" :placeholder="(ismodify100 && formatMark('verandaSize'))?'请输入...':''" /> 
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('innerSize')}">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('innerSize')}" :readonly="!ismodify100 || !formatMark('innerSize')" v-model="modify100.innerSize" :placeholder="(ismodify100 && formatMark('innerSize'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('totalWeight')}">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('totalWeight')}" :readonly="!ismodify100 || !formatMark('totalWeight')" v-model="modify100.totalWeight":placeholder="(ismodify100 && formatMark('totalWeight'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('approvedLoad')}">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('approvedLoad')}" :readonly="!ismodify100 || !formatMark('approvedLoad')" v-model="modify100.approvedLoad" :placeholder="(ismodify100 && formatMark('approvedLoad'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('customer')}">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('customer')}" :readonly="!ismodify100 || !formatMark('customer')" v-model="modify100.customer" :placeholder="(ismodify100 && formatMark('customer'))?'请输入...':''"/>
-                            <span class="item-comm" :class="{mark:formatMark('tractionWeight')}">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('tractionWeight')}" :readonly="!ismodify100 || !formatMark('tractionWeight')" v-model="modify100.tractionWeight" :placeholder="(ismodify100 && formatMark('tractionWeight'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('driverCustomer')}">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('driverCustomer')}" :readonly="!ismodify100 || !formatMark('driverCustomer')" v-model="modify100.driverCustomer" :placeholder="(ismodify100 && formatMark('driverCustomer'))?'请输入...':''"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('getWay')}">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('getWay')}" :readonly="!ismodify100 || !formatMark('getWay')" v-model="modify100.getWay" :placeholder="(ismodify100 && formatMark('getWay'))?'请输入...':''"/>
                             <span class="item-comm" :class="{mark:formatMark('outDate')}">车辆出厂日期：</span><DatePicker v-if="ismodify100 && formatMark('outDate')" v-model="modify100.outDate" type="date" placeholder="选择出厂日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify100 || !formatMark('outDate')" readonly :value="modify2.outDate"/>
-                            <span class="item-comm" :class="{mark:formatMark('issueGov')}">签发机关：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('issueGov')}" :readonly="!ismodify100 || !formatMark('issueGov')" v-model="modify100.issueGov" :placeholder="(ismodify100 && formatMark('issueGov'))?'请输入...':''" />
                         </div>   
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('madeFactory')}">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('madeFactory')}" :readonly="!ismodify100 || !formatMark('madeFactory')" v-model="modify100.madeFactory" :placeholder="(ismodify100 && formatMark('madeFactory'))?'请输入...':''" /> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('record')}">检验记录：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('record')}" :readonly="!ismodify100 || !formatMark('record')" v-model="modify100.record" :placeholder="(ismodify100 && formatMark('record'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('turnType')}">转向形式：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('turnType')}" :readonly="!ismodify100 || !formatMark('turnType')" v-model="modify100.turnType" :placeholder="(ismodify100 && formatMark('turnType'))?'请输入...':''" /> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('wheelDistance')}">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelDistance')}" :readonly="!ismodify100 || !formatMark('wheelDistance')" v-model="modify100.wheelDistance" :placeholder="(ismodify100 && formatMark('wheelDistance'))?'请输入...':''" /> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('wheelCount')}">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelCount')}" :readonly="!ismodify100 || !formatMark('wheelCount')" v-model="modify100.wheelCount" :placeholder="(ismodify100 && formatMark('wheelCount'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('wheelNormal')}">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelNormal')}" :readonly="!ismodify100 || !formatMark('wheelNormal')" v-model="modify100.wheelNormal" :placeholder="(ismodify100 && formatMark('wheelNormal'))?'请输入...':''" /> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('steelCount')}">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('steelCount')}" :readonly="!ismodify100 || !formatMark('steelCount')" v-model="modify100.steelCount" :placeholder="(ismodify100 && formatMark('steelCount'))?'请输入...':''" /> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('wheelbase')}">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('wheelbase')}" :readonly="!ismodify100 || !formatMark('wheelbase')" v-model="modify100.wheelbase" :placeholder="(ismodify100 && formatMark('wheelbase'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('axesCount')}">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('axesCount')}" :readonly="!ismodify100 || !formatMark('axesCount')" v-model="modify100.axesCount" :placeholder="(ismodify100 && formatMark('axesCount'))?'请输入...':''" /> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('size')}">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('size')}" :readonly="!ismodify100 || !formatMark('size')" v-model="modify100.size" :placeholder="(ismodify100 && formatMark('size'))?'请输入...':''" /> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('verandaSize')}">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('verandaSize')}" :readonly="!ismodify100 || !formatMark('verandaSize')" v-model="modify100.verandaSize" :placeholder="(ismodify100 && formatMark('verandaSize'))?'请输入...':''" />  -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('innerSize')}">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('innerSize')}" :readonly="!ismodify100 || !formatMark('innerSize')" v-model="modify100.innerSize" :placeholder="(ismodify100 && formatMark('innerSize'))?'请输入...':''" /> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('totalWeight')}">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('totalWeight')}" :readonly="!ismodify100 || !formatMark('totalWeight')" v-model="modify100.totalWeight":placeholder="(ismodify100 && formatMark('totalWeight'))?'请输入...':''" /> -->
+                        <!--     <span class="item-comm" :class="{mark:formatMark('approvedLoad')}">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('approvedLoad')}" :readonly="!ismodify100 || !formatMark('approvedLoad')" v-model="modify100.approvedLoad" :placeholder="(ismodify100 && formatMark('approvedLoad'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('customer')}">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('customer')}" :readonly="!ismodify100 || !formatMark('customer')" v-model="modify100.customer" :placeholder="(ismodify100 && formatMark('customer'))?'请输入...':''"/> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('tractionWeight')}">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('tractionWeight')}" :readonly="!ismodify100 || !formatMark('tractionWeight')" v-model="modify100.tractionWeight" :placeholder="(ismodify100 && formatMark('tractionWeight'))?'请输入...':''" /> -->
+                       <!--      <span class="item-comm" :class="{mark:formatMark('driverCustomer')}">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('driverCustomer')}" :readonly="!ismodify100 || !formatMark('driverCustomer')" v-model="modify100.driverCustomer" :placeholder="(ismodify100 && formatMark('driverCustomer'))?'请输入...':''"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('getWay')}">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('getWay')}" :readonly="!ismodify100 || !formatMark('getWay')" v-model="modify100.getWay" :placeholder="(ismodify100 && formatMark('getWay'))?'请输入...':''"/> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('issueGov')}">签发机关：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('issueGov')}" :readonly="!ismodify100 || !formatMark('issueGov')" v-model="modify100.issueGov" :placeholder="(ismodify100 && formatMark('issueGov'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
                         <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('useNature')}">使用性质：</span><Select v-if="ismodify100 && formatMark('useNature')" v-model="modify100.useNature" class="item-input">
                                     <Option value="1">营运用车</Option>
@@ -530,13 +534,14 @@
                                     <Option value="5">其它</Option>
                                 </Select>
                             <Input class="item-input txt" v-if="!ismodify100 || !formatMark('outDate')" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>    
-                            <span class="item-comm" :class="{mark:formatMark('remark')}">备注：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('remark')}" :readonly="!ismodify100 || !formatMark('remark')" v-model="modify100.remark" :placeholder="(ismodify100 && formatMark('remark'))?'请输入...':''" />
-                             <span class="item-comm" :class="{mark:formatMark('travelerRegisterDate')}">登记日期：</span><DatePicker v-if="ismodify100 && formatMark('travelerRegisterDate')" v-model="modify100.travelerRegisterDate" type="date" placeholder="选择登记日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100 || !formatMark('travelerRegisterDate')" readonly :value="modify100.travelerRegisterDate"/> 
+                            <span class="item-comm required" :class="{mark:formatMark('passenger')}">核载人数(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('passenger')}" :readonly="!ismodify100 || !formatMark('passenger')" v-model="modify100.passenger" :placeholder="(ismodify100 && formatMark('passenger'))?'请输入...':''" />
+                            <span class="item-comm required" :class="{mark:formatMark('cylinder')}">缸数(缸)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('cylinder')}" :readonly="!ismodify100 || !formatMark('cylinder')" v-model="modify100.cylinder" :placeholder="(ismodify100 && formatMark('cylinder'))?'请输入...':''" />
+                           <!--  <span class="item-comm" :class="{mark:formatMark('remark')}">备注：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('remark')}" :readonly="!ismodify100 || !formatMark('remark')" v-model="modify100.remark" :placeholder="(ismodify100 && formatMark('remark'))?'请输入...':''" /> -->
+                          <!--    <span class="item-comm" :class="{mark:formatMark('travelerRegisterDate')}">登记日期：</span><DatePicker v-if="ismodify100 && formatMark('travelerRegisterDate')" v-model="modify100.travelerRegisterDate" type="date" placeholder="选择登记日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100 || !formatMark('travelerRegisterDate')" readonly :value="modify100.travelerRegisterDate"/>  -->
                         </div>   
                         <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('mile')}">行驶里程(万)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('mile')}" :readonly="!ismodify100 || !formatMark('mile')" v-model="modify100.mile" :placeholder="(ismodify100 && formatMark('mile'))?'请输入...':''"  />
                             <span class="item-comm required" :class="{mark:formatMark('fuelNumber')}">燃料编号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('fuelNumber')}" :readonly="!ismodify100 || !formatMark('fuelNumber')" v-model="modify100.fuelNumber" :placeholder="(ismodify100 && formatMark('fuelNumber'))?'请输入...':''"/>
-                            <span class="item-comm required" :class="{mark:formatMark('cylinder')}">缸数(缸)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('cylinder')}" :readonly="!ismodify100 || !formatMark('cylinder')" v-model="modify100.cylinder" :placeholder="(ismodify100 && formatMark('cylinder'))?'请输入...':''" />
                         </div>   
                         <div class="item-div">         
                             <span class="item-comm required" :class="{mark:formatMark('hasInspect')}">有无年检：</span><Select v-if="ismodify100 &&formatMark('hasInspect')" v-model="modify100.hasInspect" class="item-input">
@@ -544,7 +549,7 @@
                                     <Option value="1">有</Option>
                                 </Select><Input class="item-input txt" v-if="!ismodify100 || !formatMark('hasInspect')" readonly :value="modify100.hasInspect=='0'?'无':modify100.hasInspect=='1'?'有':''"/>
                             <span v-show="modify100.hasInspect=='1'">
-                                <span class="item-comm required" :class="{mark:formatMark('insEndDate')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('insEndDate')" v-model="modify100.insEndDate" type="date" placeholder="选择年检结束时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('insEndDate')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('insEndDate')" v-model="modify100.insEndDate" type="month" placeholder="选择年检结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('insEndDate')" readonly :value="modify100.insEndDate"/>
                             </span>
                         </div>   
@@ -636,21 +641,20 @@
                             <span class="item-comm required" :class="{mark:formatMark('address')}">住址：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('address')}" :readonly="!ismodify100 || !formatMark('address')" v-model="modify100.address" :placeholder="(ismodify100 && formatMark('address'))?'请输入...':''" />
                         </div>   
                         <div class="item-div">      
-                            <span class="item-comm required" :class="{mark:formatMark('model')}">品牌型号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('model')}" :readonly="!ismodify100 || !formatMark('model')" v-model="modify100.model" :placeholder="(ismodify100 && formatMark('model'))?'请输入...':''" />
+                            <span class="item-comm required" :class="{mark:formatMark('brandModel')}">品牌型号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('brandModel')}" :readonly="!ismodify100 || !formatMark('brandModel')" v-model="modify100.brandModel" :placeholder="(ismodify100 && formatMark('brandModel'))?'请输入...':''" />
                             <span class="item-comm required" :class="{mark:formatMark('vin')}">车辆识别代码：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('vin')}" :readonly="!ismodify100 || !formatMark('vin')" v-model="modify100.vin" :placeholder="(ismodify100 && formatMark('vin'))?'请输入...':''" />
                            <span class="item-comm required" :class="{mark:formatMark('registerDate')}">注册日期：</span><DatePicker v-if="ismodify100 &&formatMark('registerDate')" v-model="modify100.registerDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100 || !formatMark('registerDate')" readonly :value="modify100.registerDate"/>
                         </div>   
-                        <div class="item-div">      
-                            <span class="item-comm" :class="{mark:formatMark('archivesNumber')}">档案编号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('archivesNumber')}" :readonly="!ismodify100 || !formatMark('archivesNumber')" v-model="modify100.archivesNumber" :placeholder="(ismodify100 && formatMark('archivesNumber'))?'请输入...':''" />
-                            <span class="item-comm required" :class="{mark:formatMark('passenger')}">核载人数(人)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('passenger')}" :readonly="!ismodify100 || !formatMark('passenger')" v-model="modify100.passenger" :placeholder="(ismodify100 && formatMark('passenger'))?'请输入...':''" />
-                            <span class="item-comm" :class="{mark:formatMark('weightWhole')}">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('weightWhole')}" :readonly="!ismodify100 || !formatMark('weightWhole')" v-model="modify100.weightWhole" :placeholder="(ismodify100 && formatMark('weightWhole'))?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">      
-                            <span class="item-comm" :class="{mark:formatMark('weightApproved')}">核定载质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('weightApproved')}" :readonly="!ismodify100 || !formatMark('weightApproved')" v-model="modify100.weightApproved" :placeholder="(ismodify100 && formatMark('weightApproved'))?'请输入...':''" />
-                           <span class="item-comm" :class="{mark:formatMark('issueAgency')}">发证机构：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('issueAgency')}" :readonly="!ismodify100 || !formatMark('issueAgency')" v-model="modify100.issueAgency" :placeholder="(ismodify100 && formatMark('issueAgency'))?'请输入...':''" />
-                        </div>
+                        <!-- <div class="item-div">       -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('archivesNumber')}">档案编号：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('archivesNumber')}" :readonly="!ismodify100 || !formatMark('archivesNumber')" v-model="modify100.archivesNumber" :placeholder="(ismodify100 && formatMark('archivesNumber'))?'请输入...':''" /> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('weightWhole')}">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('weightWhole')}" :readonly="!ismodify100 || !formatMark('weightWhole')" v-model="modify100.weightWhole" :placeholder="(ismodify100 && formatMark('weightWhole'))?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">       -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('weightApproved')}">核定载质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('weightApproved')}" :readonly="!ismodify100 || !formatMark('weightApproved')" v-model="modify100.weightApproved" :placeholder="(ismodify100 && formatMark('weightApproved'))?'请输入...':''" /> -->
+                           <!-- <span class="item-comm" :class="{mark:formatMark('issueAgency')}">发证机构：</span><Input class="item-input" :class="{txt:!ismodify100 || !formatMark('issueAgency')}" :readonly="!ismodify100 || !formatMark('issueAgency')" v-model="modify100.issueAgency" :placeholder="(ismodify100 && formatMark('issueAgency'))?'请输入...':''" /> -->
+                        <!-- </div> -->
                         <!-- 登记摘要信息栏  -->
-                        <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span><Icon type="md-add-circle"  v-if="ismodify3" @click="addItem" size="18" style="cursor:pointer;position:absolute;left:140px;top:3px;" title="新增"/><Button type="primary" v-if="name=='WaitStoreList'" style="margin-left:31px;" size="small" :ghost="!ismodify3" @click="modify3Btn">{{ismodify3?'保存':'修改'}}</Button></div>
+                        <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span><Icon type="md-add-circle"  v-if="ismodify3" @click="addItem" size="18" style="cursor:pointer;position:absolute;left:140px;top:3px;" title="新增"/><Button type="primary" v-if="isCarUpdate" style="margin-left:31px;" size="small" :ghost="!ismodify3" @click="modify3Btn">{{ismodify3?'保存':'修改'}}</Button></div>
                         <span v-for="(item,index) in recordVO" :key="index">
                             <div class="item-div">
                                 <span class="item-comm required" :class="{mark:formatMark2('owner',index)}">拥有者：</span><Input class="item-input" :class="{txt:!ismodify3 || !formatMark2('owner',index)}" :readonly="!ismodify3 || !formatMark2('owner',index)" v-model="item.owner" :placeholder="(ismodify3 && formatMark2('owner',index))?'请输入...':''"/>
@@ -668,7 +672,7 @@
                         </span>  
                         <!-- 车辆证件照片 -->
                         <div class="title-info">车辆证件照片</div>
-                        <div>
+                        <div v-if="isCarUpdate">
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[0]" :type="5" @changePicUrl="changePicUrl(arguments,'行驶证正面')">行驶证正面：</ImgUpload></span>  
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[1]" :type="5" @changePicUrl="changePicUrl($event,'行驶证反面')">行驶证反面：</ImgUpload></span>  
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[2]" :type="5" @changePicUrl="changePicUrl(arguments,'驾驶证正面')">驾驶证正面：</ImgUpload></span>  
@@ -679,6 +683,52 @@
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[7]" :type="5" @changePicUrl="changePicUrl($event,'绿本第4页')">绿本第4页：</ImgUpload></span> 
                             <Button type="primary"  size="small" @click="modify5Btn">保存</Button>    
                         </div>
+                        <div v-if="!isCarUpdate">
+                            <span class="span-width">
+                                <span class="my-title-comm">行驶证正面：</span>
+                                <viewer :images="modify5Img[0]?modify5Img[0].split(' '):[]"><img class="my-img" :src="modify5Img[0]" alt="行驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">行驶证反面：</span>
+                                <viewer :images="modify5Img[1]?modify5Img[1].split(' '):[]"><img class="my-img" :src="modify5Img[1]" alt="行驶证反面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">驾驶证正面：</span>
+                                <viewer :images="modify5Img[2]?modify5Img[2].split(' '):[]"><img class="my-img" :src="modify5Img[2]" alt="驾驶证正面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">驾驶证反面：</span>
+                                <viewer :images="modify5Img[3]?modify5Img[3].split(' '):[]"><img class="my-img" :src="modify5Img[3]" alt="驾驶证反面">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第1页：</span>
+                                <viewer :images="modify5Img[4]?modify5Img[4].split(' '):[]"><img class="my-img" :src="modify5Img[4]" alt="绿本第1页">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第2页：</span>
+                                    <viewer :images="modify5Img[5]?modify5Img[5].split(' '):[]"><img class="my-img" :src="modify5Img[5]" alt="绿本第2页">
+                                </viewer>
+                                </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第3页：</span>
+                                <viewer :images="modify5Img[6]?modify5Img[6].split(' '):[]"><img class="my-img" :src="modify5Img[6]" alt="绿本第3页">
+                                </viewer>
+                            </span>  
+                            <span class="span-width">
+                                <span class="my-title-comm">绿本第4页：</span>
+                                <viewer :images="modify5Img[7]?modify5Img[7].split(' '):[]"><img class="my-img" :src="modify5Img[7]" alt="绿本第4页">
+                                </viewer>
+                            </span> 
+                        </div>
+                        <div class="title-info">车300照片</div>
+                        <div>
+                            <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
+                        </div>  
                     </div>
                     <div class="name3-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="($route.query.name2=='WaitStoreList'&& !isReturn) || $route.query.name2=='WaitConfirmList'">
                         <!-- 基础信息 -->
@@ -700,50 +750,50 @@
                                 </Select><Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.source=='1'?'国产':modify100.source=='2'?'进口':''"/>
                             <span class="item-comm required">发证日期(行驶证)：</span><DatePicker v-if="ismodify100" v-model="modify100.giveDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.giveDate"/>
-                            <span class="item-comm">发证日期(绿本)：</span><DatePicker v-if="ismodify100" v-model="modify100.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
-                            <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.issueDate"/>
+                            <span class="item-comm required">发动机号码：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.enginerNumber" :placeholder="ismodify100?'请输入...':''" />
+                            <!-- <span class="item-comm">发证日期(绿本)：</span><DatePicker v-if="ismodify100" v-model="modify100.issueDate" type="date" placeholder="选择发证日期" class="item-input"></DatePicker>
+                            <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.issueDate"/> -->
                         </div>   
                         <div class="item-div"> 
-                            <span class="item-comm required">发动机号码：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.enginerNumber" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.enginerModel" :placeholder="ismodify100?'请输入...':''" />
+                            <!-- <span class="item-comm">发动机型号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.enginerModel" :placeholder="ismodify100?'请输入...':''" /> -->
                             <span class="item-comm">燃油种类：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.oilType" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
                             <span class="item-comm required">排量(ml)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.displace" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.madeFactory" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">检验记录：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.record" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">转向形式：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.turnType" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelDistance" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelCount" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelNormal" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.steelCount" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelbase" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.axesCount" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.size" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.verandaSize" :placeholder="ismodify100?'请输入...':''" /> 
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.innerSize" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.totalWeight":placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.approvedLoad" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.customer" :placeholder="ismodify100?'请输入...':''"/>
-                            <span class="item-comm">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.tractionWeight" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.driverCustomer" :placeholder="ismodify100?'请输入...':''"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.getWay" :placeholder="ismodify100?'请输入...':''"/>
                             <span class="item-comm">车辆出厂日期：</span><DatePicker v-if="ismodify100" v-model="modify100.outDate" type="date" placeholder="选择出厂日期" class="item-input"></DatePicker>
                             <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify2.outDate"/>
-                            <span class="item-comm">签发机关：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.issueGov" :placeholder="ismodify100?'请输入...':''" />
                         </div>   
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm">制造工厂：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.madeFactory" :placeholder="ismodify100?'请输入...':''" /> -->
+                            <!-- <span class="item-comm">检验记录：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.record" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm">转向形式：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.turnType" :placeholder="ismodify100?'请输入...':''" /> -->
+                            <!-- <span class="item-comm">轮距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelDistance" :placeholder="ismodify100?'请输入...':''" /> -->
+                           <!--  <span class="item-comm">轮胎数(胎)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelCount" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm">轮胎规格(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelNormal" :placeholder="ismodify100?'请输入...':''" /> -->
+                          <!--   <span class="item-comm">钢板弹簧片数(片)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.steelCount" :placeholder="ismodify100?'请输入...':''" /> -->
+                           <!--  <span class="item-comm">轴距(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.wheelbase" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm">轴数(轴)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.axesCount" :placeholder="ismodify100?'请输入...':''" /> -->
+                           <!--  <span class="item-comm">外部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.size" :placeholder="ismodify100?'请输入...':''" /> -->
+                            <!-- <span class="item-comm">外廊尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.verandaSize" :placeholder="ismodify100?'请输入...':''" />  -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">货厢内部尺寸(mm)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.innerSize" :placeholder="ismodify100?'请输入...':''" /> -->
+                            <!-- <span class="item-comm">总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.totalWeight":placeholder="ismodify100?'请输入...':''" /> -->
+                           <!--  <span class="item-comm">核定载重量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.approvedLoad" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">核定载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.customer" :placeholder="ismodify100?'请输入...':''"/> -->
+                            <!-- <span class="item-comm">准牵引总质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.tractionWeight" :placeholder="ismodify100?'请输入...':''" /> -->
+                          <!--   <span class="item-comm">驾驶室载客(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.driverCustomer" :placeholder="ismodify100?'请输入...':''"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">车辆获得方式：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.getWay" :placeholder="ismodify100?'请输入...':''"/> -->
+                          <!--   <span class="item-comm">签发机关：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.issueGov" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
                         <div class="item-div">     
                             <span class="item-comm required">使用性质：</span><Select v-if="ismodify100" v-model="modify100.useNature" class="item-input">
                                     <Option value="1">营运用车</Option>
@@ -752,14 +802,15 @@
                                     <Option value="4">家庭用车</Option>
                                     <Option value="5">其它</Option>
                                 </Select>
-                            <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>    
-                            <span class="item-comm">备注：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.remark" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">登记日期：</span><DatePicker v-if="ismodify100" v-model="modify100.travelerRegisterDate" type="date" placeholder="选择登记日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.travelerRegisterDate"/> 
+                            <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>
+                            <span class="item-comm required">核载人数(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.passenger" :placeholder="ismodify100?'请输入...':''" />
+                            <span class="item-comm required">缸数(缸)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.cylinder" :placeholder="ismodify100?'请输入...':''" />    
+                           <!--  <span class="item-comm">备注：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.remark" :placeholder="ismodify100?'请输入...':''" /> -->
+                            <!-- <span class="item-comm">登记日期：</span><DatePicker v-if="ismodify100" v-model="modify100.travelerRegisterDate" type="date" placeholder="选择登记日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.travelerRegisterDate"/>  -->
                         </div>   
                         <div class="item-div">     
                             <span class="item-comm required">行驶里程(万)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.mile" :placeholder="ismodify100?'请输入...':''"  />
                             <span class="item-comm required">燃料编号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.fuelNumber" :placeholder="ismodify100?'请输入...':''"/>
-                            <span class="item-comm required">缸数(缸)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.cylinder" :placeholder="ismodify100?'请输入...':''" />
                         </div>   
                         <div class="item-div">         
                             <span class="item-comm required">有无年检：</span><Select v-if="ismodify100" v-model="modify100.hasInspect" class="item-input">
@@ -767,7 +818,7 @@
                                     <Option value="1">有</Option>
                                 </Select><Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.hasInspect=='0'?'无':modify100.hasInspect=='1'?'有':''"/>
                             <span v-show="modify100.hasInspect=='1'">
-                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify100" v-model="modify100.insEndDate" type="date" placeholder="选择年检结束时间" class="item-input"></DatePicker>
+                                <span class="item-comm required">有效期结束时间：</span><DatePicker v-if="ismodify100" v-model="modify100.insEndDate" type="month" placeholder="选择年检结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.insEndDate"/>
                             </span>
                         </div>   
@@ -859,19 +910,18 @@
                             <span class="item-comm required">住址：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.address" :placeholder="ismodify100?'请输入...':''" />
                         </div>   
                         <div class="item-div">      
-                            <span class="item-comm required">品牌型号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.model" :placeholder="ismodify100?'请输入...':''" />
+                            <span class="item-comm required">品牌型号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.brandModel" :placeholder="ismodify100?'请输入...':''" />
                             <span class="item-comm required">车辆识别代码：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.vin" :placeholder="ismodify100?'请输入...':''" />
                             <span class="item-comm required">注册日期：</span><DatePicker v-if="ismodify100" v-model="modify100.registerDate" type="date" placeholder="选择注册日期" class="item-input"></DatePicker><Input class="item-input txt" v-if="!ismodify100" readonly :value="modify100.registerDate"/>
                         </div>   
-                        <div class="item-div">      
-                            <span class="item-comm">档案编号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.archivesNumber" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm required">核载人数(人)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.passenger" :placeholder="ismodify100?'请输入...':''" />
-                            <span class="item-comm">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.weightWhole" :placeholder="ismodify100?'请输入...':''" />
-                        </div>   
-                        <div class="item-div">      
-                            <span class="item-comm">核定载质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.weightApproved" :placeholder="ismodify100?'请输入...':''" />
-                           <span class="item-comm">发证机构：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.issueAgency" :placeholder="ismodify100?'请输入...':''" />
-                        </div>
+                        <!-- <div class="item-div">       -->
+                          <!--   <span class="item-comm">档案编号：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.archivesNumber" :placeholder="ismodify100?'请输入...':''" /> -->
+                           <!--  <span class="item-comm">整备质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.weightWhole" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">       -->
+                            <!-- <span class="item-comm">核定载质量(kg)：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.weightApproved" :placeholder="ismodify100?'请输入...':''" /> -->
+                          <!--  <span class="item-comm">发证机构：</span><Input class="item-input" :class="{txt:!ismodify100}" :readonly="!ismodify100" v-model="modify100.issueAgency" :placeholder="ismodify100?'请输入...':''" /> -->
+                        <!-- </div> -->
                         <!-- 登记摘要信息栏  -->
                         <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span><Icon type="md-add-circle"  v-if="ismodify3" @click="addItem" size="18" style="cursor:pointer;position:absolute;left:140px;top:3px;" title="新增"/><Button type="primary" v-if="name=='WaitStoreList'" style="margin-left:31px;" size="small" :ghost="!ismodify3" @click="modify3Btn">{{ismodify3?'保存':'修改'}}</Button></div>
                         <span v-for="(item,index) in recordVO" :key="index">
@@ -901,8 +951,12 @@
                             <span class="span-width"><ImgUpload :myPicUrl="modify5Img[7]" :type="5" @changePicUrl="changePicUrl($event,'绿本第4页')">绿本第4页：</ImgUpload></span> 
                             <Button type="primary"  size="small" @click="modify5Btn">保存</Button>    
                         </div>
+                        <div class="title-info">车300照片</div>
+                        <div>
+                            <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
+                        </div>
                     </div>
-                    <div class="name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'|| $route.query.name2=='WaitCheckAgain'">
+                    <div class="name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'">
                         <!-- 基础信息 -->
                         <div class="title-info">基础信息</div>   
                         <div class="item-div">
@@ -918,58 +972,59 @@
                         <div class="item-div"> 
                             <span class="item-comm required" :class="{mark:formatMark('source')}" :data-sn="formatSn('source')">来源：</span><Input class="item-input txt" v-if="!ismodify100 || !formatMark('source')" readonly :value="modify100.source=='1'?'国产':modify100.source=='2'?'进口':''"/>
                             <span class="item-comm required" :class="{mark:formatMark('giveDate')}" :data-sn="formatSn('giveDate')">发证日期(行驶证)：</span><Input class="item-input txt" readonly :value="modify100.giveDate"/>
-                            <span class="item-comm" :class="{mark:formatMark('issueDate')}" :data-sn="formatSn('issueDate')">发证日期(绿本)：</span><Input class="item-input txt" readonly :value="modify100.issueDate"/>
+                            <span class="item-comm required" :class="{mark:formatMark('enginerNumber')}" :data-sn="formatSn('enginerNumber')">发动机号码：</span><Input class="item-input txt" readonly v-model="modify100.enginerNumber"/>
+                           <!--  <span class="item-comm" :class="{mark:formatMark('issueDate')}" :data-sn="formatSn('issueDate')">发证日期(绿本)：</span><Input class="item-input txt" readonly :value="modify100.issueDate"/> -->
                         </div>   
                         <div class="item-div"> 
-                            <span class="item-comm required" :class="{mark:formatMark('enginerNumber')}" :data-sn="formatSn('enginerNumber')">发动机号码：</span><Input class="item-input txt" readonly v-model="modify100.enginerNumber"/>
-                            <span class="item-comm" :class="{mark:formatMark('enginerModel')}" :data-sn="formatSn('enginerModel')">发动机型号：</span><Input class="item-input txt" readonly v-model="modify100.enginerModel"/>
+                           <!--  <span class="item-comm" :class="{mark:formatMark('enginerModel')}" :data-sn="formatSn('enginerModel')">发动机型号：</span><Input class="item-input txt" readonly v-model="modify100.enginerModel"/> -->
                             <span class="item-comm" :class="{mark:formatMark('oilType')}" :data-sn="formatSn('oilType')">燃油种类：</span><Input class="item-input txt" readonly v-model="modify100.oilType"/>
-                        </div>   
-                        <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('displace')}" :data-sn="formatSn('displace')">排量(ml)：</span><Input class="item-input txt" readonly v-model="modify100.displace"/>
-                            <span class="item-comm" :class="{mark:formatMark('madeFactory')}" :data-sn="formatSn('madeFactory')">制造工厂：</span><Input class="item-input txt" readonly v-model="modify100.madeFactory"/>
-                            <span class="item-comm" :class="{mark:formatMark('record')}" :data-sn="formatSn('record')">检验记录：</span><Input class="item-input txt" readonly v-model="modify100.record"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('turnType')}"  :data-sn="formatSn('turnType')">转向形式：</span><Input class="item-input txt" readonly v-model="modify100.turnType"/>
-                            <span class="item-comm" :class="{mark:formatMark('wheelDistance')}"  :data-sn="formatSn('wheelDistance')">轮距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelDistance"/>
-                            <span class="item-comm" :class="{mark:formatMark('wheelCount')}"  :data-sn="formatSn('wheelCount')">轮胎数(胎)：</span><Input class="item-input txt" readonly v-model="modify100.wheelCount"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('wheelNormal')}" :data-sn="formatSn('wheelNormal')">轮胎规格(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelNormal"/>
-                            <span class="item-comm" :class="{mark:formatMark('steelCount')}" :data-sn="formatSn('steelCount')">钢板弹簧片数(片)：</span><Input class="item-input txt" readonly v-model="modify100.steelCount"/>
-                            <span class="item-comm" :class="{mark:formatMark('wheelbase')}" :data-sn="formatSn('wheelbase')">轴距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelbase"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('axesCount')}" :data-sn="formatSn('axesCount')">轴数(轴)：</span><Input class="item-input txt" readonly v-model="modify100.axesCount"/>
-                            <span class="item-comm" :class="{mark:formatMark('size')}" :data-sn="formatSn('size')">外部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.size"/>
-                            <span class="item-comm" :class="{mark:formatMark('verandaSize')}" :data-sn="formatSn('verandaSize')">外廊尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.verandaSize"/> 
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('innerSize')}" :data-sn="formatSn('innerSize')">货厢内部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.innerSize"/>
-                            <span class="item-comm" :class="{mark:formatMark('totalWeight')}" :data-sn="formatSn('totalWeight')">总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.totalWeight"/>
-                            <span class="item-comm" :class="{mark:formatMark('approvedLoad')}" :data-sn="formatSn('approvedLoad')">核定载重量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.approvedLoad"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('customer')}"  :data-sn="formatSn('customer')">核定载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.customer"/>
-                            <span class="item-comm" :class="{mark:formatMark('tractionWeight')}"  :data-sn="formatSn('tractionWeight')">准牵引总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.tractionWeight"/>
-                            <span class="item-comm" :class="{mark:formatMark('driverCustomer')}"  :data-sn="formatSn('driverCustomer')">驾驶室载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.driverCustomer"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm" :class="{mark:formatMark('getWay')}" :data-sn="formatSn('getWay')">车辆获得方式：</span><Input class="item-input txt" readonly v-model="modify100.getWay"/>
                             <span class="item-comm" :class="{mark:formatMark('outDate')}" :data-sn="formatSn('outDate')">车辆出厂日期：</span><Input class="item-input txt" readonly :value="modify2.outDate"/>
-                            <span class="item-comm" :class="{mark:formatMark('issueGov')}" :data-sn="formatSn('issueGov')">签发机关：</span><Input class="item-input txt" readonly v-model="modify100.issueGov"/>
                         </div>   
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('madeFactory')}" :data-sn="formatSn('madeFactory')">制造工厂：</span><Input class="item-input txt" readonly v-model="modify100.madeFactory"/> -->
+                         <!--    <span class="item-comm" :class="{mark:formatMark('record')}" :data-sn="formatSn('record')">检验记录：</span><Input class="item-input txt" readonly v-model="modify100.record"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('turnType')}"  :data-sn="formatSn('turnType')">转向形式：</span><Input class="item-input txt" readonly v-model="modify100.turnType"/> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('wheelDistance')}"  :data-sn="formatSn('wheelDistance')">轮距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelDistance"/> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('wheelCount')}"  :data-sn="formatSn('wheelCount')">轮胎数(胎)：</span><Input class="item-input txt" readonly v-model="modify100.wheelCount"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('wheelNormal')}" :data-sn="formatSn('wheelNormal')">轮胎规格(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelNormal"/> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('steelCount')}" :data-sn="formatSn('steelCount')">钢板弹簧片数(片)：</span><Input class="item-input txt" readonly v-model="modify100.steelCount"/> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('wheelbase')}" :data-sn="formatSn('wheelbase')">轴距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelbase"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                         <!--    <span class="item-comm" :class="{mark:formatMark('axesCount')}" :data-sn="formatSn('axesCount')">轴数(轴)：</span><Input class="item-input txt" readonly v-model="modify100.axesCount"/> -->
+                         <!--    <span class="item-comm" :class="{mark:formatMark('size')}" :data-sn="formatSn('size')">外部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.size"/> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('verandaSize')}" :data-sn="formatSn('verandaSize')">外廊尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.verandaSize"/>  -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('innerSize')}" :data-sn="formatSn('innerSize')">货厢内部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.innerSize"/> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('totalWeight')}" :data-sn="formatSn('totalWeight')">总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.totalWeight"/> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('approvedLoad')}" :data-sn="formatSn('approvedLoad')">核定载重量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.approvedLoad"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('customer')}"  :data-sn="formatSn('customer')">核定载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.customer"/> -->
+                         <!--    <span class="item-comm" :class="{mark:formatMark('tractionWeight')}"  :data-sn="formatSn('tractionWeight')">准牵引总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.tractionWeight"/> -->
+                     <!--        <span class="item-comm" :class="{mark:formatMark('driverCustomer')}"  :data-sn="formatSn('driverCustomer')">驾驶室载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.driverCustomer"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('getWay')}" :data-sn="formatSn('getWay')">车辆获得方式：</span><Input class="item-input txt" readonly v-model="modify100.getWay"/> -->
+                            <!-- <span class="item-comm" :class="{mark:formatMark('issueGov')}" :data-sn="formatSn('issueGov')">签发机关：</span><Input class="item-input txt" readonly v-model="modify100.issueGov"/> -->
+                        <!-- </div>    -->
                         <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('useNature')}" :data-sn="formatSn('useNature')">使用性质：</span>
-                            <Input class="item-input txt" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>    
-                            <span class="item-comm" :class="{mark:formatMark('remark')}" :data-sn="formatSn('remark')">备注：</span><Input class="item-input txt" readonly v-model="modify100.remark"/>
-                            <span class="item-comm" :class="{mark:formatMark('travelerRegisterDate')}" :data-sn="formatSn('travelerRegisterDate')">登记日期：</span><Input class="item-input txt" readonly :value="modify100.travelerRegisterDate"/> 
+                            <Input class="item-input txt" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>   
+                            <span class="item-comm required" :class="{mark:formatMark('passenger')}" :data-sn="formatSn('passenger')">核载人数(人)：</span><Input class="item-input txt" readonly v-model="modify100.passenger"/> 
+                            <span class="item-comm required" :class="{mark:formatMark('cylinder')}" :data-sn="formatSn('cylinder')">缸数(缸)：</span><Input class="item-input txt" readonly v-model="modify100.cylinder"/>
+                       <!--      <span class="item-comm" :class="{mark:formatMark('remark')}" :data-sn="formatSn('remark')">备注：</span><Input class="item-input txt" readonly v-model="modify100.remark"/> -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('travelerRegisterDate')}" :data-sn="formatSn('travelerRegisterDate')">登记日期：</span><Input class="item-input txt" readonly :value="modify100.travelerRegisterDate"/>  -->
                         </div>   
                         <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('mile')}" :data-sn="formatSn('mile')">行驶里程(万)：</span><Input class="item-input txt" readonly v-model="modify100.mile"/>
                             <span class="item-comm required" :class="{mark:formatMark('fuelNumber')}" :data-sn="formatSn('fuelNumber')">燃料编号：</span><Input class="item-input txt" readonly v-model="modify100.fuelNumber"/>
-                            <span class="item-comm required" :class="{mark:formatMark('cylinder')}" :data-sn="formatSn('cylinder')">缸数(缸)：</span><Input class="item-input txt" readonly v-model="modify100.cylinder"/>
                         </div>   
                         <div class="item-div">         
                             <span class="item-comm required" :class="{mark:formatMark('hasInspect')}" :data-sn="formatSn('hasInspect')">有无年检：</span><Input class="item-input txt" readonly :value="modify100.hasInspect=='0'?'无':modify100.hasInspect=='1'?'有':''"/>
@@ -1031,19 +1086,18 @@
                             <span class="item-comm required" :class="{mark:formatMark('address')}" :data-sn="formatSn('address')">住址：</span><Input class="item-input txt" readonly v-model="modify100.address"/>
                         </div>   
                         <div class="item-div">      
-                            <span class="item-comm required" :class="{mark:formatMark('model')}" :data-sn="formatSn('model')">品牌型号：</span><Input class="item-input txt" readonly v-model="modify100.model"/>
+                            <span class="item-comm required" :class="{mark:formatMark('brandModel')}" :data-sn="formatSn('brandModel')">品牌型号：</span><Input class="item-input txt" readonly v-model="modify100.brandModel"/>
                             <span class="item-comm required" :class="{mark:formatMark('vin')}" :data-sn="formatSn('vin')">车辆识别代码：</span><Input class="item-input txt" readonly v-model="modify100.vin"/>
                             <span class="item-comm required" :class="{mark:formatMark('registerDate')}" :data-sn="formatSn('registerDate')">注册日期：</span><Input class="item-input txt" readonly :value="modify100.registerDate"/>
                         </div>   
-                        <div class="item-div">      
-                            <span class="item-comm" :class="{mark:formatMark('archivesNumber')}" :data-sn="formatSn('archivesNumber')">档案编号：</span><Input class="item-input txt" readonly v-model="modify100.archivesNumber"/>
-                            <span class="item-comm required" :class="{mark:formatMark('passenger')}" :data-sn="formatSn('passenger')">核载人数(人)：</span><Input class="item-input txt" readonly v-model="modify100.passenger"/>
-                            <span class="item-comm" :class="{mark:formatMark('weightWhole')}" :data-sn="formatSn('weightWhole')">整备质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightWhole"/>
-                        </div>   
-                        <div class="item-div">      
-                            <span class="item-comm" :class="{mark:formatMark('weightApproved')}" :data-sn="formatSn('weightApproved')">核定载质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightApproved"/>
-                           <span class="item-comm" :class="{mark:formatMark('issueAgency')}" :data-sn="formatSn('issueAgency')">发证机构：</span><Input class="item-input txt" readonly v-model="modify100.issueAgency"/>
-                        </div>
+                        <!-- <div class="item-div">       -->
+                           <!--  <span class="item-comm" :class="{mark:formatMark('archivesNumber')}" :data-sn="formatSn('archivesNumber')">档案编号：</span><Input class="item-input txt" readonly v-model="modify100.archivesNumber"/> -->
+                          <!--   <span class="item-comm" :class="{mark:formatMark('weightWhole')}" :data-sn="formatSn('weightWhole')">整备质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightWhole"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">       -->
+                         <!--    <span class="item-comm" :class="{mark:formatMark('weightApproved')}" :data-sn="formatSn('weightApproved')">核定载质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightApproved"/>
+                           <span class="item-comm" :class="{mark:formatMark('issueAgency')}" :data-sn="formatSn('issueAgency')">发证机构：</span><Input class="item-input txt" readonly v-model="modify100.issueAgency"/> -->
+                        <!-- </div> -->
                         <!-- 登记摘要信息栏  -->
                         <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span></div>
                         <span v-for="(item,index) in recordVO" :key="index">
@@ -1099,9 +1153,16 @@
                                 <viewer :images="modify5Img[7]?modify5Img[7].split(' '):[]"><img class="my-img" :src="modify5Img[7]" alt="绿本第4页">
                                 </viewer>
                             </span> 
+                        </div> 
+                        <div class="title-info">车300照片</div>
+                        <div v-if="name=='WaitAuditingList'">
+                            <span class="span-width1"><ImgUpload :type="5" class="imgUpload" :txt="'多选'" :myUploadList="auditPicsmyUploadList" :myUploadList2="auditPicsmyUploadList2" @changePicUrl="changePicUrl10" ></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="commonModifyBtn(auditPicsmyUploadList2)">保存</Button></span>   
+                        </div>
+                        <div v-if="name!='WaitAuditingList'">
+                            <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
                         </div>     
                     </div>
-                    <div class="name5-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract'&& $route.query.name2!='WaitCheckAgain'&& $route.query.name2!='WaitStoreList'&& $route.query.name2!='WaitConfirmList'">
+                    <div class="name5-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract' && $route.query.name2!='WaitStoreList'&& $route.query.name2!='WaitConfirmList'">
                         <!-- 基础信息 -->
                         <div class="title-info">基础信息</div>   
                         <div class="item-div">
@@ -1117,58 +1178,59 @@
                         <div class="item-div"> 
                             <span class="item-comm required">来源：</span> <Input class="item-input txt" v-if="!ismodify100 || !formatMark('source')" readonly :value="modify100.source=='1'?'国产':modify100.source=='2'?'进口':''"/>
                             <span class="item-comm required">发证日期(行驶证)：</span><Input class="item-input txt" readonly :value="modify100.giveDate"/>
-                            <span class="item-comm">发证日期(绿本)：</span><Input class="item-input txt" readonly :value="modify100.issueDate"/>
+                            <span class="item-comm required">发动机号码：</span><Input class="item-input txt" readonly v-model="modify100.enginerNumber"/>
+                            <!-- <span class="item-comm">发证日期(绿本)：</span><Input class="item-input txt" readonly :value="modify100.issueDate"/> -->
                         </div>   
                         <div class="item-div"> 
-                            <span class="item-comm required">发动机号码：</span><Input class="item-input txt" readonly v-model="modify100.enginerNumber"/>
-                            <span class="item-comm">发动机型号：</span><Input class="item-input txt" readonly v-model="modify100.enginerModel"/>
+                            <!-- <span class="item-comm">发动机型号：</span><Input class="item-input txt" readonly v-model="modify100.enginerModel"/> -->
                             <span class="item-comm">燃油种类：</span><Input class="item-input txt" readonly v-model="modify100.oilType"/>
-                        </div>   
-                        <div class="item-div">     
                             <span class="item-comm required">排量(ml)：</span><Input class="item-input txt" readonly v-model="modify100.displace"/>
-                            <span class="item-comm">制造工厂：</span><Input class="item-input txt" readonly v-model="modify100.madeFactory"/>
-                            <span class="item-comm">检验记录：</span><Input class="item-input txt" readonly v-model="modify100.record"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">转向形式：</span><Input class="item-input txt" readonly v-model="modify100.turnType"/>
-                            <span class="item-comm">轮距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelDistance"/>
-                            <span class="item-comm">轮胎数(胎)：</span><Input class="item-input txt" readonly v-model="modify100.wheelCount"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">轮胎规格(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelNormal"/>
-                            <span class="item-comm">钢板弹簧片数(片)：</span><Input class="item-input txt" readonly v-model="modify100.steelCount"/>
-                            <span class="item-comm">轴距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelbase"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">轴数(轴)：</span><Input class="item-input txt" readonly v-model="modify100.axesCount"/>
-                            <span class="item-comm">外部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.size"/>
-                            <span class="item-comm">外廊尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.verandaSize"/> 
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">货厢内部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.innerSize"/>
-                            <span class="item-comm">总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.totalWeight"/>
-                            <span class="item-comm">核定载重量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.approvedLoad"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">核定载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.customer"/>
-                            <span class="item-comm">准牵引总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.tractionWeight"/>
-                            <span class="item-comm">驾驶室载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.driverCustomer"/>
-                        </div>   
-                        <div class="item-div">     
-                            <span class="item-comm">车辆获得方式：</span><Input class="item-input txt" readonly v-model="modify100.getWay"/>
                             <span class="item-comm">车辆出厂日期：</span><Input class="item-input txt" readonly :value="modify2.outDate"/>
-                            <span class="item-comm">签发机关：</span><Input class="item-input txt" readonly v-model="modify100.issueGov"/>
                         </div>   
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">制造工厂：</span><Input class="item-input txt" readonly v-model="modify100.madeFactory"/> -->
+                            <!-- <span class="item-comm">检验记录：</span><Input class="item-input txt" readonly v-model="modify100.record"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">转向形式：</span><Input class="item-input txt" readonly v-model="modify100.turnType"/> -->
+                            <!-- <span class="item-comm">轮距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelDistance"/> -->
+                            <!-- <span class="item-comm">轮胎数(胎)：</span><Input class="item-input txt" readonly v-model="modify100.wheelCount"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">轮胎规格(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelNormal"/> -->
+                            <!-- <span class="item-comm">钢板弹簧片数(片)：</span><Input class="item-input txt" readonly v-model="modify100.steelCount"/> -->
+                            <!-- <span class="item-comm">轴距(mm)：</span><Input class="item-input txt" readonly v-model="modify100.wheelbase"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">轴数(轴)：</span><Input class="item-input txt" readonly v-model="modify100.axesCount"/> -->
+                            <!-- <span class="item-comm">外部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.size"/> -->
+                            <!-- <span class="item-comm">外廊尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.verandaSize"/>  -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">货厢内部尺寸(mm)：</span><Input class="item-input txt" readonly v-model="modify100.innerSize"/> -->
+                            <!-- <span class="item-comm">总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.totalWeight"/> -->
+                            <!-- <span class="item-comm">核定载重量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.approvedLoad"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">核定载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.customer"/> -->
+                            <!-- <span class="item-comm">准牵引总质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.tractionWeight"/> -->
+                            <!-- <span class="item-comm">驾驶室载客(人)：</span><Input class="item-input txt" readonly v-model="modify100.driverCustomer"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">      -->
+                            <!-- <span class="item-comm">车辆获得方式：</span><Input class="item-input txt" readonly v-model="modify100.getWay"/> -->
+                            <!-- <span class="item-comm">签发机关：</span><Input class="item-input txt" readonly v-model="modify100.issueGov"/> -->
+                        <!-- </div>    -->
                         <div class="item-div">     
                             <span class="item-comm required">使用性质：</span>
                             <Input class="item-input txt" readonly :value="modify100.useNature=='1'?'营运用车':modify100.useNature=='2'?'出租车':modify100.useNature=='3'?'公务用车':modify100.useNature=='4'?'家庭用车':modify100.useNature=='5'?'其它':''"/>    
-                            <span class="item-comm">备注：</span><Input class="item-input txt" readonly v-model="modify100.remark"/>
-                            <span class="item-comm">登记日期：</span><Input class="item-input txt" readonly :value="modify100.travelerRegisterDate"/>
+                            <span class="item-comm required">核载人数(人)：</span><Input class="item-input txt" readonly v-model="modify100.passenger"/>
+                            <span class="item-comm required">缸数(缸)：</span><Input class="item-input txt" readonly v-model="modify100.cylinder"/>
+                            <!-- <span class="item-comm">备注：</span><Input class="item-input txt" readonly v-model="modify100.remark"/> -->
+                            <!-- <span class="item-comm">登记日期：</span><Input class="item-input txt" readonly :value="modify100.travelerRegisterDate"/> -->
                         </div>   
                         <div class="item-div">     
                             <span class="item-comm required">行驶里程(万)：</span><Input class="item-input txt" readonly v-model="modify100.mile"/>
                             <span class="item-comm required">燃料编号：</span><Input class="item-input txt" readonly v-model="modify100.fuelNumber"/>
-                            <span class="item-comm required">缸数(缸)：</span><Input class="item-input txt" readonly v-model="modify100.cylinder"/>
                         </div>   
                         <div class="item-div">         
                             <span class="item-comm required">有无年检：</span><Input class="item-input txt" readonly :value="modify100.hasInspect=='0'?'无':modify100.hasInspect=='1'?'有':''"/>
@@ -1230,19 +1292,18 @@
                             <span class="item-comm required">住址：</span><Input class="item-input txt" readonly v-model="modify100.address"/>
                         </div>   
                         <div class="item-div">      
-                            <span class="item-comm required">品牌型号：</span><Input class="item-input txt" readonly v-model="modify100.model"/>
+                            <span class="item-comm required">品牌型号：</span><Input class="item-input txt" readonly v-model="modify100.brandModel"/>
                             <span class="item-comm required">车辆识别代码：</span><Input class="item-input txt" readonly v-model="modify100.vin"/>
                             <span class="item-comm required">注册日期：</span><Input class="item-input txt" readonly :value="modify100.registerDate"/>
                         </div>   
-                        <div class="item-div">      
-                            <span class="item-comm">档案编号：</span><Input class="item-input txt" readonly v-model="modify100.archivesNumber"/>
-                            <span class="item-comm required">核载人数(人)：</span><Input class="item-input txt" readonly v-model="modify100.passenger"/>
-                            <span class="item-comm">整备质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightWhole"/>
-                        </div>   
-                        <div class="item-div">      
-                            <span class="item-comm">核定载质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightApproved"/>
-                           <span class="item-comm">发证机构：</span><Input class="item-input txt" readonly v-model="modify100.issueAgency"/>
-                        </div>
+                        <!-- <div class="item-div">       -->
+                            <!-- <span class="item-comm">档案编号：</span><Input class="item-input txt" readonly v-model="modify100.archivesNumber"/> -->
+                            <!-- <span class="item-comm">整备质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightWhole"/> -->
+                        <!-- </div>    -->
+                        <!-- <div class="item-div">       -->
+                           <!--  <span class="item-comm">核定载质量(kg)：</span><Input class="item-input txt" readonly v-model="modify100.weightApproved"/>
+                            <span class="item-comm">发证机构：</span><Input class="item-input txt" readonly v-model="modify100.issueAgency"/> -->
+                        <!-- </div> -->
                         <!-- 登记摘要信息栏  -->
                         <div class="title-info" style="position:relative;"><span style="vertical-align:middle;">登记摘要信息栏(必填) </span></div>
                         <span v-for="(item,index) in recordVO" :key="index">
@@ -1298,7 +1359,14 @@
                                 <viewer :images="modify5Img[7]?modify5Img[7].split(' '):[]"><img class="my-img" :src="modify5Img[7]" alt="绿本第4页">
                                 </viewer>
                             </span> 
-                        </div>     
+                        </div>
+                        <div class="title-info">车300照片</div>
+                        <div v-if="name=='WaitAuditingList'">
+                            <span class="span-width1"><ImgUpload :type="5" class="imgUpload" :txt="'多选'" :myUploadList="auditPicsmyUploadList" :myUploadList2="auditPicsmyUploadList2" @changePicUrl="changePicUrl10" ></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="commonModifyBtn(auditPicsmyUploadList2)">保存</Button></span>   
+                        </div>
+                        <div v-if="name!='WaitAuditingList'">
+                            <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
+                        </div>  
                     </div>
                 </TabPane>
                <!--  <TabPane label="认证信息" name="name3">
@@ -1373,19 +1441,44 @@
                         </span>
                     </div>
                 </TabPane> -->
-                <TabPane label="打包信息" name="name3">
-                    打包信息
-                </TabPane>
-                <TabPane label="合同信息" name="name4">
-                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
-                        <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button class="btn-margin" :loading="carImgloading5" type="primary" size="small" v-if="$route.query.name2=='SignContract'" @click="downContract">合同生成</Button>
+                <TabPane label="订单资料" name="name3">
+                     <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
+                        <!-- <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button class="btn-margin" :loading="carImgloading5" type="primary" size="small" v-if="$route.query.name2=='SignContract'" @click="downContract">合同生成</Button>
                             <span class="span-width1">音频：<ImgUpload :txt="'多选'" :myUploadList="myimgs99" :myUploadList2="myimgs991" class="imgUpload" :type="5" @changePicUrl="changePicUrl99"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('音频')">保存</Button></span>
                         <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button class="btn-margin" type="dashed" size="small" @click="previewDown(item.contractId)">打印合同</Button></div>
                         <div>
                             <span class="span-width1"><ImgUpload class="imgUpload" :type="6" :txt="'多选'" :myUploadList="formatImg(item.imgs,'绝对')" :myUploadList2="formatImg(item.imgs,'相对')" @changePicUrl="changePicUrl300"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyContractBtn(item.contractId)">保存</Button></span>   
                         </div>
-                        </template>
+                        </template> -->
+                        <Button class="btn-margin" style="margin-left:0" type="primary" size="small" v-if="$route.query.name2=='WaitStoreList'" @click="orderUpLoad">上传资料</Button>
+                        <input style="display:none" type="file" id="file1" ref="file1" @change="changeFile1('资料')"/>
+                        <div class="listadmin">
+                            <Table border :columns="columnsInfo" :height="adjustHeight" :data="orderInfo" :loading="table_loading"></Table>
+                        </div>
+                        <div style="text-align:center;margin-top:20px;">
+                            <Page :current="searchInfo.pageNum" :total="totalCount" :page-size="pagesize" @on-change="pageChange" show-total></Page>
+                        </div>
+                    </div>
+                </TabPane>
+                <TabPane label="合同信息" name="name4">
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='SignContract'">
+                        <Button v-if="contractList.length?true:false" class="btn-margin" style="margin-left:0" type="primary" size="small" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button class="btn-margin" :loading="carImgloading5" type="primary" size="small" v-if="$route.query.name2=='SignContract'" @click="downContract">合同生成</Button>
+                           <!--  <span class="span-width1">音频：<ImgUpload :txt="'多选'" :myUploadList="myimgs99" :myUploadList2="myimgs991" class="imgUpload" :type="5" @changePicUrl="changePicUrl99"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyCommonBtn('音频')">保存</Button></span> -->
+                        <Button class="btn-margin" type="primary" size="small" @click="orderUpLoad2">上传复审资料包</Button>
+                        <input style="display:none" type="file" id="file2" ref="file2" @change="changeFile1('合同')"/>
+                        <div class="listadmin">
+                            <Table border :columns="columnsContract" :height="adjustHeight" :data="contractInfo" :loading="table_loading"></Table>
+                        </div>
+                        <div style="text-align:center;margin-top:20px;">
+                            <Page :current="search2Info.pageNum" :total="totalCount" :page-size="pagesize" @on-change="pageChange" show-total></Page>
+                        </div>    
+                        <!-- <template v-for="item in contractList">
+                        <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button><Button class="btn-margin" type="dashed" size="small" @click="previewDown(item.contractId)">打印合同</Button></div>
+                        <div>
+                            <span class="span-width1"><ImgUpload class="imgUpload" :type="6" :txt="'多选'" :myUploadList="formatImg(item.imgs,'绝对')" :myUploadList2="formatImg(item.imgs,'相对')" @changePicUrl="changePicUrl300"></ImgUpload><Button class="btn-margin" type="primary" size="small" @click="modifyContractBtn(item.contractId)">保存</Button></span>   
+                        </div>
+                        </template> -->
                     </div>
                     <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='SignContract'">
                         <Button v-if="contractList.length?true:false" class="btn-margin" type="primary" size="small" style="margin-left:0" :loading="carImgloading2" @click="downLoadContract">批量合同下载</Button><Button class="btn-margin" :loading="carImgloading3" type="primary" size="small" v-if="contractList.length?true:false" @click="previewContract">查看电签合同</Button><Button v-if="!contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="applySeal">申请电签</Button><Button v-if="contractFlowId && $route.query.name2=='WaitCheckAgain'" class="btn-margin" type="primary" size="small" @click="sealDetail">电签详情</Button>
@@ -1393,7 +1486,13 @@
                             <img class="my-img" style="margin:0 15px;" src="https://carloan-bm.oss-cn-hangzhou.aliyuncs.com/imgs/radio_icon.png" alt="音频">
                             <div @click="toDownBtn(audio)"><Icon type="md-download" color="#fff"></Icon></div>
                         </span>   
-                        <template v-for="item in contractList">
+                        <div class="listadmin">
+                            <Table border :columns="columnsContract" :height="adjustHeight" :data="contractInfo" :loading="table_loading"></Table>
+                        </div>
+                        <div style="text-align:center;margin-top:20px;">
+                            <Page :current="search2Info.pageNum" :total="totalCount" :page-size="pagesize" @on-change="pageChange" show-total></Page>
+                        </div>   
+                        <!-- <template v-for="item in contractList">
                         <div class="title-info" :class="item.isRequired?'required':''">{{item.contractItemName}}<Button class="btn-margin" type="dashed" size="small" @click="preview(item.pdfUrl)">预览合同</Button></div>
                         <div>
                             <span>
@@ -1404,7 +1503,7 @@
                                 </span>
                             </span>
                         </div>
-                        </template>
+                        </template> -->
                     </div>
                 </TabPane>
                 <TabPane label="设备管理" name="name5">
@@ -1418,10 +1517,23 @@
                             <span class="imgs-imgsArr">
                                 图片：<viewer :images="item.imgsArr"><img class="my-img" style="margin:0 15px;" v-for="(ele,index) in item.imgsArr" :src="ele" :key="index" alt="图片"></viewer>
                             </span>
-                            <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='WaitStoreList'" @click="modifyDevice(item.id,item.deviceNum)">修改</Button>
+                            <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='WaitStoreList' && orderStatus!=10" @click="modifyDevice(item.id,item.deviceNum)">修改</Button>
                             <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='GPSInstall'" @click="modifyPosition(item.id,item.imgs,item.position)">添加/修改位置</Button>
                         </div>   
                         </template>
+                    </div>
+                </TabPane>
+                <TabPane label="承保方" name="name6">
+                    <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
+                        <Button type="primary" size="small" @click="modifyUnderwrite" v-if="isunderwriteUpdate">{{!isunderwrite?'修改':'保存'}}</Button>
+                        <div class="name-underwrite">
+                            <span class="item-comm required" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'">承保方：</span><span class="item-comm required" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract'" :class="{mark:formatMark3('insurer')}" :data-sn="formatSn3('insurer')">承保方：</span><Select v-if="isunderwrite && isunderwriteUpdate" v-model="underwrite.insurer" class="item-input">
+                                <Option value="1">青岛人保</Option>
+                                <Option value="2">大连人保</Option>
+                                <Option value="3">郑州人保</Option>
+                            </Select>
+                            <Input class="item-input txt" v-if="!isunderwrite" readonly :value="underwrite.insurer=='1'?'青岛人保':underwrite.insurer=='2'?'大连人保':underwrite.insurer=='3'?'郑州人保':''"/>
+                        </div>
                     </div>
                 </TabPane>
             </Tabs>
@@ -1510,6 +1622,19 @@ export default {
     name: 'WaitStoreDetail',
     data () {
         return {
+            totalCount: null,
+            pagesize: 15,
+            table_loading: false,
+            searchInfo:{
+                pageNum: 1
+            }, 
+            search2Info:{
+                pageNum: 1
+            },
+            percent: 0,
+            orderInfo:[],
+            contractInfo:[],
+            spinState: false,
             myUrl:process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093',
             mat:'',
             myTitle:'新增订单设备',
@@ -1535,6 +1660,7 @@ export default {
             name: '',   //保存从哪个页面跳转进来的路由name值
             bigimg:'',
             id:'',
+            orderStatus: '', //为10表示复审退回
             audiosArr:[],
             checkedState:false,
             deviceId:'', //设备ID
@@ -1584,6 +1710,127 @@ export default {
                     }
                 }
             ],
+            oss: {}, //oss相关信息集合
+            columnsInfo: [{
+                    title: '操作',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    fixed: "left",
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    disabled: this.$route.query.name2=='WaitStoreList'?false:true
+                                },
+                                style: {
+                                    'margin-top':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modalTipTitle="删除该资料";
+                                        this.item = params.row;
+                                        this.tipModal = true;
+                                    }
+                                }
+                            }, '删除'),
+                        ]);
+                    }
+                }, {
+                    title: '资料链接',
+                    key: 'resource',
+                    minWidth: 115,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('a', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    'display':'inline-block',
+                                    'minWidth':'100px'
+                                },
+                                on: {
+                                    click: () => {
+                                       window.location.href = params.row.resource;
+                                    }
+                                }
+                            }, '资料'),
+                        ]);
+                    }
+                }, {
+                    title: '上传时间',
+                    key: 'createTime',
+                    minWidth: 90,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+            }],
+            columnsContract: [{
+                    title: '操作',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    fixed: "left",
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                    disabled: this.$route.query.name2=='SignContract'?false:true
+                                },
+                                style: {
+                                    'margin-top':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modalTipTitle="删除该资料";
+                                        this.item = params.row;
+                                        this.tipModal = true;
+                                    }
+                                }
+                            }, '删除'),
+                        ]);
+                    }
+                }, {
+                    title: '资料链接',
+                    key: 'resource',
+                    minWidth: 115,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('a', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    'display':'inline-block',
+                                    'minWidth':'100px'
+                                },
+                                on: {
+                                    click: () => {
+                                       window.location.href = params.row.resource;
+                                    }
+                                }
+                            }, '资料'),
+                        ]);
+                    }
+                }, {
+                    title: '上传时间',
+                    key: 'createTime',
+                    minWidth: 90,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.createTime)
+                        ]);
+                    }
+            }],
             applySealModify:{
                 scene:'',
                 firstPartKey:'',
@@ -1810,10 +2057,19 @@ export default {
             myimgs15Files:[], 
             myimgs15Imgs:[],
             
+            
+            topInfo:{  //最顶上的基本信息
+                name: '',
+                identityCard: '',
+                plateNumber: '',
+                vin: '',
+                enginerNumber: ''
+            },
             isReturn:false, //默认不是退回到门店的订单
+            isCarUpdate:false, //合同退回为true
             ismodify100:false,  //true 为修改模式
             modify100: {
-                orderId: this.$route.query.orderId,
+                orderId: '',
             },
             modify100Clone: {
                 isResponse: false
@@ -1828,7 +2084,14 @@ export default {
             ismodifyContact1:[false,false,false], //true 为修改模式
             contacts1:[],
             contacts1Clone:[],
-            identityInfo1:[]
+            identityInfo1:[],
+            underwrite:{},
+            underwriteClone:{
+                isResponse: false //存储为一个副本 带sn,needUpdate字段
+            },
+            isunderwrite: false,
+            isunderwriteReturn: false,
+            isunderwriteUpdate: false
         }
     },
     components:{
@@ -1854,9 +2117,13 @@ export default {
         this.getInitialCarList2({autoRepositoryId:this.$route.query.autoId,orderId:this.$route.query.orderId});
         this.getFile({autoRepositoryId:this.$route.query.autoId});
         this.getDeviceList({orderId:this.$route.query.orderId});
+        this.getOrderList({orderId:this.$route.query.orderId});
         // if(this.$route.query.name2!='WaitStoreList' && this.$route.query.name2!='WaitAuditingList' && this.$route.query.name2!='WaitConfirmList'){
         this.contractList = [];
-        // this.getContractList({orderId:this.$route.query.orderId});
+        this.getOSSInfo({params:{type:11}});
+        this.getContractList({orderId:this.$route.query.orderId});
+        this.getContractList2({orderId:this.$route.query.orderId});
+        this.getInsurerDetail();
         // }
         let that = this;
         $('.name4-box').off('click').on('click','.item-div .item-comm', function(){
@@ -1881,6 +2148,29 @@ export default {
         })
         $('.person-name3-box').off('click').on('click','.common-ul .item-comm', function(){
             if(that.$route.query.name2=='WaitAuditingList'|| that.$route.query.name2=='SignContract'|| that.$route.query.name2=='WaitCheckAgain'){
+                let formData = {
+                    orderId: that.$route.query.orderId,
+                    sn: this.dataset.sn
+                };
+                if(!this.dataset.sn){
+                    return that.$Message.error("该字段不允许标记");
+                }
+                if($(this).hasClass('mark')){
+                    $(this).removeClass('mark');
+                    formData.handType = 0
+                }else{
+                    $(this).addClass('mark');
+                    formData.handType = 1
+                }
+                that.$axios.post('/fx?api=gate.hand.change.record',formData).then(res => {
+                    if(res!=500){
+                        console.log('标记成功');
+                    }
+                })  
+            }
+        })
+        $('.name-underwrite').off('click').on('click','.item-comm', function(){
+            if(that.$route.query.name2=='WaitAuditingList'|| that.$route.query.name2=='SignContract'){
                 let formData = {
                     orderId: that.$route.query.orderId,
                     sn: this.dataset.sn
@@ -1966,6 +2256,157 @@ export default {
         //         }
         //     })
         // },
+        getInsurerDetail(){
+            this.$axios.get('/fx?api=gate.order.insurer.detail',{params:{id:this.$route.query.orderId}}).then(res => {
+                if(res!=500){
+                    this.underwriteClone.isResponse = true;
+                    this.isunderwriteUpdate = res.isUpdate;
+                    this.isunderwriteReturn = res.isReturn;
+                    res.infoList.forEach( (item, index) => {
+                        this.$set(this.underwrite, item.key, item.value) //添加响应式的属性
+                        this.$set(this.underwriteClone, item.key, item)
+                    });
+                    console.log(this.underwrite,this.underwriteClone);
+                }
+            })
+        },
+        orderUpLoad(){
+            this.$refs.file1.value = null;
+            let file = this.$refs.file1;
+            file.click();
+        }, 
+        orderUpLoad2(){
+            this.$refs.file2.value = null;
+            let file = this.$refs.file2;
+            file.click();
+        },
+        random_string(len) {　　
+            len = len || 32;　　
+            var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';　　
+            var maxPos = chars.length;　　
+            var pwd = '';　　
+            for (let i = 0; i < len; i++) {　　
+                pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            return pwd;
+        },
+        changeFile1(txt){
+            this.spinState = true
+            let { endpoint } = this.oss;
+            let index1 = endpoint.indexOf('oss');
+            let index2 = endpoint.indexOf('aliyuncs');
+            let myEndpoint = endpoint.slice(index1,index2-1);
+            let client = new OSS.Wrapper({
+                region: myEndpoint,
+                accessKeyId: this.oss.aki,
+                accessKeySecret: this.oss.aks,
+                stsToken: this.oss.sk,
+                bucket: this.oss.bucketName,
+                secure:true
+            });
+            let file = null;
+            switch (txt) {
+                case '资料':
+                    file = this.$refs.file1.files[0];
+                    break;
+                case '合同':
+                    file = this.$refs.file2.files[0];
+                    break;    
+            }
+            if(file){
+                let reg = /\.rar$|\.zip$/i;
+                if(!reg.test(file.name)){
+                    let fileInput = null;
+                    switch (txt) {
+                        case '资料':
+                            fileInput = this.$refs.file1;
+                            break;
+                        case '合同':
+                            fileInput = this.$refs.file2;
+                            break;    
+                    }
+                    fileInput.value='';
+                    let errorTxt = '格式只支持rar,zip';
+                    this.spinState = false;
+                    return this.$Message.error(errorTxt);
+                }
+                let random_name = this.random_string(6) + '_' + new Date().getTime() + '.' + file.name.split('.').pop();   // 随机命名
+                // client.multipartUpload(`${this.oss.dirPath}${random_name}`, file).then(result => {
+                //     console.log(result);
+                //     let requestUrls = result.res.requestUrls[0];
+                //     let index1 = requestUrls.indexOf('uploadId');
+                //     let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
+                //     let myIndex = myUrl.indexOf('/img');
+                //     let ranUrl = myUrl.slice(myIndex+1);
+                //     myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
+                //     this.fileUpload(ranUrl);
+                //     // this.$emit('changePicUrl', ranUrl,myUrl);
+                // }).catch(err => {
+                //     this.$Message.warning('文件上传出错');
+                //     this.spinState = false;
+                // }); 
+                
+                let checkpoint;
+
+                // 定义上传方法
+                let that = this;
+                async function multipartUpload (){
+                    try {
+                        let result = await client.multipartUpload(`${that.oss.dirPath}${random_name}`, file, {
+                            checkpoint: checkpoint,
+                            progress: async function (percent, cpt) {
+                                that.percent = Math.round(percent*100);
+                                checkpoint = cpt;
+                            }
+                        })
+                        let requestUrls = result.res.requestUrls[0];
+                        let index1 = requestUrls.indexOf('uploadId');
+                        let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
+                        let myIndex = myUrl.indexOf('/img');
+                        let ranUrl = myUrl.slice(myIndex+1);
+                        myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
+                        that.fileUpload(ranUrl,txt);
+                    } catch(e){
+                        that.$Message.warning('文件上传出错');
+                        that.spinState = false;
+                    }
+                }
+                multipartUpload();
+            }     
+        },
+        fileUpload(resource,txt){
+            let myUrl = '';
+            switch (txt) {
+                case '资料':
+                    myUrl = '/fx?api=gate.file.upload';
+                    break;
+                case '合同':
+                    myUrl = '/fx?api=gate.file.upload.contract';
+                    break;    
+            }
+            this.$axios.post(myUrl,{orderId:this.$route.query.orderId,resource:resource}).then(res => {
+                if(res!=500){
+                    this.$Message.success('资料上传成功');
+                    switch (txt) {
+                        case '资料':
+                            this.getOrderList({orderId:this.$route.query.orderId});
+                            break;
+                        case '合同':
+                            this.getContractList2({orderId:this.$route.query.orderId});
+                            break;    
+                    }
+                   
+                }
+                this.spinState = false;
+            })
+        },
+        getOSSInfo(){ //获得OSS相关信息
+            this.$axios.get('/fx?api=gate.base.ossUpload',{params:{type:11}}).then(res => {
+                if(res!=500){
+                    this.oss = res;     
+                }
+            })
+        },
         getInitialPersonList2(formData){ 
             this.$axios.get('/fx?api=gate.order.admin.person.detail',{params:formData}).then(res => {
                 if(res!=500){
@@ -1976,6 +2417,8 @@ export default {
                         this.$set(this.modifyInfo1, item.key, item.value) //添加响应式的属性
                         this.$set(this.modifyInfo1Clone, item.key, item)
                     });
+                    this.topInfo.name = this.modifyInfo1.name;
+                    this.topInfo.identityCard = this.modifyInfo1.identityCard;
                     this.contacts1 = [];
                     this.contacts1Clone = [];
                     res.contactList.forEach((item, index) => {
@@ -2062,13 +2505,23 @@ export default {
                 }
             })
         },
+        getOrderList(formData){
+            this.$axios.get('/fx?api=gate.file.list',{params:formData}).then(res => {
+                if(res!=500){
+                    this.orderInfo = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.searchInfo.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+            })
+        },
         getContractList(formData ){
             this.$axios.get('/fx?api=gate.order.admin.contractQuery',{params:formData}).then(res => {
                 if(res!=500){
                     this.contractList = res.list;
                     this.contractFlowId = res.flowId;
                     this.audiosArr = [];
-                    res.audios.forEach((item,index)=>{
+                    res.audios && res.audios.forEach((item,index)=>{
                         this.audiosArr.push(item.value);
                     })
                     this.contractList.forEach( (item,index)=>{
@@ -2089,7 +2542,7 @@ export default {
                     })
                     this.myimgs99 = [];
                     this.myimgs991 = [];
-                    res.audios.forEach((item,index)=>{
+                     res.audios && res.audios.forEach((item,index)=>{
                         this.myimgs99.push(item.value);
                         this.myimgs991.push(item.key);
                     })
@@ -2097,10 +2550,21 @@ export default {
                 }
             })
         },
+        getContractList2(formData){
+            this.$axios.get('/fx?api=gate.contract.file.list',{params:formData}).then(res => {
+                if(res!=500){
+                    this.contractInfo = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.search2Info.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+            })
+        },
         getDeviceList(formData ){
             this.$axios.get('/fx?api=gate.order.device.query',{params:formData}).then(res => {
                 if(res!=500){
-                    this.deviceList = res;
+                    this.deviceList = res.list;
+                    this.orderStatus = res.orderStatus;  
                     this.deviceList.forEach( (item,index)=>{
                         let imgsArr = [];
                         item.imgs.map( (ele, index) => {
@@ -2113,6 +2577,22 @@ export default {
                 }
             })
         }, 
+        pageChange(){
+
+        },
+        modifyUnderwrite(){
+            if(this.isunderwrite){
+                this.$axios.post('/fx?api=gate.order.insurer.update',{id:this.$route.query.orderId,...this.underwrite}).then(res => {
+                    if(res!=500){
+                        this.$Message.success("保存成功"); 
+                        this.isunderwrite = !this.isunderwrite;
+                        this.getInsurerDetail();
+                    }
+                })
+            }else{
+                this.isunderwrite = !this.isunderwrite;
+            }
+        },
         // getInitialCarList(formData){
         //     this.$axios.get('/fx?api=gate.order.admin.car.detail',{params:formData}).then(res => {
         //         if(res!=500){
@@ -2272,10 +2752,14 @@ export default {
             this.$axios.get('/fx?api=gate.order.admin.car.detail',{params:formData}).then(res => {
                 if(res!=500){
                     this.isReturn = res.isReturn;
+                    this.isCarUpdate = res.isCarUpdate;
                     res.autoInfoList.forEach( (item, index) => {
                         this.$set(this.modify100, item.key, item.value) //添加响应式的属性
                         this.$set(this.modify100Clone, item.key, item)
                     });
+                    this.topInfo.plateNumber = this.modify100.plateNumber;
+                    this.topInfo.vin = this.modify100.vin;
+                    this.topInfo.enginerNumber = this.modify100.enginerNumber;
                     this.recordVO = [];
                     this.recordVOClone = [];
                     res.recordVO.forEach((item, index) => {
@@ -2344,10 +2828,10 @@ export default {
                     //     this.insurancePicsmyUploadList.push(item.value);
                     //     this.insurancePicsmyUploadList2.push(item.key);
                     // });
-                    // res.car300AuditPics.forEach( (item, index) => {
-                    //     this.auditPicsmyUploadList.push(item.value);
-                    //     this.auditPicsmyUploadList2.push(item.key);
-                    // });
+                    res.car300AuditPics.forEach( (item, index) => {
+                        this.auditPicsmyUploadList.push(item.value);
+                        this.auditPicsmyUploadList2.push(item.key);
+                    });
                     // this.carRegisterRecords = carRegisterRecordDetailVOs.length ?
                     //     [...carRegisterRecordDetailVOs] : [{
                     //         owner: "", //拥有者
@@ -2417,6 +2901,9 @@ export default {
         formatMark(key){
           return this.modify100Clone.isResponse && this.modify100Clone[key].needUpdate;
         },
+        formatMark3(key){
+          return this.underwriteClone.isResponse && this.underwriteClone[key].needUpdate;
+        },
         formatMark2(key,index){
             if(this.modify100Clone.isResponse && !this.recordVOClone[index]){
                 return true;
@@ -2428,6 +2915,9 @@ export default {
         },
         formatSn2(key,index){
             return this.modify100Clone.isResponse? this.recordVOClone[index][key].sn:'';
+        },
+        formatSn3(key){
+          return this.underwriteClone.isResponse? this.underwriteClone[key].sn:'';
         },
         formatMarkInfo(key){
             return this.modifyInfo1Clone.isResponse && this.modifyInfo1Clone[key].needUpdate;
@@ -2442,19 +2932,20 @@ export default {
           return this.modifyInfo1Clone.isResponse? this.contacts1Clone[index][key].sn:'';
         },
         modify100Btn(){
-            this.modify100.issueDate = this.modify100.issueDate?moment(this.modify100.issueDate).format("YYYY-MM-DD"):'';
+            this.modify100.orderId = this.$route.query.orderId;
+            // this.modify100.issueDate = this.modify100.issueDate?moment(this.modify100.issueDate).format("YYYY-MM-DD"):'';
             this.modify100.giveDate = this.modify100.giveDate?moment(this.modify100.giveDate).format("YYYY-MM-DD"):'';
             this.modify100.outDate = this.modify100.outDate?moment(this.modify100.outDate).format("YYYY-MM-DD"):'';
             this.modify100.registerDate = this.modify100.registerDate?moment(this.modify100.registerDate).format("YYYY-MM-DD"):'';
             this.modify100.examinerDate = this.modify100.examinerDate?moment(this.modify100.examinerDate).format("YYYY-MM-DD"):'';
             this.modify100.deliveryDate = this.modify100.deliveryDate?moment(this.modify100.deliveryDate).format("YYYY-MM-DD"):'';
             this.modify100.storageDate = this.modify100.storageDate?moment(this.modify100.storageDate).format("YYYY-MM-DD"):'';
-            this.modify100.travelerRegisterDate = this.modify100.travelerRegisterDate?moment(this.modify100.travelerRegisterDate).format("YYYY-MM-DD"):'';
-            this.modify100.insEndDate = this.modify100.insEndDate?moment(this.modify100.insEndDate).format("YYYY-MM-DD"):'';
+            // this.modify100.travelerRegisterDate = this.modify100.travelerRegisterDate?moment(this.modify100.travelerRegisterDate).format("YYYY-MM-DD"):'';
+            this.modify100.insEndDate = this.modify100.insEndDate?moment(this.modify100.insEndDate).format("YYYY-MM"):'';
             this.modify100.highStartDate = this.modify100.highStartDate?moment(this.modify100.highStartDate).format("YYYY-MM-DD"):'';
             this.modify100.highEndDate = this.modify100.highEndDate?moment(this.modify100.highEndDate).format("YYYY-MM-DD"):'';
             this.modify100.busyStartDate = this.modify100.busyStartDate?moment(this.modify100.busyStartDate).format("YYYY-MM-DD"):'';
-            this.modify100.busyEndDate = this.modify100.busyEndDate?moment(this.modify100.higbusyEndDatehEndDate).format("YYYY-MM-DD"):'';
+            this.modify100.busyEndDate = this.modify100.busyEndDate?moment(this.modify100.busyEndDate).format("YYYY-MM-DD"):'';
             if(this.ismodify100){ //为保存操作
                 for (let key in this.modify100) {
                     if(!this.modify100[key]){
@@ -2481,6 +2972,8 @@ export default {
                     if(res!=500){
                         this.$Message.success("保存成功"); 
                         this.ismodify100 = !this.ismodify100;
+                        this.getInitialCarList2({autoRepositoryId:this.$route.query.autoId,orderId:this.$route.query.orderId});
+
                     }
                 })
             }else{
@@ -2766,14 +3259,14 @@ export default {
                 }
             })
         },
-        commonModifyBtn(imgs,txt){
+        commonModifyBtn(imgs){
             if(!imgs.length){
                 return this.$Message.warning("至少需要一张图片"); 
             }
             let formData = {
                 orderId:this.$route.query.orderId,
                 autoRepositoryId: this.$route.query.autoId,
-                entityType:txt,
+                entityType:'car300Audit',
                 filePath: String(imgs)
             };
             this.$axios.post('/fx?api=gate.order.car.file.update',formData).then(res => {
@@ -2827,7 +3320,7 @@ export default {
                     myUrl = '/fx?api=gate.order.car.other.file.update';
                     formData.otherFileType = 2;
                     formData.filePath = String(this.imgs10);
-                    break;
+                    break; 
                 case '车型评估反馈照片':
                     if(!this.imgs16.length){
                         return this.$Message.warning("请上传图片"); 
@@ -3197,7 +3690,12 @@ export default {
             if (num != 500) {
                 this.$Message.success('操作成功');
                 this.applySealDetModal = false;
-                this.getContractList({orderId:this.$route.query.orderId});
+                if(this.activedName=='name3'){
+                    this.getOrderList({orderId:this.$route.query.orderId});
+                }else{
+                    this.getContractList({orderId:this.$route.query.orderId});
+                }
+                
             }
         },
         downloadSeal(flowId){
@@ -3283,6 +3781,24 @@ export default {
     }
     .imgUpload{
         display: inline-block;
+    }
+    .progress-box /deep/ .ivu-progress{
+        display: inline-block;
+        width: 50%;
+        font-size: 12px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        margin-left: -25%;
+    }
+    .progress-box{
+         position: absolute;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(255,255,255,.9);
+         top: 0;
+         left: 0;
+         z-index: 8;
     }
     .item-input,.common-width{
         width: 200px;
