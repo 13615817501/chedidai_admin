@@ -320,7 +320,7 @@
                             </span>
                         </div> 
                     </div>
-                    <div class="person-name3-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'|| $route.query.name2=='WaitCheckAgain'">
+                    <div class="person-name3-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='WaitCheckAgain'|| $route.query.name2=='SignContract'">
                         <div class="title-info">个人信息</div>
                         <ul class="common-ul">
                             <li><span class="item-comm required" :class="{mark:formatMarkInfo('name')}" :data-sn="formatSnInfo('name')">姓名：</span><Input class="item-input txt" readonly v-model="modifyInfo1.name"/></li>
@@ -389,7 +389,7 @@
                            <span><img :src="certifyList.bankBackValue" alt="银行卡反面" @click="clickFaceImg(certifyList.bankBackValue)"></span> -->
                         </div> 
                     </div>
-                    <div class="person-name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract'&& $route.query.name2!='WaitCheckAgain'&& $route.query.name2!='WaitStoreList'">
+                    <div class="person-name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList' && $route.query.name2!='WaitCheckAgain'&& $route.query.name2!='SignContract' && $route.query.name2!='WaitStoreList'">
                         <div class="title-info">个人信息</div>
                         <ul class="common-ul">
                             <li><span class="item-comm required">姓名：</span><Input class="item-input txt" readonly v-model="modifyInfo1.name"/></li>
@@ -956,7 +956,7 @@
                             <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
                         </div>
                     </div>
-                    <div class="name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'">
+                    <div class="name4-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2=='WaitAuditingList'">
                         <!-- 基础信息 -->
                         <div class="title-info">基础信息</div>   
                         <div class="item-div">
@@ -1162,7 +1162,7 @@
                             <viewer :images="auditPicsmyUploadList"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in auditPicsmyUploadList" :src="src" :key="index" alt="车300照片"></viewer>
                         </div>     
                     </div>
-                    <div class="name5-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract' && $route.query.name2!='WaitStoreList'&& $route.query.name2!='WaitConfirmList'">
+                    <div class="name5-box" :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}" v-if="$route.query.name2!='WaitAuditingList' && $route.query.name2!='WaitStoreList' && $route.query.name2!='WaitConfirmList'">
                         <!-- 基础信息 -->
                         <div class="title-info">基础信息</div>   
                         <div class="item-div">
@@ -1523,11 +1523,11 @@
                         </template>
                     </div>
                 </TabPane>
-                <TabPane label="承保方" name="name6">
+                <!-- <TabPane label="承保方" name="name6">
                     <div :style="{height:adjustHeight-95+'px','overflow-y': 'scroll'}">
-                        <Button type="primary" size="small" @click="modifyUnderwrite" v-if="isunderwriteUpdate">{{!isunderwrite?'修改':'保存'}}</Button>
+                        <Button type="primary" size="small" @click="modifyUnderwrite" v-if="isunderwriteUpdate && $route.query.name2=='WaitStoreList'">{{!isunderwrite?'修改':'保存'}}</Button>
                         <div class="name-underwrite">
-                            <span class="item-comm required" v-if="$route.query.name2=='WaitAuditingList'|| $route.query.name2=='SignContract'">承保方：</span><span class="item-comm required" v-if="$route.query.name2!='WaitAuditingList'&& $route.query.name2!='SignContract'" :class="{mark:formatMark3('insurer')}" :data-sn="formatSn3('insurer')">承保方：</span><Select v-if="isunderwrite && isunderwriteUpdate" v-model="underwrite.insurer" class="item-input">
+                            <span class="item-comm required">承保方：</span><Select v-if="isunderwrite && isunderwriteUpdate" v-model="underwrite.insurer" class="item-input">
                                 <Option value="1">青岛人保</Option>
                                 <Option value="2">大连人保</Option>
                                 <Option value="3">郑州人保</Option>
@@ -1535,7 +1535,7 @@
                             <Input class="item-input txt" v-if="!isunderwrite" readonly :value="underwrite.insurer=='1'?'青岛人保':underwrite.insurer=='2'?'大连人保':underwrite.insurer=='3'?'郑州人保':''"/>
                         </div>
                     </div>
-                </TabPane>
+                </TabPane> -->
             </Tabs>
         </div>
         <Modal width="400" v-model="modifyModal" :title="myTitle" :mask-closable="false"> 
@@ -2123,11 +2123,11 @@ export default {
         this.getOSSInfo({params:{type:11}});
         this.getContractList({orderId:this.$route.query.orderId});
         this.getContractList2({orderId:this.$route.query.orderId});
-        this.getInsurerDetail();
+        // this.getInsurerDetail();
         // }
         let that = this;
         $('.name4-box').off('click').on('click','.item-div .item-comm', function(){
-            if(that.$route.query.name2=='WaitAuditingList'|| that.$route.query.name2=='SignContract'|| that.$route.query.name2=='WaitCheckAgain'){
+            if(that.$route.query.name2=='WaitAuditingList'){
                 let formData = {
                     orderId: that.$route.query.orderId,
                     sn: this.dataset.sn
@@ -2582,15 +2582,18 @@ export default {
         },
         modifyUnderwrite(){
             if(this.isunderwrite){
+                if(!this.underwrite.insurer){
+                    return this.$Message.error("带 * 为必填项"); 
+                }
                 this.$axios.post('/fx?api=gate.order.insurer.update',{id:this.$route.query.orderId,...this.underwrite}).then(res => {
                     if(res!=500){
                         this.$Message.success("保存成功"); 
-                        this.isunderwrite = !this.isunderwrite;
+                        this.isunderwrite = !this.isunderwrite;7
                         this.getInsurerDetail();
                     }
                 })
             }else{
-                this.isunderwrite = !this.isunderwrite;
+                this.么么么么么晕或错 = !this.isunderwrite;
             }
         },
         // getInitialCarList(formData){
@@ -3692,8 +3695,8 @@ export default {
                 this.applySealDetModal = false;
                 if(this.activedName=='name3'){
                     this.getOrderList({orderId:this.$route.query.orderId});
-                }else{
-                    this.getContractList({orderId:this.$route.query.orderId});
+                }else if(this.activedName=='name4'){
+                    this.getContractList2({orderId:this.$route.query.orderId});
                 }
                 
             }

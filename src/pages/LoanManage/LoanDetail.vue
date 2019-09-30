@@ -8,7 +8,7 @@
         <div class="search-box">
             <Button type="primary" @click="backBtn"><Icon type="ios-arrow-back"/>返回</Button>
         </div> 
-        <div :style="{paddingLeft:'15px',height:adjustHeight+120+'px',overflow:'auto'}">
+        <div :style="{paddingLeft:'15px',height:adjustHeight+90+'px',overflow:'auto'}">
             <div class="div-comm-1">订单费用：</div>
             <span class="span-comm-1">
                 <div>合同金额(元)：{{certifyData.amount}}</div>

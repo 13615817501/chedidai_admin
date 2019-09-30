@@ -39,11 +39,13 @@
             </div>
             <div class="add-comm">
             	<span class="item-comm required">工号：</span>
-	            <Input  style="width:50%;" v-model="add.workNumber" placeholder="请输入工号"/>
+            	<strong v-if="addModalTitle=='修改'">{{add.workNumber}}</strong>
+	            <Input  v-if="addModalTitle=='新增'"  style="width:50%;" v-model="add.workNumber" placeholder="请输入工号"/>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">身份证号：</span>
-	            <Input  style="width:50%;" v-model="add.idCard" placeholder="请输入身份证号"/>
+            	<strong v-if="addModalTitle=='修改'">{{add.idCard}}</strong>
+	            <Input  v-if="addModalTitle=='新增'"  style="width:50%;" v-model="add.idCard" placeholder="请输入身份证号"/>
             </div>
             <div class="add-comm" style="margin-left:10px;">
                 <ImgUpload @changePicUrl="changePicUrl" :myPicUrl="picUrl" :type="2">头像：</ImgUpload>

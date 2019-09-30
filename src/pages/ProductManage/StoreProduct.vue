@@ -355,6 +355,7 @@ export default {
             this.tipModal = false;
             if (num != 500) {
                 this.$Message.success('操作成功');
+                this.selection = [];
                 this.getInitialList(this.search);
             }
         },
