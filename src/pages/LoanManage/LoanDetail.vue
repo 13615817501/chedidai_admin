@@ -3,10 +3,16 @@
         <Breadcrumb>
 	        <BreadcrumbItem>订单管理</BreadcrumbItem>
             <BreadcrumbItem>{{$route.query.name=='FirstOrder'?'首款订单':'尾款订单'}}</BreadcrumbItem>
-	        <BreadcrumbItem>订单详情</BreadcrumbItem>
+	        <BreadcrumbItem>账单详情</BreadcrumbItem>
 	    </Breadcrumb>
+        <div v-if="spinState" class="progress-box">
+            <i-progress  :percent="percent" :stroke-width="10"/>
+        </div>
         <div class="search-box">
             <Button type="primary" @click="backBtn"><Icon type="ios-arrow-back"/>返回</Button>
+            <Button class="btn-margin" style="margin-left:0" type="primary" @click="orderUpLoad">上传资方还款计划</Button>
+            <input style="display:none" type="file" id="file1" ref="file1" @change="changeFile1('资料')"/>
+            <Button class="btn-margin" style="margin-left:0" type="primary" @click="template">资方还款计划模板下载</Button>
         </div> 
         <div :style="{paddingLeft:'15px',height:adjustHeight+90+'px',overflow:'auto'}">
             <div class="div-comm-1">订单费用：</div>
@@ -73,6 +79,9 @@ export default {
 		return {
             certifyData:[],
 			certifyList:[],
+            oss:{},
+            spinState:false,
+            percent:0,
             columns: [{
 					title: '期数',
 					key: 'period',
@@ -268,6 +277,7 @@ export default {
     },
 	activated(){
         this.getInitialList({orderId:this.$route.query.orderId});
+        this.getOSSInfo({params:{type:11}});
 	},
 	methods: {
 		getInitialList(formData){ 
@@ -281,6 +291,94 @@ export default {
 		},
         backBtn(){
             this.$router.push({name:this.$route.query.name,query:{pageNum:this.$route.query.pageNum}});
+        },
+        orderUpLoad(){
+            this.$refs.file1.value = null;
+            let file = this.$refs.file1;
+            file.click();
+        }, 
+        random_string(len) {　　
+            len = len || 32;　　
+            var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';　　
+            var maxPos = chars.length;　　
+            var pwd = '';　　
+            for (let i = 0; i < len; i++) {　　
+                pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            return pwd;
+        },
+        changeFile1(txt){
+            this.spinState = true;
+            let { endpoint } = this.oss;
+            let index1 = endpoint.indexOf('oss');
+            let index2 = endpoint.indexOf('aliyuncs');
+            let myEndpoint = endpoint.slice(index1,index2-1);
+            let client = new OSS.Wrapper({
+                region: myEndpoint,
+                accessKeyId: this.oss.aki,
+                accessKeySecret: this.oss.aks,
+                stsToken: this.oss.sk,
+                bucket: this.oss.bucketName,
+                secure:true
+            });
+            let file = this.$refs.file1.files[0];
+            if(file){
+                let reg = /\.xls$|\.xlsx$/i;
+                if(!reg.test(file.name)){
+                    let fileInput = this.$refs.file1;
+                    fileInput.value='';
+                    let errorTxt = '格式只支持xls,xlsx';
+                    return this.$Message.error(errorTxt);
+                }
+                let random_name = this.random_string(6) + '_' + new Date().getTime() + '.' + file.name.split('.').pop();   // 随机命名
+                
+                let checkpoint;
+
+                // 定义上传方法
+                let that = this;
+                async function multipartUpload (){
+                    try {
+                        let result = await client.multipartUpload(`${that.oss.dirPath}${random_name}`, file, {
+                            checkpoint: checkpoint,
+                            progress: async function (percent, cpt) {
+                                that.percent = Math.round(percent*100);
+                                checkpoint = cpt;
+                            }
+                        })
+                        let requestUrls = result.res.requestUrls[0];
+                        let index1 = requestUrls.indexOf('uploadId');
+                        let myUrl = result.url?result.url:requestUrls.slice(0,index1-1);
+                        let myIndex = myUrl.indexOf('/img');
+                        let ranUrl = myUrl.slice(myIndex+1);
+                        myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
+                        that.fileUpload(ranUrl);
+                    } catch(e){
+                        that.$Message.warning('文件上传出错');
+                        that.spinState = false;
+                    }
+                }
+                multipartUpload();
+            }     
+        },
+        fileUpload(resource){
+            let myUrl = '/fx?api=gate.order.excle.uploadRepaymentPlanCapital';
+            this.$axios.post(myUrl,{url:resource,orderId:this.$route.query.orderId}).then(res => {
+                if(res!=500){
+                    this.$Message.success('资料上传成功');
+                    this.getInitialList({orderId:this.$route.query.orderId});
+                }
+                this.spinState = false;
+            })
+        },
+        getOSSInfo(){ //获得OSS相关信息
+            this.$axios.get('/fx?api=gate.base.ossUpload',{params:{type:11}}).then(res => {
+                if(res!=500){
+                    this.oss = res;     
+                }
+            })
+        },
+        template(){
+            window.open('https://ucarmanager.oss-cn-hangzhou.aliyuncs.com/src/%E4%B8%8A%E4%BC%A0%E8%BF%98%E6%AC%BE%E8%AE%A1%E5%88%92%E8%A1%A8%E6%A8%A1%E6%9D%BF.xlsx');
         }
 	}
 }
@@ -288,7 +386,7 @@ export default {
 <style lang="less" scoped>
     #customList /deep/ .ivu-table-row.ivu-table-row-hover{
         cursor: pointer;
-    }
+    }                     
     .item-comm{
         position: relative;
         display: inline-block;
@@ -320,5 +418,23 @@ export default {
         font-weight: 600;
         font-size: 14px;
         margin: 10px 0;
+    }
+    .progress-box /deep/ .ivu-progress{
+        display: inline-block;
+        width: 50%;
+        font-size: 12px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        margin-left: -25%;
+    }
+    .progress-box{
+         position: absolute;
+         width: 100%;
+         height: 100%;
+         background-color: rgba(255,255,255,.9);
+         top: 0;
+         left: 0;
+         z-index: 8;
     }
 </style>

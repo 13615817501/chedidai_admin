@@ -242,7 +242,6 @@ export default {
             this.modalPreview = true;
         },
         confirmBtn(){
-            debugger;
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
                 return this.$Message.error("带 * 为必填项"); 
             }

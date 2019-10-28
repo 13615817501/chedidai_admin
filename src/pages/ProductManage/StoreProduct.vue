@@ -210,7 +210,7 @@ export default {
                     }
                 }, {
                     type: 'selection',
-                    width: 50,
+                    width: 80,
                     align: 'center'
                 }, {
                     title: '门店名称',

@@ -3,7 +3,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-    adjustHeight: ''  
+    adjustHeight: '',
+    host: process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093'  
 }
 
 const mutations = {

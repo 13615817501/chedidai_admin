@@ -197,7 +197,7 @@ export default {
 						}
 						myUrl = client.signatureUrl(ranUrl);    //转化成带加密签名的图片(参数必须为相对地址)
 						if(this.txt=='多选' || this.type==11){
-							if(this.type==11 && this.uploadList.length>=1){
+							if(this.txt!='多选' && this.type==11 && this.uploadList.length>=1){
 								return this.$Message.error('附件只能上传一个');
 							}
 	                        this.uploadList.push(myUrl);   //绝对地址

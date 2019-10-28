@@ -374,7 +374,7 @@ export default {
 	methods: {
         remoteMethod(query) { //远程请求
             if (query != '') {
-                this.$axios.post('/fx?api=gate.order.admin.claimList', {name: query}).then(res => {
+                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
                     this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
                 })
             } else {

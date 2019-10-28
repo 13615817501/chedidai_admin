@@ -1519,6 +1519,7 @@
                             </span>
                             <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='WaitStoreList' && orderStatus!=10" @click="modifyDevice(item.id,item.deviceNum)">修改</Button>
                             <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='GPSInstall'" @click="modifyPosition(item.id,item.imgs,item.position)">添加/修改位置</Button>
+                            <Button class="btn-margin" type="dashed" size="small" v-if="$route.query.name2=='GPSInstall'" @click="deleteDevice(item.id)">删除</Button>
                         </div>   
                         </template>
                     </div>
@@ -1635,7 +1636,6 @@ export default {
             orderInfo:[],
             contractInfo:[],
             spinState: false,
-            myUrl:process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093',
             mat:'',
             myTitle:'新增订单设备',
             myTitle2:'添加/修改订单设备',
@@ -2101,7 +2101,7 @@ export default {
         ChinaArea2
     }, 
     computed:{
-        ...mapState(['adjustHeight']) 
+        ...mapState(['adjustHeight','host']) 
     },
     activated(){
         this.mat = localStorage.getItem('mat');
@@ -2901,6 +2901,11 @@ export default {
                 }
             })
         },
+        deleteDevice(id){
+            this.item = {id:id};
+            this.modalTipTitle = '删除该设备';
+            this.tipModal = true;
+        },
         formatMark(key){
           return this.modify100Clone.isResponse && this.modify100Clone[key].needUpdate;
         },
@@ -3444,7 +3449,7 @@ export default {
             //     this.carImgloading4 = false;
             // })
             let formDataString = encodeURIComponent(JSON.stringify({orderId:this.$route.query.orderId}));
-            window.open(`${this.myUrl}/file/download?api=gate.download.order.file&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${formDataString}`);
+            window.open(`${this.host}/file/download?api=gate.download.order.file&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${formDataString}`);
         },
         confirmBtn(){
             let formData = {};
@@ -3697,6 +3702,8 @@ export default {
                     this.getOrderList({orderId:this.$route.query.orderId});
                 }else if(this.activedName=='name4'){
                     this.getContractList2({orderId:this.$route.query.orderId});
+                }else if(this.activedName=='name5'){
+                    this.getDeviceList({orderId:this.$route.query.orderId});
                 }
                 
             }

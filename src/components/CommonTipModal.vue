@@ -182,6 +182,9 @@
                     formUrl = '/fx?api=gate.admin.store.pubProdMapping';  
                     formData.ids = this.adminId;
                     formData.status = 0;
+                }else if(this.modalTipTitle=='删除该设备'){
+                    formUrl = '/fx?api=gate.order.delete.device';  
+                    formData.id = this.item.id;
                 }
                 this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => { 

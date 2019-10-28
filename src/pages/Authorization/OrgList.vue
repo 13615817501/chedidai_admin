@@ -22,7 +22,7 @@
 	        :expand-type="props.expandType"
             :row-key="rowKey"
 	        select-type="radio"
-	        expand-key="name">
+	        >
 	            <template slot="roles" slot-scope="scope">
                     <Tag v-for="role in scope.row.roles" :key="role.k" color="blue">{{role.v}}</Tag>
                 </template>  
@@ -36,7 +36,7 @@
 		            <span>{{scope.row.area?scope.row.area.name:''}}</span>
 		        </template>
      			<template slot="operate" slot-scope="scope">
-			        <Button type="primary" size="small" @click="addBtnFun(scope.row.id)">新增</Button>
+			        <Button type="primary" size="small" @click="addBtnFun(scope.row)">新增</Button>
 			        <Button type="primary" size="small" @click="modifyBtnFun(scope.row)" v-if="scope.row.pid!=0">修改</Button>
 			        <Button type="primary" size="small" @click="deleteBtnFun(scope.row)" v-if="scope.row.pid!=0">删除</Button>
 			    </template>
@@ -116,6 +116,7 @@ export default {
 	          isFold: false,
 	          expandType: false
             },
+            item:{},
             modalTip:false,
             modalTipTitle:'删除该部门组织',
 			myData:[],
@@ -233,9 +234,10 @@ export default {
 		handleCheckClick(option) {
             // console.log(option); 
         },
-        addBtnFun(id){
+        addBtnFun(row){
         	this.myTitle = '新增';
-            this.pid = id;
+            this.pid = row.id;
+            this.item = row;
             this.salesForm = {
 				name: '',
 				roleIds: '',

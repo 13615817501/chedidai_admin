@@ -63,7 +63,6 @@ export default {
 	props:[],
 	data () {
 		return {
-            myUrl:process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093',
             mat:'',
 			totalCount: 0,
             modifyModal:false,
@@ -481,7 +480,7 @@ export default {
 		}
 	},
 	computed:{
-        ...mapState(['adjustHeight']) 
+        ...mapState(['adjustHeight','host']) 
     },
 	activated(){
         this.mat = localStorage.getItem('mat');
@@ -535,7 +534,7 @@ export default {
             })
         },
         downLoad(){
-            window.open(`${this.myUrl}/file/download?api=gate.order.excle.exportUserInfoStatisticsExcleService&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval')))}`);
+            window.open(`${this.host}/file/download?api=gate.order.excle.exportUserInfoStatisticsExcleService&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval')))}`);
         }
 	}
 }

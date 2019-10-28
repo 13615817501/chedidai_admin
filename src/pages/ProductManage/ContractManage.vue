@@ -360,7 +360,7 @@ export default {
     watch:{
         name(newVal,oldVal){
             if (newVal) {
-                this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{name: newVal,pageNum:1,pageSize:10000}}).then(res => {
+                this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{name: newVal,status:1,pageNum:1,pageSize:10000}}).then(res => {
                     this.contractList = res.list.filter(item => item.name.toLowerCase().indexOf(item.name.toLowerCase()) > -1);
                     this.contractList.map( (item, index) => {
                         item.isRequired = false;
@@ -374,7 +374,7 @@ export default {
     },
 	methods: {
         getContractItemList(){
-            this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{pageNum:1,pageSize:10000}}).then(res => {
+            this.$axios.get('/fx?api=gate.prod.admin.contractItemList', {params:{status:1,pageNum:1,pageSize:10000}}).then(res => {
                 this.contractList = res.list;
                 this.contractList.map( (item, index) => {
                     item.isRequired = false;
