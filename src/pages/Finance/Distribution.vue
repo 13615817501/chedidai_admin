@@ -1,7 +1,7 @@
 <template>
     <div id="paymentIn" class="common-id">
         <Breadcrumb>
-            <BreadcrumbItem>财务管理</BreadcrumbItem>
+            <BreadcrumbItem>报表管理</BreadcrumbItem>
             <BreadcrumbItem>推荐激励</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">

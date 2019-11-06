@@ -14,7 +14,7 @@
                 <Input v-model="search.prodName" clearable placeholder="请输入产品名称" style="width: 120px"></Input>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
-           <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
+           <!-- <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button> -->
            <Button type="primary" style="margin-left:10px;" @click="deleteBtnBatch">删除</Button>
            <Button type="primary" style="margin-left:10px;" @click="upBtnBatch">上架</Button>
            <Button type="primary" style="margin-left:10px;" @click="downBtnBatch">下架</Button>
@@ -31,6 +31,9 @@
                     <span class="item-comm required">门店名称：</span><Select ref="selectStore" v-model="modify.storeId" label-in-value filterable v-bind="remoteSetting2" placeholder="请搜索匹配.." class="common-width" @on-change="changeFun2" clearable>
                         <Option v-for="(option, index) in storeList" :value="option.id" :label="option.name" :key="option.id"></Option>
                     </Select>
+                    <div style="margin-top:5px;">
+                        <Tag v-for="(store,index) in storeIdsArr" :key="store.value" closable @on-close="handleClose2(store,index)">{{store.label}}</Tag>
+                    </div>
                 </div>
                 <div class="item-div">
                     <span class="item-comm required">产品名称：</span><Select ref="selectProd" v-model="prodId" label-in-value filterable v-bind="remoteSetting" placeholder="请搜索匹配.." class="common-width" @on-change="changeFun" clearable>
@@ -106,10 +109,13 @@ export default {
                 remoteMethod: this.remoteMethod2
             },
             prodId: '',
-            prodIdsArr:[], //存放所有产品的数组
+            prodIdsArr:[], //存放所有产品的数组 
+            storeId: '',
+            storeIdsArr:[], //存放所有产品的数组
             prodIdsValueArr:[], //存放所有产品的数组
+            storeIdsValueArr:[], //存放所有产品的数组
             modify: {
-                storeId:'',
+                storeIds:'',
                 prodIds:'',
             },
 			table_loading: false, //默认先显示加载
@@ -303,7 +309,7 @@ export default {
             this.prodIdsArr = [];
             this.prodIdsValueArr = [];
             this.modify = {
-                storeId:'',
+                storeIds:'',
                 prodIds:'',
             };
         },
@@ -330,7 +336,7 @@ export default {
             }
         },
         confirmBtn(){
-            if(!this.modify.prodIds || !this.modify.storeId ){
+            if(!this.modify.prodIds || !this.modify.storeIds ){
                 return this.$Message.error("带 * 为必填项"); 
             }
             let formData = {...this.modify};
@@ -373,16 +379,29 @@ export default {
             this.prodId = null;
             this.modify.prodIds = this.prodIdsValueArr.join(',');
         },
+        changeFun2(Option){
+            if(!Option){  //v-model置为空后option会变为undefined,所以先判断
+                return;
+            } 
+            let bol = this.storeIdsArr.some(item =>{
+                return item.label == Option.label;
+            });
+            if(!bol){
+                this.storeIdsArr.push(Option);
+                this.storeIdsValueArr.push(Option.value);
+            } 
+            this.prodId = null;
+            this.modify.storeIds = this.storeIdsValueArr.join(',');
+        },
         handleClose(role,index){
             this.prodIdsArr.splice(index,1);
             this.prodIdsValueArr.splice(this.prodIdsValueArr.indexOf(role.value),1);
             this.modify.prodIds  = this.prodIdsValueArr.join(',');
         },
-        changeFun2(obj){
-            if(!obj){
-                return;
-            }
-            this.modify.storeId = obj.value;
+        handleClose2(store,index){
+            this.storeIdsArr.splice(index,1);
+            this.storeIdsValueArr.splice(this.storeIdsValueArr.indexOf(store.value),1);
+            this.modify.storeIds  = this.storeIdsValueArr.join(',');
         },
         deleteBtnBatch(){ //批量删除
             this.commGetIds();

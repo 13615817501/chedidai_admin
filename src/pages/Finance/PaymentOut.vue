@@ -1,7 +1,7 @@
 <template>
     <div id="paymentOut" class="common-id">
         <Breadcrumb>
-            <BreadcrumbItem>财务管理</BreadcrumbItem>
+            <BreadcrumbItem>报表管理</BreadcrumbItem>
             <BreadcrumbItem>出账列表</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">

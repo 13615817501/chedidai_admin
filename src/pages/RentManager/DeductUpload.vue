@@ -1,7 +1,7 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-            <BreadcrumbItem>放款管理</BreadcrumbItem>
+            <BreadcrumbItem>租金管理</BreadcrumbItem>
             <BreadcrumbItem>划扣上传列表</BreadcrumbItem>
         </Breadcrumb>
         <div class="search-box">

@@ -11,9 +11,10 @@
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
             <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
+            <Button type="primary" style="margin-left:10px;" @click="bindBtn">批量绑定门店</Button>
         </div> 
 	    <div class="listadmin">
-            <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
+            <Table border  @on-selection-change="selectionChange" :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
             <Page :current = "search.pageNum" :total="totalCount" :page-size="search.pageSize" @on-change="pageChange" show-total></Page>
@@ -150,6 +151,15 @@
                 <Button @click="cancel">取消</Button>
             </div> 
         </Modal>
+        <Modal width="500" v-model="storeModal" title="批量绑定门店" :mask-closable="false"> 
+            <div class="modify-modal" style="margin:15px 0;"> 
+                <Table @on-selection-change="selectionChange2"  border :columns="columns4" :data="storeList" height="500"></Table>
+            </div> 
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
+                <Button @click="cancel2">取消</Button>
+            </div> 
+        </Modal>
         <CommonTipModal :modal="tipModal" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
             <div style="text-align:center">
                 <p>确定{{modalTipTitle}}吗?</p>
@@ -180,6 +190,7 @@ export default {
             bigimg:'',
             picUrl:'',
             modalPreview:false,
+            storeModal:false,
             modal_loading:false,
             storeNames:[],
             id:'',
@@ -191,6 +202,10 @@ export default {
 			    pageNum: 1,
 			    pageSize:15
 			},
+            selection: [],   //产品数组集合
+            selection2: [],  //门店数组集合
+            selectionIds: '',   //产品字符串集合
+            selectionIds2: '',  //门店字符串集合
             labelEnum:[], //产品标签 
             isInterestHeadEnum:[], //是否利息前置
             calInterestWayEnum:[], //计算利息方式
@@ -228,6 +243,23 @@ export default {
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
+            storeList:[],
+            columns4: [
+                {
+                    type: 'selection',
+                    width: 50,
+                    align: 'center'
+                },{
+                    title: '门店名称',
+                    key: 'name',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.name)
+                        ]);
+                    }
+                }
+            ],
             columns: [{
                     title: '操作',
                     key: 'action',
@@ -336,7 +368,11 @@ export default {
                             }, '合同管理')
                         ]);
                     }
-                }, {
+                },{
+                    type: 'selection',
+                    width: 80,
+                    align: 'center'
+                },{
 					title: '产品名称',
 					key: 'fullName',
 					minWidth: 160,
@@ -414,6 +450,7 @@ export default {
     },
 	activated(){
         this.getInitialList(this.search);
+        this.getInitialList2();
         this.getDetailProduct();
 	},
 	methods: {
@@ -429,6 +466,15 @@ export default {
 		    	this.table_loading = false;
 			})
 		},
+        getInitialList2(){ 
+            this.table_loading = true;
+            this.$axios.post('/fx?api=gate.admin.store.all').then(res => {
+                if(res!=500){
+                    this.storeList = res;
+                }
+                this.table_loading = false;
+            })
+        },
         getDetailProduct(id){ 
             return this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:id}}).then(res => {
                 if(res!=500){
@@ -449,6 +495,56 @@ export default {
         	this.search.pageNum = 1;
 			this.getInitialList(this.search);
 		},
+        bindBtn(){
+            this.commGetIds('产品');
+            this.getInitialList2();
+        },
+        commGetIds(txt){
+            let [arrIds,arrIds2] = [[],[]];
+            if(txt=='产品'){
+                if(!this.selection.length){
+                    return this.$Message.error('至少选择一项');
+                }
+                this.selection.forEach( (item, index) => {
+                    arrIds.push(item.id);
+                }); 
+                this.selectionIds = String(arrIds);
+                this.storeModal = true;
+            } 
+            if(txt=='门店'){
+                if(!this.selection2.length){
+                    return this.$Message.error('至少选择一项');
+                }
+                this.selection2.forEach( (item, index) => {
+                    arrIds2.push(item.id);
+                }); 
+                this.selectionIds2 = String(arrIds2);
+            }
+        },
+        selectionChange(selection){
+            this.selection = selection; 
+        },
+        selectionChange2(selection){
+            this.selection2 = selection;
+        },
+        confirmBtn3(){
+            this.commGetIds('门店');
+            if(!this.selection || !this.selection2 ){
+                return this.$Message.error("带 * 为必填项"); 
+            }
+            let formData = {
+                prodIds:this.selectionIds,
+                storeIds:this.selectionIds2
+            };
+            this.$axios.post('/fx?api=gate.admin.store.addProdMapping',formData).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.storeModal = false;
+                    this.getInitialList(this.search);
+                    this.checkData = [];
+                }
+            })
+        },
         addBtn(){
             this.myTitle = '新增';
             this.modifyModal = true;
@@ -532,6 +628,11 @@ export default {
             this.modifyModal = false;
             this.modalPreview = false;
             this.copyModal = false;
+        },
+        cancel2(){
+            this.storeModal = false;
+            this.getInitialList2();
+            this.selection2 = []; //被选中的集合
         },
         tipComfirmBtn(num) {
             this.tipModal = false;

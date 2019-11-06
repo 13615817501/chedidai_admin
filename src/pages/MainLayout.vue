@@ -246,8 +246,11 @@ export default {
                     break; 
                 case '贷后管理':
                     return 'logo-dropbox';
+                    break; 
+                case '租金管理':
+                    return 'ios-create';
                     break;
-                case '财务管理':
+                case '报表管理':
                     return 'logo-usd';
                     break;  
                 case '业务大盘':

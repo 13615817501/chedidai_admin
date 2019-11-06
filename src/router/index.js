@@ -81,7 +81,27 @@ var router = new Router({
 	                name: 'OrgList',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/Authorization/OrgList`),
+	            },{
+	                path: '/RentManager/UploadPayment',
+	                name: 'UploadPayment',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/RentManager/UploadPayment`),
 	            }, {
+	                path: '/RentManager/DeductUpload',
+	                name: 'DeductUpload',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/RentManager/DeductUpload`),
+	            },{
+	                path: '/RentManager/CollectFeedback',
+	                name: 'CollectFeedback',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/RentManager/CollectFeedback`),
+	            }, {
+	                path: '/RentManager/RepaymentDeduction',
+	                name: 'RepaymentDeduction',
+	                meta: { auth: true }, // 为true需要登录才能查看
+	                component: () => import(`@/pages/RentManager/RepaymentDeduction`),
+	            },{
 	                path: '/CustomManage/CustomList',
 	                name: 'CustomList',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -112,11 +132,6 @@ var router = new Router({
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/Claim`),
 	            },{
-	                path: '/LoanManage/DeductUpload',
-	                name: 'DeductUpload',
-	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/DeductUpload`),
-	            },{
 	                path: '/LoanManage/DeductFailList',
 	                name: 'DeductFailList',
 	                meta: { auth: true }, // 为true需要登录才能查看
@@ -141,16 +156,6 @@ var router = new Router({
 	                name: 'LoanDetail',
 	                meta: { auth: true }, // 为true需要登录才能查看
 	                component: () => import(`@/pages/LoanManage/LoanDetail`),
-	            },{
-	                path: '/LoanManage/CollectFeedback',
-	                name: 'CollectFeedback',
-	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/CollectFeedback`),
-	            }, {
-	                path: '/LoanManage/RepaymentDeduction',
-	                name: 'RepaymentDeduction',
-	                meta: { auth: true }, // 为true需要登录才能查看
-	                component: () => import(`@/pages/LoanManage/RepaymentDeduction`),
 	            }, {
 	                path: '/OrderManage/GPSInstall',
 	                name: 'GPSInstall',

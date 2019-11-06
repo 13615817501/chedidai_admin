@@ -1,8 +1,8 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>订单管理</BreadcrumbItem>
-            <BreadcrumbItem>{{myName2}}</BreadcrumbItem>
+	        <BreadcrumbItem>{{accountFomart2(this.$route.query.name)}}</BreadcrumbItem>
+            <BreadcrumbItem> {{accountFomart(this.$route.query.name)}}</BreadcrumbItem>
 	        <BreadcrumbItem>详情</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
@@ -291,53 +291,7 @@ export default {
         ImgUpload
     }, 
 	computed:{
-        ...mapState(['adjustHeight']),
-        myName2(){
-            switch (this.$route.query.name) {
-                case 'OrderList':
-                    return '订单列表';
-                    break;
-                case 'StoreOrderList':
-                    return '门店订单列表';
-                    break;
-                case 'WaitClaimStore':
-                    return '门店认领';
-                    break;
-                case 'WaitStoreList':
-                    return '待门店处理';
-                    break;
-                case 'WaitClaimCheck':
-                    return '初审认领';
-                    break;
-                case 'WaitAuditingList':
-                    return '待初审订单';
-                    break;
-                case 'WaitConfirmList':
-                    return '待确认订单';
-                    break;
-                case 'SignContract':
-                    return '签署合同';
-                    break;
-                case 'GPSInstall':
-                    return '待GPS安装';
-                    break;
-                case 'WaitClaimCollect':
-                    return '贷后认领';
-                    break;
-                case 'GPSCheck':
-                    return '待GPS校验';
-                    break;
-                case 'WaitClaimCheckAgain':
-                    return '待复审认领';
-                    break;
-                case 'WaitCheckAgain':
-                    return '待复审订单';
-                    break;  
-                case 'WaitUnderwriting':
-                    return '待发起核保';
-                    break;          
-             } 
-        }
+        ...mapState(['adjustHeight'])
     },
 	activated(){
         this.getInitialList({orderId:this.$route.query.orderId});
@@ -421,6 +375,12 @@ export default {
                     !this.isModify3 && this.commonSavaYajin('/fx?api=gate.order.admin.mdfServiceFee',this.modify.serviceFee);
                     break;        
             }
+        },
+        accountFomart(name){
+            return util.accountFomart(name);
+        },  
+        accountFomart2(name){
+            return util.accountFomart2(name);
         },
         modifyCarInfoBtn(){
             this.modifyModal2 = true;

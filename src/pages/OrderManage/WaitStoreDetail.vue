@@ -549,9 +549,9 @@
                                     <Option value="1">有</Option>
                                 </Select><Input class="item-input txt" v-if="!ismodify100 || !formatMark('hasInspect')" readonly :value="modify100.hasInspect=='0'?'无':modify100.hasInspect=='1'?'有':''"/>
                             <span v-show="modify100.hasInspect=='1'">
-                                <span class="item-comm required" :class="{mark:formatMark('insEndDate')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('insEndDate')" v-model="modify100.insEndDate" type="month" placeholder="选择年检结束时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('insEndDate') || formatMark('hasInspect')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('insEndDate')" v-model="modify100.insEndDate" type="month" placeholder="选择年检结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('insEndDate')" readonly :value="modify100.insEndDate"/>
-                            </span>
+                            </span>    
                         </div>   
                         <div class="item-div">     
                             <span class="item-comm required" :class="{mark:formatMark('hasHighInsurance')}">有无交强险：</span><Select v-if="ismodify100 && formatMark('hasHighInsurance')" v-model="modify100.hasHighInsurance" class="item-input">
@@ -559,9 +559,9 @@
                                     <Option value="1">有</Option>
                                 </Select><Input class="item-input txt" v-if="!ismodify100 || !formatMark('hasHighInsurance')" readonly :value="modify100.hasHighInsurance=='0'?'无':modify100.hasHighInsurance=='1'?'有':''"/>
                             <span v-show="modify100.hasHighInsurance=='1'">
-                                <span class="item-comm required" :class="{mark:formatMark('highStartDate')}">有效期开始时间：</span><DatePicker v-if="ismodify100 && formatMark('highStartDate')" v-model="modify100.highStartDate" type="date" placeholder="选择交强险开始时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('highStartDate') || formatMark('hasHighInsurance')}">有效期开始时间：</span><DatePicker v-if="ismodify100 && formatMark('highStartDate')" v-model="modify100.highStartDate" type="date" placeholder="选择交强险开始时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('highStartDate')" readonly :value="modify100.highStartDate"/>
-                                <span class="item-comm required" :class="{mark:formatMark('highEndDate')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('highEndDate')" v-model="modify100.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('highEndDate') || formatMark('hasHighInsurance')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('highEndDate')" v-model="modify100.highEndDate" type="date" placeholder="选择交强险结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('highEndDate')" readonly :value="modify100.highEndDate"/>
                             </span>
                         </div>   
@@ -571,9 +571,9 @@
                                     <Option value="1">有</Option>
                                 </Select><Input class="item-input txt" v-if="!ismodify100 || !formatMark('hasBusyInsurance')" readonly :value="modify100.hasBusyInsurance=='0'?'无':modify100.hasBusyInsurance=='1'?'有':''"/>
                             <span v-show="modify100.hasBusyInsurance=='1'">    
-                                <span class="item-comm required" :class="{mark:formatMark('busyStartDate')}">有效期开始时间：</span><DatePicker v-if="ismodify100 && formatMark('busyStartDate')" v-model="modify100.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('busyStartDate') || formatMark('hasBusyInsurance')}">有效期开始时间：</span><DatePicker v-if="ismodify100 && formatMark('busyStartDate')" v-model="modify100.busyStartDate" type="date" placeholder="选择商业险开始时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('busyStartDate')" readonly :value="modify100.busyStartDate"/>
-                                <span class="item-comm required" :class="{mark:formatMark('busyEndDate')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('busyEndDate')" v-model="modify100.busyEndDate" type="date" placeholder="选择商业险结束时间" class="item-input"></DatePicker>
+                                <span class="item-comm required" :class="{mark:formatMark('busyEndDate') || formatMark('hasBusyInsurance')}">有效期结束时间：</span><DatePicker v-if="ismodify100 && formatMark('busyEndDate')" v-model="modify100.busyEndDate" type="date" placeholder="选择商业险结束时间" class="item-input"></DatePicker>
                                 <Input class="item-input txt" v-if="!ismodify100 || !formatMark('busyEndDate')" readonly :value="modify100.busyEndDate"/>
                             </span>  
                         </div>   
@@ -3043,6 +3043,7 @@ export default {
                 this.modifyInfo1.firstCome = this.modifyInfo1.firstCome?moment(this.modifyInfo1.firstCome).format("YYYY"):'';
                 this.modifyInfo1.signDate = this.modifyInfo1.signDate?moment(this.modifyInfo1.signDate).format("YYYY-MM-DD"):'';
                 let formData = {...this.modifyInfo1};
+                console.log(this.modifyInfo1);
                 formData.uid = this.$route.query.userId;
                 formData.orderId = this.$route.query.orderId;
                 let bol = false;
@@ -3138,17 +3139,16 @@ export default {
             })
         },
         chinaAreaChange1(data){
-            this.modifyInfo.nowProvice = data.province;
-            this.modifyInfo.nowCity = data.city;
-            this.modifyInfo.nowArea = data.area;
+            this.modifyInfo1.nowProvice = data.province;
+            this.modifyInfo1.nowCity = data.city;
+            this.modifyInfo1.nowArea = data.area;
         }, 
         chinaAreaChange2(data){
-            this.modifyInfo.companyProvice  = data.province;
-            this.modifyInfo.companyCity  = data.city;
-            this.modifyInfo.companyArea = data.area;
+            this.modifyInfo1.companyProvice  = data.province;
+            this.modifyInfo1.companyCity  = data.city;
+            this.modifyInfo1.companyArea = data.area;
         },
         chinaAreaChange3(arr){
-            console.log(arr);
             this.infoContent.province = arr.province;
             this.infoContent.city = arr.city;
             this.infoContent.area = arr.area;

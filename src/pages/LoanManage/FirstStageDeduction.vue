@@ -166,6 +166,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '产品名称',
+                    key: 'prodName',
+                    minWidth: 140,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.prodName)
+                        ]);
+                    }
+                },{
                     title: '用户姓名',
                     key: 'userName',
                     minWidth: 100,
@@ -202,42 +211,6 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '门店名',
-                    key: 'storeName',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.storeName)
-                        ]);
-                    }
-                }, {
-                    title: '产品名称',
-                    key: 'prodName',
-                    minWidth: 160,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.prodName)
-                        ]);
-                    }
-                },{
-                    title: '合同金额(元)',
-                    key: 'amount',
-                    minWidth: 130,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.amount)
-                        ]);
-                    }
-                }, {
-                    title: '首款金额(元)',
-                    key: 'firstLoanAmount',
-                    minWidth: 130,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.firstLoanAmount)
-                        ]);
-                    }
-                },{
                     title: '银行分行号',
                     key: 'bankName',
                     minWidth: 160,
@@ -247,21 +220,48 @@ export default {
                         ]);
                     }
                 },{
-                    title: '划扣状态',
-                    key: 'deductStatus',
-                    minWidth: 160,
+                    title: '门店名',
+                    key: 'storeName',
+                    minWidth: 100,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?`失败 (${params.row.deductFailReason})`:'')
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                }, {
+                    title: '合同金额(元)',
+                    key: 'amount',
+                    minWidth: 110,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.amount)
+                        ]);
+                    }
+                }, {
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 110,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
                         ]);
                     }
                 },{
                     title: '需要划扣金额(元)',
                     key: 'deductAmount',
-                    minWidth: 160,
+                    minWidth: 140,
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.deductAmount)
+                        ]);
+                    }
+                },{
+                    title: '划扣状态',
+                    key: 'deductStatus',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?`失败 (${params.row.deductFailReason})`:'')
                         ]);
                     }
                 },{

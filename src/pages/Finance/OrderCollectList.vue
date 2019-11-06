@@ -1,7 +1,7 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>财务管理</BreadcrumbItem>
+	        <BreadcrumbItem>报表管理</BreadcrumbItem>
 	        <BreadcrumbItem>客户信息统计表</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">

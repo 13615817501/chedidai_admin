@@ -368,6 +368,9 @@ let util = {
             case 'GPSInstall':
                 return 'OrderManage';
                 break;
+            case 'UploadPayment':
+                return 'RentManager';
+                break;
             case 'GPSCheck':
                 return 'OrderManage';
                 break;      
@@ -405,16 +408,16 @@ let util = {
                 return 'LoanManage';
                 break; 
             case 'CollectFeedback':
-                return 'LoanManage';
+                return 'RentManager';
                 break;     
             case 'RepaymentDeduction':
-                return 'LoanManage';
+                return 'RentManager';
                 break;  
             case 'DeductFailList':
                 return 'LoanManage';
                 break; 
             case 'DeductUpload':
-                return 'LoanManage';
+                return 'RentManager';
                 break;  
             case 'DeductFailFeedbackList':
                 return 'LoanManage';
@@ -467,6 +470,145 @@ let util = {
             case 'OrderCollectList':
                 return 'Finance';
                 break;                         
+        }
+    },
+    accountFomart(name){
+        switch (name) {
+            case 'OrderList':
+                return '订单列表'
+                break;
+            case 'StoreOrderList':
+                return '门店订单列表'
+                break;   
+            case 'WaitClaimStore':
+                return '门店认领'
+                break;   
+            case 'WaitStoreList':
+                return '待门店处理'
+                break;  
+            case 'WaitClaimCheck':
+                return '待初审认领'
+                break; 
+            case 'WaitAuditingList':
+                return '待初审订单'
+                break;   
+            case 'WaitConfirmList':
+                return '待确认订单'
+                break;   
+            case 'WaitUnderwriting':
+                return '待发起核保'
+                break;   
+             case 'SignContract':
+                return '签署合同'
+                break;   
+            case 'PrintInsurance':
+                return '打印合同'
+                break;   
+            case 'GPSInstall':
+                return '待GPS安装'
+                break;   
+            case 'WaitClaimCollect':
+                return '贷后认领'
+                break;   
+            case 'GPSCheck':
+                return '待GPS校验'
+                break;   
+            case 'WaitClaimCheckAgain':
+                return '复审认领'
+                break;    
+            case 'WaitCheckAgain':
+                return '待复审订单'
+                break; 
+            case 'ServiceClaim':
+                return '客服认领'
+                break; 
+            case 'WaitService':
+                return '待客服处理'
+                break;       
+            case 'Claim':
+                return '认领'
+                break;
+            case 'PendingLoan':
+                return '待放款'
+                break;
+            case 'FirstStageDeduction':
+                return '首期划扣'
+                break;
+            case 'DeductFailList':
+                return '划扣失败列表'
+                break;  
+            case 'DeductFailFeedbackList':
+                return '划扣失败反馈'
+                break;    
+            case 'RepaymentDeduction':
+                return '还款划扣'
+                break;       
+            case 'CollectFeedback':
+                return '催收反馈'
+                break;  
+             case 'DocReturnList':
+                return '资料回寄'
+                break;  
+            case 'PendingRepayment':
+                return '待还款订单'
+                break;  
+            case 'OverdueOrder':
+                return '逾期订单'
+                break;  
+            case 'CollectList':
+                return '催收记录'
+                break; 
+            case 'UploadPayment':
+                return '上传资方还款计划表'
+                break;            
+            case 'DisposalAssets':
+                return '资产处置'
+                break;        
+        }
+    },
+    accountFomart2(name){
+        switch (name) {
+            case 'Claim':
+                return '放款管理'
+                break; 
+            case 'PendingLoan':
+                return '放款管理'
+                break; 
+            case 'FirstStageDeduction':
+                return '放款管理'
+                break; 
+            case 'DeductFailList':
+                return '放款管理'
+                break; 
+            case 'DeductFailFeedbackList':
+                return '放款管理'
+                break; 
+            case 'RepaymentDeduction':
+                return '租金管理'
+                break; 
+            case 'UploadPayment':
+                return '租金管理'
+                break;
+            case 'CollectFeedback':
+                return '租金管理'
+                break;
+            case 'DocReturnList':
+                return '贷后管理'
+                break;
+            case 'PendingRepayment':
+                return '贷后管理'
+                break;case 'OverdueOrder':
+                return '贷后管理'
+                break;
+            case 'CollectList':
+                return '贷后管理'
+                break;
+            case 'DisposalAssets':
+                return '贷后管理'
+                break;    
+            default:
+                return '订单管理'
+                break;  
         }
     },
     testPhone(num) {
