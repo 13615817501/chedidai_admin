@@ -13,9 +13,12 @@ import xss from 'xss'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
-import { Tree } from 'element-ui'
+import { Tree, Table as elTable,TableColumn,Radio} from 'element-ui'
 import TreeTable from 'tree-table-vue'
 Vue.use(Tree)
+Vue.use(TableColumn)
+Vue.use(Radio)
+Vue.use(elTable)
 Vue.use(TreeTable)
 Vue.use(Viewer)
 

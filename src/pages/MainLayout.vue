@@ -23,20 +23,20 @@
             <div class="left-sub-box">
                 <Menu ref="leftMenu" :theme="theme2" width="185px" @on-select="toNextPath" accordion :open-names="openName" :active-name="activeName">
                     <template v-for="item in certifyList">
-                        <template v-if="item.name=='Index'">
+                        <template v-if="item.unique=='Index'">
                             <MenuItem name="Index/主页">
                                 <Icon type="md-home"/>
                                 主页
                              </MenuItem>
                         </template>
-                        <template v-if="item.name!='Index'">
-                            <Submenu :name="item.name">
+                        <template v-if="item.unique!='Index'">
+                            <Submenu :name="item.unique">
                                 <template slot="title">
-                                    <Icon :type="formatIconType(item.alias)"/>
-                                    {{item.alias}}
+                                    <Icon :type="formatIconType(item.name)"/>
+                                    {{item.name}}
                                 </template>
                                 <template v-for="value in item.children">
-                                    <MenuItem :name="value.name+'/'+value.alias">{{value.alias}}</MenuItem>
+                                    <MenuItem :name="value.unique+'/'+value.name">{{value.name}}</MenuItem>
                                 </template>
                             </Submenu>
                         </template>
@@ -162,9 +162,9 @@ export default {
     },
     methods: {
         getInitialList(formData){ //获取菜单列表
-            this.$axios.get('/fx?api=gate.auth.menuTree').then(res => {
+            this.$axios.get('/fx?api=gate.auth.sysMenus').then(res => {
                 if(res!=500){
-                    this.certifyList = res.children;
+                    this.certifyList = res[0].children;
                 }
             })
         },
@@ -208,7 +208,7 @@ export default {
                         passwd2: this.formInline.confirm,
                     }
                     this.modal_loading = true;
-                    this.$axios.post('/fx?api=gate.auth.passwdModify',formData).then(res => { 
+                    this.$axios.post('/fx?api=gate.auth.sysPasswdModify',formData).then(res => { 
                         this.modal_loading = false;
                         if(res!=500) { 
                             this.ModalPassword = false;

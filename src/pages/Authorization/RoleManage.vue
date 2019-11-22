@@ -1,160 +1,164 @@
 <template>
-    <div id="roleManage">
+    <div id="roleManage" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>组织管理</BreadcrumbItem>
 	        <BreadcrumbItem>角色管理</BreadcrumbItem>
 	    </Breadcrumb>
-        <div class="my-tree" :style="{'height':adjustHeight+'px'}">
-		    <el-tree ref="tree" :data="certifyList" node-key="name" :props="defaultProps" default-expand-all :expand-on-click-node="false" :highlight-current="true" :default-checked-keys="checkedKeys">
-		        <span class="custom-tree-node" slot-scope="{ node, data }">
-		            <span>{{ node.label }}</span>
-		           <!--  <span style="display:inline-block;margin-left:25px;">
-	                    <Button type="text" style="font-size: 12px;" icon="md-add"  title="添加" @click="addTbn(data,node)"></Button>
-	                    <Button type="text" style="font-size: 12px;" icon="ios-trash-outline"  title="删除" @click="deleteTbn(node,data)"></Button>
-                    </span> -->
-		        </span>
-		    </el-tree>
-        </div>
-        <CommonTipModal :modal="modalTip" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :adminId="id">
+	    <div style="height:30px;"></div>
+	    <elTable
+            :data="tableData"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="id"
+            ref="table1"
+            border
+            :max-height="adjustHeight+150"
+            :highlight-current-row="true"
+            :header-row-style="{color:'#666'}"
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+            <el-table-column
+              prop="name"
+              label="角色名"
+              minWidth="180">
+            </el-table-column>
+            <el-table-column align="center">
+                <template slot="header" slot-scope="scope">操作</template>
+                <template slot-scope="scope">
+                    <Button size="small" type="primary"  @click="addBtnFun(scope.row)">新增</Button>
+                    <Button size="small" type="primary" @click="modifyBtnFun(scope.row)">修改</Button>
+                    <Button size="small" type="error" @click="deleteBtnFun(scope.row)">删除</Button>
+                </template>
+            </el-table-column>
+        </elTable>
+        <CommonTipModal :modal="modalTip" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :item="item">
         	<div style="text-align:center">
 	            <p>确定删除该角色吗?</p>
 	        </div>
         </CommonTipModal>
-        <Modal v-model="modalAddRole" title="添加角色" width="360" :mask-closable="false">
+        <Modal v-model="modifyModal" :title="myTitle" width="360" :mask-closable="false">
 	        <div style="margin:15px 0;">
 	        	<span class="role-comm">角色标识(唯一)：</span>
-	            <Input v-model="addRole.name" style="width:50%;" placeholder="推荐英文如:java_developer"/>
+	            <Input v-model="salesForm.unique" style="width:50%;" placeholder="推荐英文如:java_developer"/>
 	        </div>
 	        <div style="margin:15px 0;">
 	        	<span class="role-comm">角色别名：</span>
-	            <Input v-model="addRole.alias" style="width:50%;" placeholder="请输入角色别名(用于展示)"/>
+	            <Input v-model="salesForm.name" style="width:50%;" placeholder="请输入角色别名(用于展示)"/>
 	        </div>
 	        <div slot="footer">
-	            <Button type="primary" :loading="modal_loading" @click="addRoleBtn">确定</Button>
+	            <Button type="primary" :loading="modal_loading" @click="handleSubmit">确定</Button>
 	            <Button @click="cancel">取消</Button>
 	        </div>
         </Modal>
     </div>
 </template>
 <script>
-    import CommonTipModal from '@/components/CommonTipModal'
-	export default {
+import { mapState } from 'vuex'
+import CommonTipModal from '@/components/CommonTipModal'
+export default {
 	    name: 'component_name',
 	    props:[],
 		data() {
 			return {
-				id:'', //当前的ID值
-				modal_loading: false,
-				modalTipTitle:'删除该角色',
-				modalTip:false,
-				modalAddRole: false, //默认不显示添加框
-				triggerCurrenNodeData:'',
-				triggerCurrenNode:'',
-				showCheck: false, //默认不显示复选框
-				certifyList: [],
-				checkedKeys:[], //默认勾选所有的角色
-				children: [],
-				adjustHeight: document.body.clientHeight-250,
-				addRole:{
-					name:'',
-					alias:''
-				},
-				defaultProps:{
-					label(data,node){
-					    return data.alias;
-					}
-				}
+				modifyModal: false, //默认不显示添加框
+				item: {},
+	            tableData: [],
+	            pid:'', //父节点ID值
+	            modalTip:false,
+	            modalTipTitle:'删除该角色',
+	            modifyModal:false,
+	            modal_loading:false,
+	            id:'',
+	            myTitle:'新增',
+	            salesForm: {
+	                unique:'',
+					name:''
+	            },
 			}
 		},
+		computed:{
+            ...mapState(['adjustHeight']) 
+        },
 		components:{
 		    CommonTipModal
-	    }, 
-	    watch: {
-	    },
-	    created(){ 
-            this.getInitialList();
 	    },
 	    activated(){ //组件激活时候触发
             this.getInitialList();
-            var _this = this;
-            window.onresize = function(){ // 定义窗口大小变更通知事件
-                _this.adjustHeight = document.body.clientHeight-250; //窗口高度
-            };
 	    },
 		methods: {
 			getInitialList() { 
-				this.$axios.get('/fx?api=gate.auth.roleTree').then(res => {
+				this.$axios.get('/fx?api=gate.auth.sysRoleList').then(res => {
 					if (res != 500) {
-						let children =  res.children;
-						this.certifyList = children;
-						let fun = (children)=>{
-							children.forEach((item) => {
-								if(item.visible == 1){
-									this.checkedKeys.push(item.id);
-								}
-								if(item.children && item.children.length){
-                                    fun(item.children);
-								}
-							});
-						}
-						fun(children);
-						this.$refs.tree.setCheckedKeys(this.checkedKeys,true);
-						this.$nextTick(() => {
-						    this.adjustHeight = document.body.clientHeight-280; //窗口高度
-					    });
+						this.tableData = res;
+                        this.$store.commit('change_height');
 					}
 				})
 			},
-			// handleDrop(draggingNode, dropNode, dropType, ev) {
-			// 	console.log('拖拽完成: ', draggingNode.data.id,dropNode.parent.key,dropNode.label, dropType);
-			// },
-			addTbn(d,n) {
-				this.id = d.id;
-				this.modalAddRole = true;
+			addBtnFun(row) {
+				this.myTitle = '新增';
+	            this.pid = row.id;
+	            this.item = row;
+	            this.salesForm = {
+	                unique:'',
+					name:''
+	            },
+                this.modifyModal = true;
 			},
-			deleteTbn(d,n) {
-				this.id = d.id;
-				this.modalTip = true;
-			},
+			modifyBtnFun(row){
+				this.myTitle = '修改';
+	            this.item = row;
+	            this.id = row.id;
+	            this.modifyModal = true;
+	            this.myTitle = '修改';
+	            this.salesForm = {
+	                unique:row.unique,
+					name:row.name
+	            };
+            }, 
+			deleteBtnFun(item){
+	            this.item = item;
+	            this.modalTip = true;
+            },
 			cancel(){
-	        	this.modalTip = false;
-	        	this.modalAddRole = false;
-				this.addRole = {
-					name: '',
-					alias: ''
-				};
+	            this.modalTip = false;
+	            this.modifyModal = false;
+	        },
+            tipComfirmBtn(num) {
+	            this.modalTip = false;
+	            if (num != 500) {
+	                this.$Message.success('删除成功');
+	                this.getInitialList();
+	            }
+	        },
+            handleSubmit(){
+                if(!this.salesForm.unique || !this.salesForm.name){
+                    return this.$Message.error("带 * 为必填项"); 
+                }
+                let formData = {...this.salesForm};
+	            let  myUrl = '/fx?api=gate.auth.sysAddRole';
+	            if(this.myTitle == '新增'){
+	                formData.pid = this.pid;
+	            }else if(this.myTitle == '修改'){
+	                 myUrl = '/fx?api=gate.auth.sysModifyRole';
+	                 formData.id = this.id;
+	            }
+	            this.$axios.post(myUrl,formData).then(res => {
+	                if(res!=500){
+	                    this.$Message.success("操作成功"); 
+	                    this.modifyModal = false;
+	                    if(this.myTitle == '新增'){
+	                        this.item.children.push(res);
+	                        this.$refs.table1.toggleRowExpansion(this.item,true);   
+	                    }else if(this.myTitle == '修改'){
+	                        Object.assign(this.item,{unique:res.unique,name:res.name})
+	                    }
+	                    this.$forceUpdate();
+	                    
+	                }
+	            })
             },
-            tipComfirmBtn(){
-            	this.modalTip = false;
-            	if(res!=500){
-                    this.$Message.success('删除成功');
-                    this.getInitialList();
-            	}
-
+            deleteBtnFun(row){
+	            this.item = row;
+	            this.modalTip = true;
             },
-            addRoleBtn(){
-            	if(!this.addRole.name || !this.addRole.alias){
-                    return this.$Message.warning('请填写完整信息');
-				}
-				let formData = {
-					...this.addRole,
-					type: 2,
-					parentNodeId: this.id,
-                    upSortId: -1
-				}
-				this.$axios.post('/fx?api=gate.auth.addTreeNode',formData).then(res => { 
-					if(res!=500){
-						this.addRole = {
-                            name:'',
-					        alias:''
-						};
-                        this.$Message.success('添加成功');
-                        this.getInitialList();
-                    }
-					this.modal_loading = false;
-					this.modalAddRole = true;
-				})
-            }
 		}
     }
 </script>
@@ -180,5 +184,19 @@
         display: inline-block;	
         width: 100px;
         margin-left: 10px;
+    }
+    #roleManage /deep/ .el-table__expand-icon.el-table__expand-icon--expanded {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    #roleManage /deep/ .el-table__expand-icon .el-icon-arrow-right:before {
+        content: "\E723";
+        font-size: 14px;
+        color: #333;
+    } 
+     #roleManage /deep/ .el-table__expand-icon.el-table__expand-icon--expanded .el-icon-arrow-right:before {
+        content: "\E722";
+        font-size: 14px;
+        color: #333;
     }
 </style>

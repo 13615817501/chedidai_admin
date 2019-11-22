@@ -5,15 +5,8 @@
 	        <BreadcrumbItem>待发起核保</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
-             <span>
-                时间类型: 
-                <Select v-model="search.timeType" style="width:100px">
-                    <Option :value="1">申请时间</Option>
-                    <Option :value="4">用户确认时间</Option>
-                </Select>
-            </span>
             <span>
-                &nbsp;&nbsp;时间区间: 
+                确认订单时间: 
                 <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
             </span>
             <span>
@@ -96,7 +89,7 @@ export default {
             orderId:'',
 			prodList:[], //产品列表
             search: {
-                timeType: 1,
+                timeType: 4,
                 timeInterval: '',
                 orderNumber: '',
                 prodId: '',
@@ -190,13 +183,20 @@ export default {
                             }, '退回待确认')
                         ]);
                     }
-                },{
+                }, {
                     title: '订单号',
                     key: 'orderNumber',
+                    className:'hoverBlue',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.orderNumber)
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitUnderwriting'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
                         ]);
                     }
                 }, {
@@ -244,26 +244,22 @@ export default {
 							h('strong', params.row.createTime)
 						]);
 					}
-				}, {
-                    title: '订单详情',
-                    key: 'action',
-                    width: 150,
+				},{
+                    title: '确认操作员',
+                    key: 'checkOfflinePassStaff',
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitUnderwriting'}});  
-                                    }
-                                }
-                            }, '详情'),
+                            h('strong', params.row.checkOfflinePassStaff)
+                        ]);
+                    }
+                }, {
+                    title: '确认时间',
+                    key: 'confirmTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.confirmTime)
                         ]);
                     }
                 }

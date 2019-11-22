@@ -1,5 +1,5 @@
 <template>
-    <div id="apiList">
+    <div id="apiList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>组织管理</BreadcrumbItem>
 	        <BreadcrumbItem>权限管理</BreadcrumbItem>
@@ -13,12 +13,12 @@
 		    <Button type="primary" icon="ios-repeat" style="margin-left:15px;" @click="resetBtn">重置</Button>
 	    </div>  
 	    <div>
-	        <span class="bottom-comm bottom-left">
+	        <!-- <span class="bottom-comm bottom-left">
 		    	<h3>接口管理</h3>
 		    	<div style="margin-left: 50px;">
 		    	    <Transfer :list-style="{'min-height':'400px','max-height':adjustHeight+'px','min-width':'220px'}" :data="apiData" :target-keys="targetApiKeys" filterable :filter-method="filterMethod" @on-change="handleChange"></Transfer>
 		    	</div>
-	    	</span>
+	    	</span> -->
 	    	<span class="bottom-comm">
 		    	<h3>权限树</h3>
 		    	<!-- <div v-if="!certifyList.length">暂无数据</div> -->
@@ -34,86 +34,82 @@
     </div>
 </template>
 <script>
-    import RoleSelect from '@/components/RoleSelect'  //拒绝理由列表模块
-	export default {
+import RoleSelect from '@/components/RoleSelect'  //拒绝理由列表模块
+import { mapState } from 'vuex'
+export default {
 	    name: 'ApiList',
 	    props:[],
 	    data () {
 		    return {
 		    	roleId:'',
                 certifyList:[],
-                apiData: [],
-                targetApiKeys: [], //选中的接口选项即可
+                // apiData: [],
+                // targetApiKeys: [], //选中的接口选项即可
                 targetMenuKeys:[], //选中的菜单选项即可
-                adjustHeight: '',
                 defaultProps:{
 					label(data,node){
-					    return data.alias;
+					    return data.name;
 					}
 				}
 		    }
 	    },
+	    computed:{
+            ...mapState(['adjustHeight']) 
+        },
 		components: {
 			RoleSelect
 		},
-	    watch: {},
-	    activated(){
-            var _this = this;
-            window.onresize = function(){ // 定义窗口大小变更通知事件
-                _this.adjustHeight = document.body.clientHeight-340; //窗口高度
-            };
-        },
 		methods: {
-		    handleChange (newTargetKeys, direction, moveKeys) {
-		    	console.log(newTargetKeys);
-                this.targetApiKeys = newTargetKeys;
-            },
+		    // handleChange (newTargetKeys, direction, moveKeys) {
+		    // 	console.log(newTargetKeys);
+      //           this.targetApiKeys = newTargetKeys;
+      //       },
             saveBtn(){
                 let menus = this.$refs.tree.getCheckedKeys();
                 let formData = {
                 	roleId: this.roleId,
-                	menus: menus?menus.join(','):'',
-                	itfs: this.targetApiKeys?this.targetApiKeys.join(','):''
+                	menuIds: menus?menus.join(','):'',
+                	// itfs: this.targetApiKeys?this.targetApiKeys.join(','):''
                 }
-                this.$axios.post('/fx?api=gate.auth.authModify',formData).then(res => {
+                this.$axios.post('/fx?api=gate.auth.sysModifyAuth',formData).then(res => {
 			    	if(res!=500){
 						this.$Message.success('保存成功');
 			    	}
 				})    
             },
             resetBtn(){
-                this.targetApiKeys = [];
+                // this.targetApiKeys = [];
                 this.$refs.tree.setCheckedKeys([],true);
             },
             filterMethod (data, query) {
                 return data.alias.indexOf(query) > -1;
             },
             getroleId(roleId){
-                this.$axios.get('/fx?api=gate.auth.authQuery',{params:{roleId:roleId}}).then(res => {
+                this.$axios.get('/fx?api=gate.auth.sysQueryAuth',{params:{roleId:roleId}}).then(res => {
 			    	if(res!=500){
 			    		this.roleId = roleId;
-						this.apiData = res.intf;
-						let menu = res.menu;
-						this.targetApiKeys = [];
+						// this.apiData = res.intf;
+						// let menu = res.menu;
+						// this.targetApiKeys = [];
 						this.targetMenuKeys = [];
 						
-						//处理api相关
-						if(this.apiData.length){
-                            this.apiData.forEach((item)=>{
-								item.key = item.id;   //组件只能识别 key label
-								item.label = item.alias;
-								if (item.mark == 1) {
-									this.targetApiKeys.push(item.id);
-								}
-							});
-						}
+						// //处理api相关
+						// if(this.apiData.length){
+      //                       this.apiData.forEach((item)=>{
+						// 		item.key = item.id;   //组件只能识别 key label
+						// 		item.label = item.alias;
+						// 		if (item.mark == 1) {
+						// 			this.targetApiKeys.push(item.id);
+						// 		}
+						// 	});
+						// }
 
 						//处理菜单相关
-						if(menu){
-                            this.certifyList = menu.children;
-							let fun = (children) => {
-								children.forEach((item) => {
-									if (item.visual == 1) {
+						if(res.length){
+                            this.certifyList = res;
+							let fun = (res) => {
+								res.forEach((item) => {
+									if (item.visible == 1) {
 									    this.targetMenuKeys.push(item.id);
 									}
 								    if (item.children && item.children.length) {
@@ -128,9 +124,7 @@
 								this.$refs.tree.setCheckedKeys([], true);
 							}
 						}
-						this.$nextTick(() => {
-						    this.adjustHeight = document.body.clientHeight-340; //窗口高度
-					    });
+						this.$store.commit('change_height');
 			    	}
 				})     
             }

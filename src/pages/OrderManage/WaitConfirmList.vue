@@ -6,15 +6,7 @@
 	    </Breadcrumb>
         <div class="search-box">
             <span>
-                时间类型: 
-                <Select v-model="search.timeType" style="width:100px">
-                    <Option :value="1">申请时间</Option>
-                    <Option :value="2">门店审核通过</Option>
-                    <Option :value="3">初审通过时间</Option>
-                </Select>
-            </span>
-            <span>
-                &nbsp;&nbsp;时间区间: 
+                初审通过时间: 
                 <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
             </span>
             <span>
@@ -90,7 +82,7 @@ export default {
             id:'',
             prodList:[],
 			search: {
-                timeType: 1,
+                timeType: 3,
                 timeInterval: '',
                 orderNumber: '',
                 prodId: '',
@@ -165,34 +157,41 @@ export default {
                                     }
                                 }
                             }, '下调金额'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.passModal = true;
-                                        this.title = '待确认拒绝';
-                                        this.orderId = params.row.orderId;
-                                    }
-                                }
-                            }, '拒绝')
+                            // h('Button', {
+                            //     props: {
+                            //         type: 'primary',
+                            //         size: 'small',
+                            //     },
+                            //     style: {
+                            //         'margin-left':'10px'
+                            //     },
+                            //     on: {
+                            //         click: () => {
+                            //             this.passModal = true;
+                            //             this.title = '待确认拒绝';
+                            //             this.orderId = params.row.orderId;
+                            //         }
+                            //     }
+                            // }, '拒绝')
                         ]);
                     }
                 },{
-					title: '订单号',
-					key: 'orderNumber',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.orderNumber)
-						]);
-					}
-				}, {
+                    title: '订单号',
+                    key: 'orderNumber',
+                    className:'hoverBlue',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitConfirmList'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
+                        ]);
+                    }
+                }, {
                     title: '用户姓名',
                     key: 'userName',
                     minWidth: 160,
@@ -300,29 +299,6 @@ export default {
                                     'margin-left':'10px',
                                 },
                             },params.row.underwritedStatus==1?'通过':params.row.underwritedStatus==0?'未核保':params.row.underwritedStatus==3?'失败':''),
-                        ]);
-                    }
-                }, {
-                    title: '订单详情',
-                    key: 'action',
-                    width: 150,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'WaitConfirmList'}});  
-                                    } 
-                                }
-                            }, '详情'),
                         ]);
                     }
                 }

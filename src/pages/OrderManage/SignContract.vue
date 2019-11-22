@@ -5,17 +5,8 @@
 	        <BreadcrumbItem>签署合同</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
-             <span>
-                时间类型: 
-                <Select v-model="search.timeType" style="width:100px">
-                    <Option :value="1">申请时间</Option>
-                    <Option :value="2">门店审核通过</Option>
-                    <Option :value="3">审核通过时间</Option>
-                    <Option :value="4">确认时间</Option>
-                </Select>
-            </span>
             <span>
-                &nbsp;&nbsp;时间区间: 
+                发起核保时间: 
                 <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
             </span>
             <span>
@@ -100,7 +91,7 @@ export default {
             orderId:'',
 			prodList:[], //产品列表
             search: {
-                timeType: 1,
+                timeType: 16,
                 timeInterval: '',
                 orderNumber: '',
                 prodId: '',
@@ -199,15 +190,22 @@ export default {
                         ]);
                     }
                 }, {
-					title: '订单号',
-					key: 'orderNumber',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.orderNumber)
-						]);
-					}
-				}, {
+                    title: '订单号',
+                    key: 'orderNumber',
+                    className:'hoverBlue',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'SignContract'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
+                        ]);
+                    }
+                }, {
                     title: '用户姓名',
                     key: 'userName',
                     minWidth: 90,
@@ -253,21 +251,21 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '初审人员',
-                    key: 'checkPassStaff',
+                    title: '核保人员',
+                    key: 'underwritedStaff',
                     minWidth: 90,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.checkPassStaff)
+                            h('strong', params.row.underwritedStaff)
                         ]);
                     }
                 }, {
-                    title: '初审通过时间',
-                    key: 'checkPassTime',
+                    title: '核保时间',
+                    key: 'underwritedTime',
                     minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.checkPassTime)
+                            h('strong', params.row.underwritedTime)
                         ]);
                     }
                 }, {
@@ -305,30 +303,7 @@ export default {
                                         window.open(params.row.reasonAttachment);
                                     }
                                 }
-                            }, '附件'),
-                        ]);
-                    }
-                }, {
-                    title: '订单详情',
-                    key: 'action',
-                    width: 150,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'SignContract'}});  
-                                    }
-                                }
-                            }, '详情'),
+                            }, '附件')
                         ]);
                     }
                 }

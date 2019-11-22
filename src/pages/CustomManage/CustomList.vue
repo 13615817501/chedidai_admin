@@ -26,6 +26,17 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="280" v-model="mobileModal" title="修改手机号" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm" style="width:60px;">手机号：</span><Input v-model="mobile" placeholder="请输入用户手机号" style="width: 150px"></Input>
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -44,7 +55,9 @@ export default {
             bigimg:'', //点击呈现大图
             modalTipTitle:'禁用该客户',
             tipModal:false,
+            mobileModal:false,
             item:{},
+            mobile: '',
             id:'',
             activeState: null,
             search:{
@@ -61,11 +74,28 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 90,
+                    width: 180,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
                         return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                     display: params.row.status==1?'inline-block':'none' 
+                                },
+                                on: {
+                                    click: () => {
+                                        this.mobileModal = true;
+                                        this.mobile = params.row.mobile;
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '修改手机号'),
                             h('Button', {
                                 props: {
                                     type: 'error',
@@ -222,6 +252,21 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(this.search);
             }
+        },
+        confirmBtn(){
+            this.table_loading = true;
+            this.$axios.post('/fx?api=gate.user.mobile.update',{oldMobile:this.item.mobile,mobile:this.mobile}).then(res => {
+                if(res!=500){
+                    this.$Message.success('修改成功');
+                    this.getInitialList(this.search);
+                }
+                this.table_loading = false;
+                this.mobileModal = false;
+            })
+        },
+        cancel(){
+            this.mobileModal = false;
+            this.tipModal = false;
         }
 	}
 }
@@ -247,7 +292,6 @@ export default {
         width: 90px;
     }
     .modify-modal{
-    	height: 600px;
         padding: 0 10px;
     }
     .item-div{

@@ -120,13 +120,20 @@ export default {
                             }, '添加催收')
                         ]);
                     }
-                }, {
+                },{
                     title: '订单号',
                     key: 'orderNumber',
+                    className:'hoverBlue',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.orderNumber)
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'PendingRepayment'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
                         ]);
                     }
                 }, {
@@ -244,29 +251,6 @@ export default {
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.period)
-                        ]);
-                    }
-                },{
-                    title: '订单详情',
-                    key: 'action',
-                    width: 100,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'PendingRepayment'}});
-                                    }
-                                }
-                            }, '详情'),
                         ]);
                     }
                 },{

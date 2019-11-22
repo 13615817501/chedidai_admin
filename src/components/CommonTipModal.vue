@@ -35,11 +35,14 @@
             	let formUrl = '';
                 if(this.modalTipTitle=='删除该部门组织'){
                     formData.id = this.item.id;
-                    formUrl = '/fx?api=gate.iam.delOrg';
+                    formUrl = '/fx?api=gate.auth.sysDeleteUnit';
                 }else if(this.modalTipTitle=='删除该管理员'){
-                    formUrl = '/fx?api=gate.auth.adminInfoModify';  //这里还需要修改
+                    formUrl = '/fx?api=gate.auth.sysModifyAdmin';  //这里还需要修改
                     formData.adminId = this.adminId;
                     formData.status = '0';
+                }else if(this.modalTipTitle=='删除该角色'){
+                    formUrl = '/fx?api=gate.auth.sysDeleteRole';  //这里还需要修改
+                    formData.id = this.item.id;
                 }else if(this.modalTipTitle=='删除该门店产品'){
                     formUrl = '/fx?api=gate.admin.store.delProdMapping';  //这里还需要修改
                     formData.ids = this.item.id;
@@ -184,6 +187,9 @@
                     formData.status = 0;
                 }else if(this.modalTipTitle=='删除该设备'){
                     formUrl = '/fx?api=gate.order.delete.device';  
+                    formData.id = this.item.id;
+                }else if(this.modalTipTitle=='删除该菜单'){
+                    formUrl = '/fx?api=gate.auth.sysDeleteMenu';  
                     formData.id = this.item.id;
                 }
                 this.modal_loading = true;

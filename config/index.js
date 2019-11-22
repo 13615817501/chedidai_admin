@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/fx': {
-            target: 'http://192.168.31.14:8093',
+            target: 'http://192.168.31.114:8093',
             changeOrigin: true,
             secure: false,
             pathRewrite: {
@@ -22,7 +22,7 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    host: '192.168.31.181', // can be overwritten by process.env.HOST
+    host: '192.168.31.180', // can be overwritten by process.env.HOST
     port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,

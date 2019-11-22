@@ -185,6 +185,15 @@ export default {
                             h('strong', params.row.checkPassTime)
                         ]);
                     }
+                },{
+                    title: '拒绝操作员',
+                    key: 'refuseStaff',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.refuseStaff)
+                        ]);
+                    }
                 }, {
 					title: '拒绝理由',
 					key: 'reason',

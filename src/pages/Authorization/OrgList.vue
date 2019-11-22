@@ -1,84 +1,90 @@
 <template>
-    <div id="customList" class="common-id">
+    <div id="my-table" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>组织管理</BreadcrumbItem>
-	        <BreadcrumbItem>部门列表</BreadcrumbItem>
-	    </Breadcrumb>
-        <tree-table 
-            class="listadmin"
-	        ref="table"
-	        sum-text="sum"
-	        index-text="#" 
-	        :data="myData"
-	        :columns="columns"
-	        :stripe="props.stripe"
-	        :border="props.border"
-	        :show-header="props.showHeader"
-	        :show-summary="props.showSummary"
-	        :show-row-hover="props.showRowHover"
-	        :show-index="props.showIndex"
-	        :tree-type="props.treeType"
-	        :is-fold="props.isFold"
-	        :expand-type="props.expandType"
-            :row-key="rowKey"
-	        select-type="radio"
-	        >
-	            <template slot="roles" slot-scope="scope">
-                    <Tag v-for="role in scope.row.roles" :key="role.k" color="blue">{{role.v}}</Tag>
-                </template>  
-	            <template slot="province" slot-scope="scope">
-		            <span>{{scope.row.province?scope.row.province.name:''}}</span>
-		        </template> 
-		        <template slot="city" slot-scope="scope">
-		            <span>{{scope.row.city?scope.row.city.name:''}}</span>
-		        </template> 
-		        <template slot="area" slot-scope="scope">
-		            <span>{{scope.row.area?scope.row.area.name:''}}</span>
-		        </template>
-     			<template slot="operate" slot-scope="scope">
-			        <Button type="primary" size="small" @click="addBtnFun(scope.row)">新增</Button>
-			        <Button type="primary" size="small" @click="modifyBtnFun(scope.row)" v-if="scope.row.pid!=0">修改</Button>
-			        <Button type="primary" size="small" @click="deleteBtnFun(scope.row)" v-if="scope.row.pid!=0">删除</Button>
-			    </template>
-        </tree-table>
-        <Modal v-model="modifyModal" :title="myTitle" :mask-closable="false" width="350">
-            <Form ref="salesForm" :model="salesForm" :label-width="90">
+            <BreadcrumbItem>组织管理</BreadcrumbItem>
+            <BreadcrumbItem>部门列表</BreadcrumbItem>
+        </Breadcrumb>
+        <div style="height:30px;"></div>
+        <elTable
+            :data="tableData"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="id"
+            ref="table1"
+            border
+            :max-height="adjustHeight+150"
+            :highlight-current-row="true"
+            :header-row-style="{color:'#666'}"
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+            <el-table-column
+              prop="name"
+              label="门店名"
+              minWidth="180">
+            </el-table-column>
+            <el-table-column
+              prop="number"
+              label="门店编号"
+              minWidth="100" align="center">
+            </el-table-column>
+            <el-table-column
+              prop="province.name"
+              label="省"
+              minWidth="60" align="center">
+            </el-table-column> 
+            <el-table-column
+              prop="city.name"
+              label="市"
+              minWidth="60" align="center">
+            </el-table-column> 
+            <el-table-column
+              prop="area.name"
+              label="区"
+              minWidth="60" align="center">
+            </el-table-column> 
+            <el-table-column
+              prop="address"
+              label="详细地址"
+              minWidth="60" align="center">
+            </el-table-column> 
+            <el-table-column align="center">
+                <template slot="header" slot-scope="scope">操作</template>
+                <template slot-scope="scope">
+                    <Button size="small" type="primary"  @click="addBtnFun(scope.row)">新增</Button>
+                    <Button size="small" type="primary" @click="modifyBtnFun(scope.row)">修改</Button>
+                    <Button size="small" type="error" @click="deleteBtnFun(scope.row)">删除</Button>
+                </template>
+            </el-table-column>
+        </elTable>
+        <Modal v-model="modifyModal" :title="myTitle" :mask-closable="false" width="370">
+            <Form ref="salesForm" :model="salesForm" :label-width="120">
                 <FormItem label="名称：" prop="name" class="ivu-form-item-required">
                     <Input v-model.trim="salesForm.name" class="item-width" placeholder="请输入名称"></Input>
                 </FormItem>
-                <FormItem label="角色：" prop="roleId" class="ivu-form-item-required">
-                    <Select class="item-width" v-model="myroleId" label-in-value @on-change="roleIdChange">
-			            <Option v-for="item in roleList" :value="item.code" :key="item.code">{{item.value}}</Option>
-			        </Select>
-			        <Tag v-for="(role,index) in roleIdsArr" :key="role.value" closable @on-close="handleClose(role,index)">{{role.label}}</Tag>
+                <FormItem label="组织编号：" prop="number" class="ivu-form-item-required">
+                    <Input v-model.trim="salesForm.number" class="item-width" placeholder="请输入门店编号"></Input>
+                </FormItem> 
+                <FormItem label="组织类型：" prop="idNum" class="ivu-form-item-required">
+                    <Select v-model="salesForm.type" class="item-width" :disabled="myTitle=='修改'">
+                        <Option :value="0">默认</Option>
+                        <Option :value="10">小黄豆</Option>
+                        <Option :value="11">小黄豆区</Option>
+                        <Option :value="12">小黄豆组</Option>
+                        <Option :value="13">小黄豆门店</Option>
+                        <Option :value="20">代理</Option>
+                        <Option :value="21">代理区</Option>
+                        <Option :value="22">代理组</Option>
+                        <Option :value="23">代理门店</Option>
+                        <Option :value="30">渠道</Option>
+                        <Option :value="31">渠道区</Option>
+                        <Option :value="32">渠道组</Option>
+                        <Option :value="33">渠道门店</Option>
+                    </Select>
                 </FormItem>
-                <FormItem label="类型：" prop="idNum" class="ivu-form-item-required">
-                    <Select v-model="salesForm.isStore" class="item-width">
-		                <Option :value="1">门店</Option>
-		                <Option :value="2">非门店</Option>
-		            </Select>
-                </FormItem>
-                <div v-show="salesForm.isStore==1">
-	                <FormItem label="门店编号：" prop="number" class="ivu-form-item-required">
-	                    <Input v-model.trim="salesForm.number" class="item-width" placeholder="请输入门店编号"></Input>
-	                </FormItem> 
-	                <ChinaArea txt="修改" @change="chinaAreaChange" :status="myTitle=='新增' && !modifyModal" :modifyStatus="myTitle=='修改' && modifyModal" 
-	                :parProvince="salesForm.province" :parCity="salesForm.city" :parArea="salesForm.area"></ChinaArea>	
-	                <FormItem label="详细地址：" prop="address" class="ivu-form-item-required item-width">
-	                    <Input v-model.trim="salesForm.address"  class="item-width" type="textarea" :rows="4" placeholder="请输入详细地址"></Input>
-	                </FormItem>
-	                <FormItem label="门店模式：" prop="idNum" class="ivu-form-item-required item-width">
-	                    <Select v-model="salesForm.type"  class="item-width">
-			                <Option :value="1">直营</Option>
-			                <Option :value="2">渠道</Option>
-			            </Select>
+                <div v-show="salesForm.type==13 || salesForm.type==23 || salesForm.type==33">
+                    <ChinaArea txt="修改" @change="chinaAreaChange" :status="myTitle=='新增' && !modifyModal" :modifyStatus="myTitle=='修改' && modifyModal" 
+                    :parProvince="salesForm.province" :parCity="salesForm.city" :parArea="salesForm.area"></ChinaArea>  
+                    <FormItem label="详细地址：" prop="address" class="item-width">
+                        <Input v-model.trim="salesForm.address"  class="item-width" type="textarea" :rows="4" placeholder="请输入详细地址"></Input>
                     </FormItem>
-                    <FormItem label="手续费：" prop="serviceCharge" class="ivu-form-item-required item-width">
-	                    <Input v-model.trim="salesForm.serviceCharge" class="item-width"placeholder="请输入手续费"></Input>
-	                </FormItem>
-	                <FormItem label="内返费：" prop="internalReturn" class="ivu-form-item-required item-width">
-	                    <Input v-model.trim="salesForm.internalReturn"  class="item-width"placeholder="请输入内返费"></Input>
-	                </FormItem>
                 </div>
             </Form>
             <div slot="footer">
@@ -86,12 +92,12 @@
                 <Button @click="cancel()">取消</Button>
             </div>
             <CommonTipModal  :modal="modalTip" @cancel="cancel" :modalTipTitle="modalTipTitle" :item="item" @comfirmBtn="tipComfirmBtn" >
-            	<div style="text-align:center">
-		            <p>确定删除该部门组织吗?</p>
-	            </div>
+                <div style="text-align:center">
+                    <p>确定删除该部门组织吗?</p>
+                </div>
             </CommonTipModal>
         </Modal>
-    </div>
+    </div>    
 </template>
 <script>
 import util from '@/util/util'
@@ -101,221 +107,110 @@ import ImgUpload from '@/components/ImgUpload' //公用的提示组件
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
-	name: 'CustomList',
-	props:[],
-	data () {
-		return {
-			props: {
-	          stripe: false,
-	          border: false,
-	          showHeader: true,
-	          showSummary: false,
-	          showRowHover: true,
-	          showIndex: false,
-	          treeType: true,
-	          isFold: false,
-	          expandType: false
-            },
-            item:{},
+    data() {
+        return {
+            item: {},
+            tableData: [],
+            pid:'', //父节点ID值
             modalTip:false,
             modalTipTitle:'删除该部门组织',
-			myData:[],
-			columns: [{
-				title: '门店名',
-				key: 'name',
-				width: '350px',
-			},{
-				title: '角色',
-				key: 'roles',
-				minWidth: '150px',
-				type: 'template',
-				template: 'roles',
-			},{
-				title: '门店编号',
-				minWidth: '100px',
-				key: 'number',
-			},{
-				title: '省',
-				key: 'province',
-				minWidth: '80px',
-				type: 'template',
-				template: 'province',
-			},{
-				title: '市',
-				key: 'city',
-				minWidth: '80px',
-				type: 'template',
-				template: 'city',
-			},{
-				title: '区',
-				key: 'area',
-				minWidth: '80px',
-				type: 'template',
-				template: 'area',
-			},{
-				title: '操作',
-				key: 'operate',
-				minWidth: '200px',
-				type: 'template',
-				template: 'operate',
-			}],
-			myroleId:'',
-			roleList:[],
             modifyModal:false,
-            myTitle:'新增',
-            item:{},
             modal_loading:false,
-            pid:'',
             id:'',
-            roleIdsArr:[], //存放所有角色的数组
-            roleIdsValueArr:[], //存放所有角色的数组
-			salesForm: {
-				name: '',
-				roleIds: '',
-				number: '',
-				isStore:'2', //默认为2非门店 1为门店
-				province: null,
-				city: null,
-				area: null,
-				address: '',
-				type: '1',
-				serviceCharge: '',
-				internalReturn: ''
-			},
-		}
-	},
-    components:{
-    	CommonTipModal,
-        ChinaArea
-    }, 
-	computed:{
+            myTitle:'新增',
+            salesForm: {
+                name: '',
+                number: '',
+                type: 0,
+                province: null,
+                city: null,
+                area: null,
+                address: '',
+            },
+        }
+    },
+    computed:{
         ...mapState(['adjustHeight']) 
     },
-	activated(){
-		this.getRoleList();
+    activated(){
         this.getInitialList();
-	},
-	watch:{
-        'modifyModal'(newVal,oldVal){
-        	if(!newVal){
-                this.roleIdsArr = [];
-                this.roleIdsValueArr = [];
-                this.myroleId = '';
-        	}
-        },
-        adjustHeight(newVal,oldVal){
-            this.tableAdjustHeight();
-        }
-	},
-	methods: {
-        tableAdjustHeight(){
-            let table = this.$refs.table;
-            $(table.$el).find('.zk-table__body-wrapper').css({
-                'height': this.adjustHeight + 150,
-                'overflow':'auto'
-            });
-        },
-		getRoleList(){
-            this.$axios.get('/fx?api=gate.auth.roleList').then(res => {
-		    	if(res!=500){
-		    		this.roleList = res.list;
-		    	}
-			})
-		},
-		getInitialList(){ 
-		    this.$axios.get('/fx?api=gate.iam.orgList').then(res => {
-		    	if(res!=500){
-		    		this.myData = res;
-			        this.$store.commit('change_height');
-                    this.tableAdjustHeight();
-		    	}
-			})
-		},
-		handleCheckClick(option) {
-            // console.log(option); 
+    },
+    components:{
+        CommonTipModal,
+        ChinaArea
+    }, 
+    methods: {
+        getInitialList(){ 
+            this.$axios.get('/fx?api=gate.auth.sysUnitList').then(res => {
+                if(res!=500){
+                    this.tableData = res;
+                    this.$store.commit('change_height');
+                }
+            })
         },
         addBtnFun(row){
-        	this.myTitle = '新增';
+            this.myTitle = '新增';
             this.pid = row.id;
             this.item = row;
             this.salesForm = {
-				name: '',
-				roleIds: '',
-				isStore: 2,
-				number: '',
-				province: null,
-				city: null,
-				area: null,
-				address: '',
-				type: 1,
-				serviceCharge: '',
-				internalReturn: ''
-			},
+                name: '',
+                number: '',
+                type: 0,
+                province: null,
+                city: null,
+                area: null,
+                address: '',
+            },
             this.modifyModal = true;
-        }, 
-        modifyBtnFun(row){
-        	this.id = row.id;
-            this.modifyModal = true;
-            this.myTitle = '修改';
-            row.roles.forEach( (item, index) => {
-            	this.roleIdsArr.push({label:item.v,value:item.k});
-            	this.roleIdsValueArr.push(item.k);
-            });
-            let str = this.roleIdsValueArr.join(',');
-            this.salesForm = {
-				name: row.name,
-				roleIds: str,
-				isStore: row.isStore,
-				number: row.number,
-				province: row.province?row.province.code:'',
-				city: row.city?row.city.code:'',
-				area: row.area?row.area.code:'',
-				address: row.address,
-				type: row.type,
-				serviceCharge: row.serviceCharge,
-				internalReturn: row.internalReturn
-			};
-        }, 
-        deleteBtnFun(item){
-            this.item = item;
-            this.modalTip = true;
         },
         handleSubmit(){
-        	let formData = {};
-        	if(this.salesForm.isStore==2){ //非门店
-                if(!this.salesForm.name || !this.salesForm.roleIds){
+            let formData = {};
+            if(this.salesForm.type!=13 && this.salesForm.type!=23 && this.salesForm.type!=33){ //非门店
+                if(!this.salesForm.name || !this.salesForm.number){
                     return this.$Message.error("带 * 为必填项"); 
                 }
                 formData = {
-                	pid:this.pid,
-                	name:this.salesForm.name,
-                	roleIds:this.salesForm.roleIds,
-                	isStore:this.salesForm.isStore
+                    name:this.salesForm.name,
+                    number:this.salesForm.number,
+                    type:this.salesForm.type,
                 };
-        	}else{
-                if(!this.salesForm.name || !this.salesForm.roleIds || !this.salesForm.number  || !this.salesForm.province || !this.salesForm.city || !this.salesForm.area  || !this.salesForm.address  || !this.salesForm.type  || !this.salesForm.serviceCharge || !this.salesForm.internalReturn){
+                
+            }else{
+                if(!this.salesForm.name || !this.salesForm.number  || !this.salesForm.province || !this.salesForm.city || !this.salesForm.area ){
                     return this.$Message.error("带 * 为必填项"); 
                 }
                 formData = {...this.salesForm};
-        	}
-            let  myUrl = '/fx?api=gate.iam.addOrg';
+            }
+            let  myUrl = '/fx?api=gate.auth.sysAddUnit';
             if(this.myTitle == '新增'){
                 formData.pid = this.pid;
             }else if(this.myTitle == '修改'){
-            	 myUrl = '/fx?api=gate.iam.mdfOrg';
-            	 formData.id = this.id;
+                 myUrl = '/fx?api=gate.auth.sysModifyUnit';
+                 formData.id = this.id;
             }
             this.$axios.post(myUrl,formData).then(res => {
                 if(res!=500){
                     this.$Message.success("操作成功"); 
                     this.modifyModal = false;
-                    this.getInitialList();    
+                    if(this.myTitle == '新增'){
+                        this.item.children.push(res);
+                        this.$refs.table1.toggleRowExpansion(this.item,true);    
+                    }else if(this.myTitle == '修改'){
+                        Object.assign(this.item,{name:res.name,number:res.number,address:res.address,area:res.area,province:res.province,city:res.city})
+                    }
+                    this.$forceUpdate();
                 }
+
             })
         },
         cancel(){
             this.modalTip = false;
             this.modifyModal = false;
+        },
+        chinaAreaChange(data){
+            this.salesForm.province = data.province;
+            this.salesForm.city = data.city;
+            this.salesForm.area = data.area;
         },
         tipComfirmBtn(num) {
             this.modalTip = false;
@@ -324,39 +219,46 @@ export default {
                 this.getInitialList();
             }
         },
-        handleContextmenu(){
-            // console.log(111);
+        modifyBtnFun(row){
+            this.item = row;
+            this.id = row.id;
+            this.modifyModal = true;
+            this.myTitle = '修改';
+            this.salesForm = {
+                name: row.name,
+                number: row.number,
+                type: row.type,
+                province: row.province?row.province.code:'',
+                city: row.city?row.city.code:'',
+                area: row.area?row.area.code:'',
+                address: row.address,
+            };
+        }, 
+        deleteBtnFun(item){
+            this.item = item;
+            this.modalTip = true;
         },
-        chinaAreaChange(data){
-            this.salesForm.province = data.province;
-            this.salesForm.city = data.city;
-            this.salesForm.area = data.area;
-        },
-        roleIdChange(Option){
-        	if(!Option){  //v-model置为空后option会变为undefined,所以先判断
-        		return;
-        	} 
-        	let bol = this.roleIdsArr.some(item =>{
-                return item.label == Option.label;
-        	});
-            if(!bol){
-                this.roleIdsArr.push(Option);
-                this.roleIdsValueArr.push(Option.value);
-            } 
-            this.salesForm.roleIds = this.roleIdsValueArr.join(',');
-        },
-        handleClose(role,index){
-            this.roleIdsArr.splice(index,1);
-            this.roleIdsValueArr.splice(this.roleIdsValueArr.indexOf(role.value),1);
-            this.salesForm.roleIds = this.roleIdsValueArr.join(',');
-        },
-        rowKey(row,rowIndex){
-            console.log(row,rowIndex);
+        handleSelectionChange(){
+
         }
-	}
-}
+    },
+  }
 </script>
 <style lang="less" scoped>
+    #my-table /deep/ .el-table__expand-icon.el-table__expand-icon--expanded {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    #my-table /deep/ .el-table__expand-icon .el-icon-arrow-right:before {
+        content: "\E723";
+        font-size: 14px;
+        color: #333;
+    } 
+    #my-table /deep/ .el-table__expand-icon.el-table__expand-icon--expanded .el-icon-arrow-right:before {
+        content: "\E722";
+        font-size: 14px;
+        color: #333;
+    }
     #customList /deep/ .ivu-table-row.ivu-table-row-hover{
         cursor: pointer;
     }
@@ -382,13 +284,13 @@ export default {
         margin: 10px 0;
     }
     .item-width{
-    	width: 200px;
+        width: 200px;
     }
     .listadmin.zk-table /deep/ .zk-table__header-wrapper{
-    	position: absolute;
-    	z-index: 100;
+        position: absolute;
+        z-index: 100;
     }
     .listadmin.zk-table /deep/ .zk-table__body-wrapper{
-    	padding-top: 41px;
+        padding-top: 41px;
     }
 </style>

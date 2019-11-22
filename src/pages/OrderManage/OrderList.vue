@@ -140,13 +140,42 @@ export default {
             },
 			table_loading: false, //默认先显示加载
 			certifyList:[],
-            columns: [{
+            columns: [ {
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
                     title: '订单号',
                     key: 'orderNumber',
+                    className:'hoverBlue',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.orderNumber)
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
                         ]);
                     }
                 }, {
@@ -165,6 +194,15 @@ export default {
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.userMobile)
+                        ]);
+                    }
+                },{
+                    title: '合同金额',
+                    key: 'amount',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.amount)
                         ]);
                     }
                 }, {
@@ -188,57 +226,13 @@ export default {
 				}, {
 					title: '状态',
 					key: 'statusValue',
-					minWidth: 150,
+					minWidth: 100,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.statusValue)
 						]);
 					}
-				}, {
-                    title: '订单详情',
-                    key: 'action',
-                    width: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
-                                    }
-                                }
-                            }, '详情'),
-                        ]);
-                    }
-                },{
-                    title: '账单详情',
-                    key: 'action',
-                    width: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'OrderList'}});  
-                                    }
-                                }
-                            }, '详情'),
-                        ]);
-                    }
-                }
+				}
 			]
 		}
 	},

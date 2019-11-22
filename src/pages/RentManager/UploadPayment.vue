@@ -119,110 +119,6 @@ export default {
                         ]);
                     }
                 },{
-                    title: '订单号',
-                    key: 'orderNumber',
-                    minWidth: 160,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.orderNumber)
-                        ]);
-                    }
-                }, {
-                    title: '用户姓名',
-                    key: 'userName',
-                    minWidth: 90,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.userName)
-                        ]);
-                    }
-                }, {
-                    title: '身份证号',
-                    key: 'useridentityCard',
-                    minWidth: 160,
-                     render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.useridentityCard)
-                        ]);
-                    }
-                }, {
-                    title: '手机号码',
-                    key: 'userMobile',
-                    minWidth: 120,
-                     render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.userMobile)
-                        ]);
-                    }
-                },{
-                    title: '门店名',
-                    key: 'storeName',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.storeName)
-                        ]);
-                    }
-                }, {
-                    title: '产品名称',
-                    key: 'prodName',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.prodName)
-                        ]);
-                    }
-                },{
-                    title: '合同金额(元)',
-                    key: 'amount',
-                    minWidth: 130,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.amount)
-                        ]);
-                    }
-                },{
-                    title: '上传资方状态 ',
-                    key: 'uploadCapitalStatus',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.uploadCapitalStatus==0?'未上传':params.row.uploadCapitalStatus==1?'已上传':'')
-                        ]);
-                    }
-                },{
-                    title: '订单状态 ',
-                    key: 'statusValue',
-                    minWidth: 100,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.statusValue)
-                        ]);
-                    }
-                },{
-                    title: '订单详情',
-                    key: 'action',
-                    width: 100,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'UploadPayment'}});
-                                    }
-                                }
-                            }, '详情'),
-                        ]);
-                    }
-                },{
                     title: '账单详情',
                     key: 'action',
                     width: 100,
@@ -242,7 +138,167 @@ export default {
                                         this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'UploadPayment'}});
                                     }
                                 }
-                            }, '详情'),
+                            }, '详情')
+                        ]);
+                    }
+                },{
+                    title: '订单号',
+                    key: 'orderNumber',
+                    className:'hoverBlue',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'UploadPayment'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
+                        ]);
+                    }
+                }, {
+                    title: '产品名称',
+                    key: 'prodName',
+                    minWidth: 140,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.prodName)
+                        ]);
+                    }
+                },{
+                    title: '上传资方状态 ',
+                    key: 'uploadCapitalStatus',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.uploadCapitalStatus==0?'未上传':params.row.uploadCapitalStatus==1?'已上传':'')
+                        ]);
+                    }
+                },{
+                    title: '用户姓名',
+                    key: 'userName',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.userName)
+                        ]);
+                    }
+                }, {
+                    title: '身份证号',
+                    key: 'identityCard',
+                    minWidth: 160,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.identityCard)
+                        ]);
+                    }
+                },{
+                    title: '手机号码',
+                    key: 'userMobile',
+                    minWidth: 120,
+                     render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.userMobile)
+                        ]);
+                    }
+                }, {
+                    title: '银行卡号',
+                    key: 'bankCardNum',
+                    minWidth: 170,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankCardNum)
+                        ]);
+                    }
+                }, {
+                    title: '银行分行号',
+                    key: 'bankName',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankName)
+                        ]);
+                    }
+                },{
+                    title: '门店名',
+                    key: 'storeName',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.storeName)
+                        ]);
+                    }
+                }, {
+                    title: '合同金额(元)',
+                    key: 'amount',
+                    minWidth: 110,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.amount)
+                        ]);
+                    }
+                }, {
+                    title: '首款金额(元)',
+                    key: 'firstLoanAmount',
+                    minWidth: 110,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.firstLoanAmount)
+                        ]);
+                    }
+                },{
+                    title: '需要划扣金额(元)',
+                    key: 'deductAmount',
+                    minWidth: 140,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.deductAmount)
+                        ]);
+                    }
+                },{
+                    title: '划扣状态',
+                    key: 'deductStatus',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.deductStatus==0?'无':params.row.deductStatus==1?'成功':params.row.deductStatus==3?`失败 (${params.row.deductFailReason})`:'')
+                        ]);
+                    }
+                },{
+                    title: '复审通过时间',
+                    key: 'checkAgainTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.checkAgainTime)
+                        ]);
+                    }
+                },{
+                    title: '首款通过时间',
+                    key: 'loanFirstTime',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.loanFirstTime)
+                        ]);
+                    }
+                },{
+                    title: '首款操作员',
+                    key: 'loanFirstStaff',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.loanFirstStaff)
+                        ]);
+                    }
+                },{
+                    title: '订单状态',
+                    key: 'statusValue',
+                    minWidth: 100,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.statusValue)
                         ]);
                     }
                 }

@@ -5,21 +5,8 @@
 	        <BreadcrumbItem>认领</BreadcrumbItem>
 	    </Breadcrumb>
         <div class="search-box">
-             <span>
-                时间类型: 
-                <Select v-model="search.timeType" style="width:120px">
-                    <Option :value="1">申请时间</Option>
-                    <Option :value="2">门店审核通过</Option>
-                    <Option :value="3">初审通过时间</Option>
-                    <Option :value="4">用户确认时间</Option>
-                    <Option :value="5">复审通过时间</Option>
-                    <Option :value="6">合同签署时</Option>
-                    <Option :value="7">GPS安装时间</Option>
-                    <Option :value="8">抵押完成时间</Option>
-                </Select>
-            </span>
             <span>
-                &nbsp;&nbsp;时间区间: 
+                复审通过时间: 
                 <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
             </span>
             <span>
@@ -101,7 +88,7 @@ export default {
             orderId:'',
             prodList:[], //产品列表
 			search: {
-                timeType: 1,
+                timeType: 5,
                 timeInterval: '',
                 orderNumber: '',
                 prodId: '',
@@ -186,15 +173,54 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '账单详情',
+                    key: 'action',
+                    width: 100,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
+                                    }
+                                }
+                            }, '详情'),
+                        ]);
+                    }
+                },{
                     title: '订单号',
                     key: 'orderNumber',
+                    className:'hoverBlue',
                     minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.orderNumber)
+                            h('strong', {
+                                on: {
+                                    click: () => {
+                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});  
+                                    }
+                                }
+                            }, params.row.orderNumber)
                         ]);
                     }
                 }, {
+                    title: '产品名称',
+                    key: 'prodName',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.prodName)
+                        ]);
+                    }
+                },{
                     title: '用户姓名',
                     key: 'userName',
                     minWidth: 100,
@@ -231,6 +257,15 @@ export default {
                         ]);
                     }
                 }, {
+                    title: '银行分行号',
+                    key: 'bankName',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.bankName)
+                        ]);
+                    }
+                },{
                     title: '门店名',
                     key: 'storeName',
                     minWidth: 120,
@@ -240,15 +275,6 @@ export default {
                         ]);
                     }
                 }, {
-                    title: '产品名称',
-                    key: 'prodName',
-                    minWidth: 120,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.prodName)
-                        ]);
-                    }
-                },{
                     title: '合同金额(元)',
                     key: 'amount',
                     minWidth: 120,
@@ -267,12 +293,12 @@ export default {
                         ]);
                     }
                 },{
-                    title: '银行分行号',
-                    key: 'bankName',
-                    minWidth: 150,
+                    title: '需要划扣金额(元)',
+                    key: 'deductAmount',
+                    minWidth: 160,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.bankName)
+                            h('strong', params.row.deductAmount)
                         ]);
                     }
                 },{
@@ -285,12 +311,12 @@ export default {
                         ]);
                     }
                 },{
-                    title: '需要划扣金额(元)',
-                    key: 'deductAmount',
-                    minWidth: 160,
+                    title: '复审通过人员',
+                    key: 'checkAgainStaff',
+                    minWidth: 150,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.deductAmount)
+                            h('strong', params.row.checkAgainStaff)
                         ]);
                     }
                 },{
@@ -309,52 +335,6 @@ export default {
                     render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.status==11?'待放首款':params.row.status==12?'待放尾款':'')
-                        ]);
-                    }
-                },{
-                    title: '订单详情',
-                    key: 'action',
-                    width: 100,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'ProcessDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
-                                    }
-                                }
-                            }, '详情'),
-                        ]);
-                    }
-                },{
-                    title: '账单详情',
-                    key: 'action',
-                    width: 100,
-                    align: 'center',
-                    render: (h, params) => {
-                        return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small',
-                                },
-                                style: {
-                                    'margin-left':'10px',
-                                },
-                                on: {
-                                    click: () => {
-                                        this.$router.push({name:'LoanDetail',query:{orderId:params.row.orderId,pageNum:this.search.pageNum,name:'Claim'}});
-                                    }
-                                }
-                            }, '详情'),
                         ]);
                     }
                 }

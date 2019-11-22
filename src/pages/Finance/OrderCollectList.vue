@@ -27,7 +27,7 @@
             </span>
             <span>
                 &nbsp;&nbsp;时间区间: 
-                <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
+                <DatePicker type="datetimerange" v-model='search.timeInterval' placeholder="请选择" style="width: 280px"></DatePicker>
             </span>
             <span>
                 &nbsp;&nbsp;产品: 
@@ -42,6 +42,28 @@
             <span>
                 &nbsp;&nbsp;用户姓名: 
                 <Input v-model="search.name" clearable placeholder="请输入用户姓名" style="width: 120px"></Input>
+            </span>
+            <span>
+                &nbsp;&nbsp;状态: 
+                <Select v-model="search.status" style="width:100px" clearable>
+                    <Option :value="1">待门店审核</Option>
+                    <Option :value="2">待初审</Option>
+                    <Option :value="3">待确认</Option>
+                    <Option :value="4">待发起核保</Option>
+                    <Option :value="5">拒绝</Option>
+                    <Option :value="6">取消</Option>
+                    <Option :value="7">等待合同签署</Option>
+                    <Option :value="8">等待GPS安装校验</Option>
+                    <Option :value="9">待复审</Option>
+                    <Option :value="10">复审退回</Option>
+                    <Option :value="11">待放首款</Option>
+                    <Option :value="12">待放款</Option>
+                    <Option :value="13">待还款</Option>
+                    <Option :value="14">逾期</Option>
+                    <Option :value="15">资产处置</Option>
+                    <Option :value="16">结清</Option>
+                    <Option :value="20">合同退回</Option>
+                </Select>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
             <Button type="primary" icon="md-download" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="downLoad">导出</Button>
@@ -83,11 +105,13 @@ export default {
 			prodList:[], //产品列表
             search: {
                 timeType: 1,
+                isSeconds: 1,
                 timeInterval: '',
                 orderNumber: '',
                 prodId: '',
                 mobile: '',
                 name: '',
+                status:'',
                 pageNum: 1,
                 pageSize: 15
             },
@@ -475,6 +499,15 @@ export default {
                             h('strong', params.row.endDate)
                         ]);
                     }
+                },{
+                    title: '订单状态',
+                    key: 'orderStatus',
+                    minWidth: 150,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.orderStatus)
+                        ]);
+                    }
                 }
 			]
 		}
@@ -484,7 +517,7 @@ export default {
     },
 	activated(){
         this.mat = localStorage.getItem('mat');
-        this.getInitialList(util.searchList(this.search,'timeInterval'));
+        this.getInitialList(util.searchList(this.search,'timeInterval','datetimerange'));
 	},
 	methods: {
         remoteMethod(query) { //远程请求
@@ -510,11 +543,11 @@ export default {
 		},
         pageChange(page){
 			this.search.pageNum = page;
-            this.getInitialList(util.searchList(this.search,'timeInterval'));
+            this.getInitialList(util.searchList(this.search,'timeInterval','datetimerange'));
         },
         searchList() {
         	this.search.pageNum = 1;
-			this.getInitialList(util.searchList(this.search,'timeInterval'));
+			this.getInitialList(util.searchList(this.search,'timeInterval','datetimerange'));
 		},
         confirmBtn(){
             if(!this.modify.name || !this.modify.bannerPic || !this.modify.monthRate || !this.modify.term || !this.modify.jrongRate || !this.modify.incidental || !this.modify.accident || !this.modify.flowAmount || !this.modify.defaultAmount || !this.modify.defaultYear || !this.modify.isInterestHead || !this.modify.calInterestWay){
@@ -529,12 +562,12 @@ export default {
                 if(res!=500){
                     this.$Message.success("操作成功"); 
                     this.modifyModal = false;
-                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                    this.getInitialList(util.searchList(this.search,'timeInterval','datetimerange'));
                 }
             })
         },
         downLoad(){
-            window.open(`${this.host}/file/download?api=gate.order.excle.exportUserInfoStatisticsExcleService&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval')))}`);
+            window.open(`${this.host}/file/download?api=gate.order.excle.exportUserInfoStatisticsExcleService&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval','datetimerange')))}`);
         }
 	}
 }

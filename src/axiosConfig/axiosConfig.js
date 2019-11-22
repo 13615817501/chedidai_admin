@@ -10,6 +10,7 @@ import { Message } from 'iview';
 // axios.defaults.baseURL = 'http://47.97.188.143:8093';
 // axios.defaults.baseURL = 'http://api.zdautoservice.com:8093';
 if(process.env.NODE_ENV=='production') axios.defaults.baseURL = 'https://aps.zdautoservice.com';
+// if(process.env.NODE_ENV=='production') axios.defaults.baseURL = 'http://114.55.169.107:8093';
 // if(process.env.NODE_ENV=='production') axios.defaults.baseURL = 'https://funde-test-api.zdautoservice.com';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'; // post请求时候统一设置的头部
 // axios.defaults.timeout = 20000;// 统一的全局参数配置

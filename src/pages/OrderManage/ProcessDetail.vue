@@ -19,22 +19,22 @@
                         <tr><td colspan="3">门店地址：{{certifyList.storeAd}}</td><td><Button type="primary" size="small"  style="margin:0 10px;" v-if="certifyList.contractButton" @click="contractinfoBtn">合同信息</Button></td></tr>
                     </tbody>
                 </table>  
-                <div style="margin-top:15px;" v-if="$route.query.name=='WaitStoreList'|| $route.query.name=='WaitConfirmList'">
+                <div style="margin-top:15px;" >
                     <div style="margin-top:15px;">
-                        <p v-if="$route.query.name=='WaitStoreList'">
+                        <p>
                             <span class="yajin">年检押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify1}" :readonly='!isModify1' v-model="modify.annualInspectionDeposit" style="width: 100px" :placeholder="isModify1?'请输入...':''" />
-                            <Button type="primary" v-if="certifyList.status!=10" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
+                            <Button type="primary" v-if="certifyList.status!=10 && $route.query.name=='WaitStoreList'" size="small"  style="margin:0 10px;" @click="savaYajinBtn('年检押金')">{{isModify1?'保存':'修改'}}</Button>
                         </p>    
-                        <p v-if="$route.query.name=='WaitStoreList'">
+                        <p>
                         <span class="yajin">违章押金(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify2}" :readonly='!isModify2' v-model="modify.trafficDeposit" style="width: 100px" :placeholder="isModify2?'请输入...':''" />
-                            <Button type="primary" size="small"  v-if="certifyList.status!=10" style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
+                            <Button type="primary" size="small"  v-if="certifyList.status!=10 && $route.query.name=='WaitStoreList'" style="margin:0 10px;" @click="savaYajinBtn('违章押金')">{{isModify2?'保存':'修改'}}</Button>
                         </p>   
                         <p>
                             <span class="yajin">综合服务费(元)：</span>
                             <Input class="item-input" :class="{txt:!isModify3}" :readonly='!isModify3' v-model="modify.serviceFee" style="width: 100px" :placeholder="isModify3?'请输入...':''" />
-                            <Button type="primary" size="small"  v-if="certifyList.status!=10" style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
+                            <Button type="primary" size="small"  v-if="certifyList.status!=10 && ($route.query.name=='WaitStoreList'|| $route.query.name=='WaitConfirmList')" style="margin:0 10px;" @click="savaYajinBtn('服务费')">{{isModify3?'保存':'修改'}}</Button>
                         </p>  
                     </div>
                 </div> 
@@ -81,6 +81,7 @@
                         <p class="time" :style="{color:certifyList.confirmBlock?'#2d8cf0':'#515a6e'}">确认金额</p>
                         <template v-if="certifyList.confirmBlock">
                         <p class="content">确认时间：{{certifyList.confirmBlock.time}}</p>
+                        <p class="content">操作员：{{certifyList.confirmBlock.staff}}</p>
                         </template>
                     </TimelineItem> 
                     <TimelineItem :color="certifyList.underwritingBlock?'blue':'#ccc'">
@@ -100,10 +101,10 @@
                     <TimelineItem :color="certifyList.gpsBlock?'blue':'#ccc'">
                         <p class="time" :style="{color:certifyList.gpsBlock?'#2d8cf0':'#515a6e'}">GPS抵押</p>
                         <template v-if="certifyList.gpsBlock">
-                        <p class="content">GPS校验时间：{{certifyList.gpsBlock.time}}</p>
-                        <p class="content">GPS校验员：{{certifyList.gpsBlock.staff}}</p>
                         <p class="content">GPS安装时间：{{certifyList.gpsBlock.mortgagedTime}}</p>
                         <p class="content">GPS安装操作员：{{certifyList.gpsBlock.mortgagedStaff}}</p>
+                        <p class="content">GPS校验时间：{{certifyList.gpsBlock.time}}</p>
+                        <p class="content">GPS校验员：{{certifyList.gpsBlock.staff}}</p>
                         </template>
                     </TimelineItem> 
                     <TimelineItem :color="certifyList.checkAgainBlock?'blue':'#ccc'">
@@ -241,15 +242,6 @@ export default {
                                     }
                                 }
                             }, '删除')
-                        ]);
-                    }
-                },{
-                    title: '操作员',
-                    key: 'staff',
-                    minWidth: 50,
-                    render: (h, params) => {
-                        return h('div', [
-                            h('strong', params.row.staff)
                         ]);
                     }
                 },{

@@ -2,14 +2,18 @@
 import '@/axiosConfig/axiosConfig'
 import moment from 'moment'
 let util = {
-    searchList(searchData,time){ //搜索通用功能
+    searchList(searchData,time,type){ //搜索通用功能   type为是否是时间区间到时分秒
         time = time || 'beginTime';
         let formData = {...searchData};
         let bool = formData[time].every(item => {
             return item == '';
         });
         if(!bool){
-            formData[time] = moment(formData[time][0]).format("YYYY-MM-DD") + '~' + moment(formData[time][1]).format("YYYY-MM-DD");
+            if(!type){
+                formData[time] = moment(formData[time][0]).format("YYYY-MM-DD") + '~' + moment(formData[time][1]).format("YYYY-MM-DD");
+            }else{
+                formData[time] = moment(formData[time][0]).format("YYYY-MM-DD HH:mm:ss") + '~' + moment(formData[time][1]).format("YYYY-MM-DD HH:mm:ss");
+            }
         }else{
             formData[time] = '';
         }

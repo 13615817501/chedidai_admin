@@ -1,5 +1,5 @@
 <template>
-    <div id="adminList">
+    <div id="adminList" class="common-id">
         <Breadcrumb>
 	        <BreadcrumbItem>组织管理</BreadcrumbItem>
 	        <BreadcrumbItem>员工列表</BreadcrumbItem>
@@ -24,45 +24,46 @@
         </div>
         <CommonTipModal :modal="modalTip" @cancel="cancel" :modalTipTitle="modalTipTitle" @comfirmBtn="tipComfirmBtn" :adminId="adminId">
         	<div style="text-align:center">
-	            <p v-if="modalTipTitle=='删除该管理员'">确定删除该管理员吗?</p>
+	            <p v-if="modalTipTitle=='删除该管理员'">确定删除该员工吗?</p>
 	        </div>
         </CommonTipModal>
         <Modal v-model="addModal" :title="addModalTitle" width="360" :mask-closable="false" @on-cancel="cancel">
             <div class="add-comm">
             	<span class="item-comm required">登录手机号：</span>
-            	<strong v-if="addModalTitle=='修改'">{{add.mobile}}</strong>
-	            <Input v-if="addModalTitle=='新增'" style="width:50%;" v-model="add.mobile" :maxlength="11" placeholder="请输入手机号"/>
+            	<!-- <strong v-if="addModalTitle=='修改'">{{add.mobile}}</strong> -->
+	            <Input style="width:50%;" v-model="add.mobile" :maxlength="11" placeholder="请输入手机号"/>
             </div>
 	        <div class="add-comm">
             	<span class="item-comm required">昵称：</span>
-	            <Input  style="width:50%;" v-model="add.name" placeholder="请输入昵称" :maxlength="4"/>
+	            <Input  style="width:50%;" v-model="add.name" placeholder="请输入昵称"/>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">工号：</span>
             	<strong v-if="addModalTitle=='修改'">{{add.workNumber}}</strong>
-	            <Input  v-if="addModalTitle=='新增'"  style="width:50%;" v-model="add.workNumber" placeholder="请输入工号"/>
+	            <Input v-if="addModalTitle=='新增'"  style="width:50%;" v-model="add.workNumber" placeholder="请输入工号"/>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">身份证号：</span>
-            	<strong v-if="addModalTitle=='修改'">{{add.idCard}}</strong>
-	            <Input  v-if="addModalTitle=='新增'"  style="width:50%;" v-model="add.idCard" placeholder="请输入身份证号"/>
+            	<!-- <strong v-if="addModalTitle=='修改'">{{add.idCard}}</strong> -->
+	            <Input style="width:50%;" v-model="add.idCard" placeholder="请输入身份证号"/>
             </div>
-            <div class="add-comm" style="margin-left:10px;">
+            <div class="add-comm no-required" style="margin-left:10px;">
                 <ImgUpload @changePicUrl="changePicUrl" :myPicUrl="picUrl" :type="2">头像：</ImgUpload>
             </div>
             <div class="add-comm" v-if="addModalTitle=='新增'">
             	<span class="item-comm required">设置登录密码：</span>
+            	<Input  style="width:10px;opacity:0;position:absolute;" v-model.trim="passwd"  type="password" placeholder="请输入密码..."/>
 	            <Input  style="width:50%;" v-model.trim="passwd"  type="password" placeholder="请输入密码..."/>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">组织门店：</span>
-	            <Select v-model="add.orgId" :key="Math.random()" style="width:50%;">
-				    <Option v-for="item in orgsList" :value="item.code" :key="item.code">{{item.value}}</Option>
+	            <Select v-model="unitIds" style="width:50%;" multiple>
+				    <Option v-for="item in orgsList" :value="item.k" :key="item.k">{{item.v}}</Option>
 			    </Select>
             </div>
             <div class="add-comm">
             	<span class="item-comm required">角色：</span>
-	            <RoleSelect @get-roleId="getroleId" :myroleid="add.roleId" :myorgId="add.orgId" :myStatus="addModal && (addModalTitle=='修改')"></RoleSelect>
+	            <RoleSelect @get-roleId="getroleId" :myroleid="add.roleId" :myorgId="add.unitIds" :myStatus="addModal && (addModalTitle=='修改')" :key="add.roleId"></RoleSelect>
             </div>
             <div class="add-comm">
             	<span class="item-comm">备注：</span>
@@ -75,7 +76,7 @@
         </Modal>
         <Modal v-model="resetModal" title="重置密码" width="300" :mask-closable="false">
             <div>
-            	<span>重置密码：</span>
+            	<span class="item-comm required">重置密码：</span>
 	            <Input  v-model.trim="passwd" type="password" style="width:50%;" placeholder="请输入密码..."/>
             </div>
 	        <div slot="footer">
@@ -90,6 +91,7 @@
     import util from '@/util/util.js'  //拒绝理由列表模块
     import CommonTipModal from '@/components/CommonTipModal'
     import ImgUpload from '@/components/ImgUpload' //图片上传组件
+    import { mapState } from 'vuex'
 	export default {
 	    name: 'component_name',
 	    props:[],
@@ -106,20 +108,20 @@
 		    	addModalTitle:'新增',
 		    	resetModal: false,
 		    	adminId: '', //当前用户的ID
-		    	adjustHeight:'',
                 search: {
                 	mobile: '',
                 	name: '',
                     pageNum: 1
                 },
                 picUrl:'',
+                unitIds: [],
                 add:{  //新增管理员数据集合
                     name:'',
                     mobile:'',
                     icon:'',
                     workNumber:'',
                     idCard:'',
-                    orgId:'',
+                    unitIds:'',
                     roleId:'',
                     content:''
                 },
@@ -183,13 +185,18 @@
                                   	    // this.clearAdminId = true;
                                   	    this.adminId = params.row.id;
                                         this.addModal = true;
+                                        let unitIds = [];
+										params.row.units.forEach( (ele, index) => {
+											unitIds.push(ele.k);
+										});
+                                        this.unitIds = unitIds;
                                         this.add = {
                                         	name: params.row.name,
 						                    mobile: params.row.mobile,
 						                    icon: params.row.icon,
 						                    workNumber:params.row.workNumber,
 						                    idCard:params.row.idCard,
-						                    orgId:params.row.orgId,
+						                    unitIds:String(this.unitIds),
 						                    roleId:params.row.roleId,
 						                    content:params.row.content,
                                         };
@@ -240,7 +247,7 @@
 				}, {
 					title: '身份证',
 					key: 'idCard',
-					minWidth: 90,
+					minWidth: 160,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.idCard)
@@ -271,7 +278,7 @@
 				}, {
 					title: '姓名',
 					key: 'name',
-					minWidth: 90,
+					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.name)
@@ -279,17 +286,21 @@
 					}
 				}, {
 					title: '组织名称',
-					key: 'orgName',
-					minWidth: 100,
+					key: 'units',
+					minWidth: 120,
 					render: (h, params) => {
+						let unitsName = [];
+						params.row.units.forEach( (ele, index) => {
+							unitsName.push(ele.v);
+						});
 						return h('div', [
-							h('strong', params.row.orgName)
+							h('strong', String(unitsName))
 						]);
 					}
 				}, {
 					title: '角色名称',
 					key: 'roleName',
-					minWidth: 100,
+					minWidth: 120,
 					render: (h, params) => {
 						return h('div', [
 							h('strong', params.row.roleName)
@@ -348,36 +359,35 @@
             CommonTipModal,
             ImgUpload
 		},
+		computed:{
+            ...mapState(['adjustHeight']) 
+        },
 	    created(){ 
             this.getOrgsTab();
             this.getInitialList();
 	    },
 	    activated(){ //组件激活时候触发
+            this.getOrgsTab();
             this.getInitialList();
-			window.onresize = () => { // 定义窗口大小变更通知事件
-				this.adjustHeight = document.body.clientHeight - 320; //窗口高度
-			};
 	    },
 		methods: {
 			getOrgsTab(){ //获得所有组织列表
-                this.$axios.get('/fx?api=gate.iam.orgsTab').then(res => {
+                this.$axios.get('/fx?api=gate.auth.unitListSet').then(res => {
 					if (res != 500) {
-						this.orgsList = res.list;
+						this.orgsList = res;
 					}
 				})
 			},
-			getInitialList(formData) { //获取拒绝订单列表
+			getInitialList(formData) { 
 				this.table_loading = true;
-				this.$axios.get('/fx?api=gate.auth.adminList', {
+				this.$axios.get('/fx?api=gate.auth.sysAdminList', {
 					params: formData
 				}).then(res => {
 					if (res != 500) {
 						this.certifyList = res.list;
-						this.totalCount = res.page.totalCount;
-						this.search.pageNum = res.page.currentPage;
-						this.$nextTick(() => {
-						    this.adjustHeight = document.body.clientHeight - 320; //窗口高度
-					    });
+	                    this.totalCount = res.page.totalCount;
+	                    this.search.pageNum = res.page.currentPage;
+						this.$store.commit('change_height');
 					}
 					this.table_loading = false;
 				})
@@ -393,13 +403,14 @@
 				this.addModalTitle = '新增';
 				this.clearAdminId = true;
                 this.addModal = true;
+                this.unitIds = [];
                 this.add = {  
                     name:'',
                     mobile:'',
                     icon:'',
                     workNumber:'',
                     idCard:'',
-                    orgId:'',
+                    unitIds:'',
                     roleId:'',
                     content:''
                 }
@@ -422,15 +433,16 @@
                     icon:'',
                     workNumber:'',
                     idCard:'',
-                    orgId:'',
+                    unitIds:'',
                     roleId:'',
                     content:''
                 }
                 this.clearAdminId = false;
                 this.passwd = '';
+                this.unitIds = [];
 			},
             addConfirmBtn(){
-            	if(!this.add.name||!this.add.mobile||!this.add.icon||!this.add.workNumber||!this.add.idCard||!this.add.orgId||!this.add.roleId){
+            	if(!this.add.name || !this.add.idCard ||!this.add.mobile||!this.add.workNumber||!this.unitIds.length||!this.add.roleId){
                    return this.$Message.error('带 * 项不能为空');
             	} 
             	if(this.addModalTitle=="新增" && !this.passwd){
@@ -439,20 +451,23 @@
             	if(!util.testPhone(this.add.mobile)){
                     return this.$Message.error('手机格式有误');
             	};
-            	if(!util.testIdNum(this.add.idCard)){
+            	if(this.add.idCard && !util.testIdNum(this.add.idCard)){
                     return this.$Message.error('身份证格式有误');
             	};
             	let formUrl = '';
                 let formData = {};
             	if(this.addModalTitle=="新增"){
-                    formUrl = '/fx?api=gate.auth.adminInfoNew'; //新增接口
+                    formUrl = '/fx?api=gate.auth.sysAddAdmin'; //新增接口
                     formData = {...this.add};
+                    formData.unitIds = String(this.unitIds);
                     formData.passwd = this.passwd;
             	}else{
-            		formUrl = '/fx?api=gate.auth.adminInfoModify'; //修改接口
+            		formUrl = '/fx?api=gate.auth.sysModifyAdmin'; //修改接口
             		formData = {
             			name: this.add.name,
-	                    orgId: this.add.orgId,
+            			mobile: this.add.mobile,
+            			workNumber: this.add.workNumber,
+	                    unitIds: String(this.unitIds),
 	                    roleId: this.add.roleId,
 	                    content: this.add.content,
 	                    adminId: this.adminId,
@@ -462,6 +477,7 @@
             	this.modal_loading = true;
                 this.$axios.post(formUrl,formData).then(res => {
 					if (res != 500) {
+						this.addModal = false;
 						this.$Message.success(this.addModalTitle=="新增"?'新增成功':'修改成功');
 						this.search.mobile = '';
 						this.search.name = '';
@@ -472,14 +488,14 @@
 		                    icon:'',
 		                    workNumber:'',
 		                    idCard:'',
-		                    orgId:'',
+		                    unitIds:'',
 		                    roleId:'',
 		                    content:''
 						}
+						this.unitIds = [];
 						this.passwd = '';
 					}
 					this.modal_loading = false;
-					this.addModal = false;
 				})
             },
             tipComfirmBtn(num){
@@ -490,7 +506,10 @@
                 this.modalTip = false;
             },
             resetConfirmBtn(){
-            	this.$axios.post('/fx?api=gate.auth.adminInfoModify',{passwd:this.passwd,adminId:this.adminId}).then(res => {
+            	if(!this.passwd){
+                    return this.$Message.error('带 * 为必填项');
+            	}
+            	this.$axios.post('/fx?api=gate.auth.sysModifyAdmin',{passwd:this.passwd,adminId:this.adminId}).then(res => {
 					if (res != 500) {
 						this.$Message.success('重置成功');
 					}
@@ -528,5 +547,8 @@
         color:red;
         left:-10px;
         top:3px;
+    }
+    .no-required /deep/ .item-comm.required:before{
+        content:'';
     }
 </style>
