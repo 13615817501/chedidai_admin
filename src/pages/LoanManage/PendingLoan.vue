@@ -149,6 +149,7 @@ export default {
                     key: 'action',
                     width: 100,
                     align: 'center',
+                    fixed: "left",
                     render: (h, params) => {
                         return h('div', [
                             h('Button', {
@@ -170,6 +171,7 @@ export default {
                 },{
                     title: '订单号',
                     key: 'orderNumber',
+                    fixed: "left",
                     className:'hoverBlue',
                     minWidth: 160,
                     render: (h, params) => {
@@ -185,6 +187,7 @@ export default {
                     }
                 },{
                     title: '产品名称',
+                    fixed: "left",
                     key: 'prodName',
                     minWidth: 120,
                     render: (h, params) => {
@@ -194,6 +197,7 @@ export default {
                     }
                 }, {
                     title: '用户姓名',
+                    fixed: "left",
                     key: 'userName',
                     minWidth: 100,
                     render: (h, params) => {
