@@ -3299,7 +3299,7 @@ export default {
         modify3Btn(){
             if(this.ismodify3){ //为保存操作
                 let bol = this.recordVO.some( (item, index) => {
-                   return item.owner=='' || item.registerGov=='' || item.registerDate=='' ||item.registerNumber==''; 
+                   return item.owner=='' || item.registerDate=='' ; 
                 });
                 if(bol){
                     return this.$Message.error("带 * 为必填项"); 
