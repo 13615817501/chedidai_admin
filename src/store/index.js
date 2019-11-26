@@ -4,7 +4,7 @@ Vue.use(Vuex)
 
 const state = {
     adjustHeight: '',
-    host: process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.14:8093'  
+    host: process.env.NODE_ENV=='production'?'https://aps.zdautoservice.com':'http://192.168.31.91:8093'  
 }
 
 const mutations = {

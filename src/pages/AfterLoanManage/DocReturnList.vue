@@ -56,6 +56,17 @@
                 <p>确定{{modalTipTitle}}吗?</p>
             </div>
         </CommonTipModal>
+        <Modal width="380" v-model="addModal" title="新增订单备注" :mask-closable="false"> 
+            <div class="modify-modal"> 
+                <div class="item-div">
+                    <span class="item-comm required" style="width:120px;">备注：</span><Input style="margin-top:10px;" v-model.trim="remark" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+                </div>
+            </div>
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="addConfirmBtn">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -76,6 +87,9 @@ export default {
             item:{},
             modal_loading:false,
             orderId:'',
+            addModal:false,
+            remark:'',
+            mat: localStorage.getItem('mat'),
             search: {
                 // timeType: 16,
                 // timeInterval: '',
@@ -93,7 +107,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 100,
+                    width: 180,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -115,6 +129,21 @@ export default {
                                     }
                                 }
                             }, '完成'),
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.addModal = true;
+                                        this.item = params.row;
+                                    }
+                                }
+                            }, '新增备注'),
                         ]);
                     }
                 }, {
@@ -154,7 +183,7 @@ export default {
                 }, {
                     title: '放款日期',
                     key: 'loanTime',
-                    minWidth: 120,
+                    minWidth: 150,
                      render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.loanTime)
@@ -163,7 +192,7 @@ export default {
                 },  {
                     title: '身份证号',
                     key: 'identityCard',
-                    minWidth: 120,
+                    minWidth: 160,
                      render: (h, params) => {
                         return h('div', [
                             h('strong', params.row.identityCard)
@@ -206,6 +235,15 @@ export default {
                         ]);
                     }
                 },{
+                    title: '备注',
+                    key: 'remark',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.remark)
+                        ]);
+                    }
+                },{
                     title: '账单详情',
                     key: 'action',
                     width: 100,
@@ -240,7 +278,6 @@ export default {
         ...mapState(['adjustHeight','host']) 
     },
     activated(){
-        this.mat = localStorage.getItem('mat');
         this.getInitialList(this.search);
     },
     methods: {
@@ -266,6 +303,7 @@ export default {
         },
         cancel(){
             this.tipModal = false;
+            this.addModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -273,6 +311,20 @@ export default {
                 this.$Message.success('操作成功');
                 this.getInitialList(this.search);
             }
+        },
+        addConfirmBtn(){
+            if(!this.remark){
+                return this.$Message.error('备注不能为空');
+            }
+            this.modal_loading = true;
+            this.$axios.post('/fx?api=gate.order.admin.remark',{orderRemarkType:'1',orderId:this.item.orderId,remark:this.remark}).then(res => {
+                if(res!=500){
+                    this.$Message.success("操作成功"); 
+                    this.getInitialList(this.search);
+                }
+                this.modal_loading = false;
+                this.addModal = false;
+            })
         },
         downLoad(){
             window.open(`${this.host}/file/download?api=gate.order.admin.docsRebackList.export&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(this.search))}`);

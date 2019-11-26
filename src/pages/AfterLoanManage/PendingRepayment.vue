@@ -36,6 +36,7 @@
                 <Input v-model="search.overdueDaysZd" clearable placeholder="请输入逾期天数" style="width: 120px"></Input>
             </span> -->
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+            <Button type="primary" icon="md-download" style="margin-left:10px;" @click="downLoad">导出</Button>
         </div> 
         <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
@@ -76,6 +77,7 @@ export default {
             modal_loading:false,
             storeNames:[],
             orderId:'',
+            mat: localStorage.getItem('mat'),
             prodList:[], //产品列表
             search: {
                 timeType: 16,
@@ -236,12 +238,12 @@ export default {
                         ]);
                     }
                 },{
-                    title: '订单状态',
+                    title: '账单状态',
                     key: 'status',
                     minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
-                            h('strong', params.row.status==13?'待还款 ':params.row.status==14?'逾期':'')
+                            h('strong', params.row.status)
                         ]);
                     }
                 },{
@@ -284,7 +286,7 @@ export default {
         ImgUpload
     }, 
     computed:{
-        ...mapState(['adjustHeight']) 
+        ...mapState(['adjustHeight','host']) 
     },
     activated(){
         this.getInitialList(util.searchList(this.search,'timeInterval'));
@@ -337,7 +339,9 @@ export default {
         changePicUrl(...arr){
             this.modify.pics = arr;
         },
-       
+        downLoad(){
+            window.open(`${this.host}/file/download?api=gate.order.excle.exportRepaymentOrderExcleService&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval')))}`);
+        }
     }
 }
 </script>

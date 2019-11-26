@@ -69,6 +69,7 @@
                     <Option :value="20">合同退回</Option>
                 </Select>
             </span>
+            <ReactChain @changeOutletId="changeOutletId"></ReactChain>    
             <Button type="primary" icon="ios-search" style="margin-left:10px;margin-top: 10px;vertical-align:baseline;" @click="searchList">搜索</Button>
         </div> 
 	    <div class="listadmin">
@@ -81,6 +82,7 @@
 </template>
 <script>
 import util from '@/util/util'
+import ReactChain from '@/components/ReactChain' //公用的提示组件 
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
@@ -113,16 +115,13 @@ export default {
                 mobile: '',
                 name: '',
                 status: '',
+                outletId:'',
                 pageNum: 1,
                 pageSize: 15
             },
             labelEnum:[], //产品标签 
             isInterestHeadEnum:[], //是否利息前置
             calInterestWayEnum:[], //计算利息方式
-            remoteSetting: {
-                remote: true,
-                remoteMethod: this.remoteMethod
-            },
             modify: {
                 name: '',
                 label: '',
@@ -239,19 +238,14 @@ export default {
 	computed:{
         ...mapState(['adjustHeight']) 
     },
+    components:{
+        ReactChain
+    }, 
 	activated(){
         this.getInitialList(util.searchList(this.search,'timeInterval'));
 	},
 	methods: {
-        remoteMethod(query) { //远程请求
-            if (query != '') {
-                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
-                    this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
-                })
-            } else {
-                this.prodList = [];
-            }
-        },
+       
 		getInitialList(formData){ 
             this.table_loading = true;
 		    this.$axios.get('/fx?api=gate.order.admin.orderList',{params:formData}).then(res => {
@@ -288,6 +282,18 @@ export default {
                     this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
             })
+        },
+        remoteMethod(query) { //远程请求
+            if (query != '') {
+                this.$axios.post('/fx?api=gate.all.product.admin', {name: query}).then(res => {
+                    this.prodList = res.filter(item => item.name.toLowerCase().indexOf(query.toLowerCase()) > -1);
+                })
+            } else {
+                this.prodList = [];
+            }
+        },
+        changeOutletId(outletId){
+            this.search.outletId = outletId;
         }
 	}
 }

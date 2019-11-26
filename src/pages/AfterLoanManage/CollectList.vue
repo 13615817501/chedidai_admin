@@ -17,6 +17,7 @@
                 </Select>
             </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
+            <Button type="primary" icon="md-download" style="margin-left:10px;" @click="downLoad">导出</Button>
         </div> 
         <div class="listadmin">
             <Table border :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
@@ -57,6 +58,7 @@ export default {
             modalTipTitle:'审核催收订单',
             tipModal:false,
             item:{},
+            mat: localStorage.getItem('mat'),
             myUploadList:[],
             myUploadList2:[],
             modal_loading:false,
@@ -237,7 +239,7 @@ export default {
         ModalPic
     }, 
     computed:{
-        ...mapState(['adjustHeight']) 
+        ...mapState(['adjustHeight','host']) 
     },
     activated(){
         this.getInitialList(this.search);
@@ -299,6 +301,9 @@ export default {
                 this.modal_loading = false;
                 this.modifyModal = false;
             })
+        },
+        downLoad(){
+            window.open(`${this.host}/file/download?api=gate.order.excle.exportOrderCollectExcleService &v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(this.search))}`);
         }
     }
 }
