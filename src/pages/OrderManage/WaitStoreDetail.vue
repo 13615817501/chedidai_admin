@@ -944,7 +944,7 @@
                         </div> 
                         <div class="title-info">车辆补充资料</div>
                         <div style="padding-left:20px;">
-                            <div v-if="name!='WaitAuditingList'">
+                            <div>
                                 <viewer :images="autoOtherFiles1"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in autoOtherFiles1" :src="src" :key="index" alt="车辆补充资料"></viewer>
                             </div>
                         </div>      
@@ -1097,7 +1097,7 @@
                         </div>  
                         <div class="title-info">车辆补充资料</div>
                         <div style="padding-left:20px;">
-                            <div v-if="name!='WaitAuditingList'">
+                            <div>
                                 <viewer :images="autoOtherFiles1"><img class="my-img" style="margin:0 15px;"  v-for="(src,index) in autoOtherFiles1" :src="src" :key="index" alt="车辆补充资料"></viewer>
                             </div>
                         </div>  
@@ -2344,8 +2344,7 @@ export default {
             if(this.ismodify100){ //为保存操作
                 for (let key in this.modify100) {
                     if(!this.modify100[key]){
-                        if(key=='plateNumber' || key=='owner' || key=='address'|| key=='model' || key=='vin' || key=='enginner' || key=='passenger' || key=='useNature' || key=='type' || key=='brand' || key=='color' || key=='source' || key=='enginerNumber'|| key=='identityCard' || key=='registerDate' || key=='mile' || key=='hasInspect' || key=='hasHighInsurance' || key=='hasBusyInsurance' || key=='fuelNumber' || key=='displace' || key=='cylinder' || key=='power' || key=='emissStand'|| key=='transmission'|| key=='driveModel' || key=='isAccident' || key=='deduction' || key=='fine' || key=='damage' || key=='hasCustodyTraveler' || key=='hasCustodyRegister'|| key=='hasCustodyHigh'|| key=='hasCustodyBusy'|| key=='custodyOther' || key=='ownerSign'|| key=='examinerDate '|| key=='source'|| key=='certificateNumber'|| key=='examinerSign'){
-                            debugger;
+                        if(key=='plateNumber' || key=='type' || key=='owner'|| key=='useNature' || key=='brandModel' || key=='vin' || key=='enginerNumber' || key=='passenger' || key=='certificateNumber' || key=='source' || key=='power' || key=='brand' || key=='model'|| key=='color' || key=='displace' || key=='cylinder' || key=='mile' || key=='fuelNumber' || key=='emissStand' || key=='transmission' || key=='driveModel' || key=='hasAbs' || key=='otherImpConfig' || key=='isAccident'|| key=='deduction'|| key=='fine' || key=='damage' || key=='hasCustodyRegister' || key=='hasCustodyTraveler' || key=='hasCustodyHigh' || key=='hasCustodyBusy' || key=='custodyOther'|| key=='examinerSign'|| key=='examinerDate'){
                             return this.$Message.error("带 * 为必填项"); 
                         }
                     }
