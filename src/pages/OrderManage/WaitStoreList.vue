@@ -53,6 +53,13 @@
                 <Button @click="cancel">取消</Button>
             </div>
         </Modal> 
+        <Modal width="350" v-model="backModal" title="退单" :mask-closable="false"> 
+            填写退回理由：<Input style="margin-top:10px;" v-model.trim="msg" type="textarea" :autosize="{minRows: 3,maxRows: 6}" placeholder="请输入..." />
+            <div slot="footer">
+                <Button type="primary" :loading="modal_loading" @click="confirmBtn3">确定</Button>
+                <Button @click="cancel">取消</Button>
+            </div> 
+        </Modal>
     </div>
 </template>
 <script>
@@ -75,11 +82,13 @@ export default {
             title:'待门店处理拒绝',
             prodId:'',
             passModal: false,
+            backModal:false,
             modal_loading:false,
             storeProduct:[],
             ModalContent:[],
             item:{},
             orderId:'',
+            msg:'',  //客服退回理由
             prodList:[], //产品列表集合
 			search:{
                 timeType:1,
@@ -96,7 +105,7 @@ export default {
             columns: [{
                     title: '操作',
                     key: 'action',
-                    width: 150,
+                    width: 250,
                     align: 'center',
                     fixed: "left",
                     render: (h, params) => {
@@ -150,7 +159,22 @@ export default {
                                         this.modifyModal = true;
                                     }
                                 }
-                            }, '修改')
+                            }, '修改') ,
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small',
+                                },
+                                style: {
+                                    'margin-left':'10px',
+                                },
+                                on: {
+                                    click: () => {
+                                        this.backModal = true;
+                                        this.orderId = params.row.orderId;
+                                    }
+                                }
+                            }, '客服退回')
                         ]);
                     }
                 }, {
@@ -320,6 +344,7 @@ export default {
             this.tipModal = false;
             this.modifyModal = false;
             this.passModal = false;
+            this.backModal = false;
         },
         tipComfirmBtn(num) {
             this.tipModal = false;
@@ -343,6 +368,18 @@ export default {
                 this.modifyModal = false;
             })
         },
+         confirmBtn3(){
+            if(!this.msg){
+               return this.$Message.warning('请填写退回理由');
+            }
+            this.$axios.post('/fx?api=gate.admin.order.backToStaff',{orderId:this.orderId,msg:this.msg}).then(res => {
+                if(res!=500){
+                    this.$Message.success('退回成功');
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
+                }
+            })
+            this.backModal = false;
+        }
 	}
 }
 </script>

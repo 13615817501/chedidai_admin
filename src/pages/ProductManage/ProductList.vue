@@ -1,9 +1,9 @@
 <template>
     <div id="customList" class="common-id">
         <Breadcrumb>
-	        <BreadcrumbItem>产品管理</BreadcrumbItem>
-	        <BreadcrumbItem>产品列表</BreadcrumbItem>
-	    </Breadcrumb>
+            <BreadcrumbItem>产品管理</BreadcrumbItem>
+            <BreadcrumbItem>产品列表</BreadcrumbItem>
+        </Breadcrumb>
         <div class="search-box">
             <span>
                 产品名称: 
@@ -13,7 +13,7 @@
             <Button type="primary" icon="md-add" style="margin-left:10px;" @click="addBtn">新增</Button>
             <Button type="primary" style="margin-left:10px;" @click="bindBtn">批量绑定门店</Button>
         </div> 
-	    <div class="listadmin">
+        <div class="listadmin">
             <Table border  @on-selection-change="selectionChange" :columns="columns" :data="certifyList" :height="adjustHeight"></Table>
         </div>
         <div style="text-align:center;margin-top:20px;">
@@ -124,6 +124,7 @@
                             <Option value="2">大连人保</Option>
                             <Option value="3">郑州人保</Option>
                         </Select>
+                    <span class="item-comm required">管理金比例(%)：</span><Input class="item-input" v-model="modify.managerPercent" placeholder="请输入..." /> 
                 </div>
                 <div class="item-div"> 
                     <span class="item-comm required">贷款还款日期方式：</span><Select v-model="modify.repayDateType" class="item-input" placeholder="请选择">
@@ -176,11 +177,11 @@ import ModalPic from '@/components/ModalPic' //公用的提示组件
 import moment from 'moment'
 import { mapState } from 'vuex'
 export default {
-	name: 'CustomList',
-	props:[],
-	data () {
-		return {
-			totalCount: 0,
+    name: 'CustomList',
+    props:[],
+    data () {
+        return {
+            totalCount: 0,
             modifyModal:false,
             modalTipTitle:'禁用该员工',
             tipModal:false,
@@ -195,13 +196,13 @@ export default {
             storeNames:[],
             id:'',
             fullName: '',
-			search:{
+            search:{
                 mobile:'',
                 name:'',
                 type: '',
-			    pageNum: 1,
-			    pageSize:15
-			},
+                pageNum: 1,
+                pageSize:15
+            },
             selection: [],   //产品数组集合
             selection2: [],  //门店数组集合
             selectionIds: '',   //产品字符串集合
@@ -239,10 +240,17 @@ export default {
                 accountStrategy:'',
                 capital:'',
                 insurer:'',
-                purpose:''
+                purpose:'',
+                zdmonthRate:'',
+                zdperiods:'',
+                zfmonthRate:'',
+                zfperiods:'',
+                repayDateType:'',
+                repayDate:'',
+                managerPercent:''
             },
-			table_loading: false, //默认先显示加载
-			certifyList:[],
+            table_loading: false, //默认先显示加载
+            certifyList:[],
             storeList:[],
             columns4: [
                 {
@@ -337,8 +345,11 @@ export default {
                                         (async () => {
                                             try {
                                                 let detailProduct = await this.$axios.get('/fx?api=gate.detail.product.admin',{params:{id:params.row.id}});
-                                                let {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate,capital,insurer,purpose} = detailProduct;
-                                                this.modify = {label,bannerPic,fullName,shortName,repayment,zfperiods,zfmonthRate,zdperiods,zdmonthRate,debtType,annualRate,repaymentChannel,insurePersent,intermediateServicePersent,accountServicePersent,platformServicePersent,compositeServicePersent:'0',cashDepositPersent,accountStrategy,gpsInstallExpenses,flowExpenses,plateMortgageExpenses,homeVisitExpenses,incidentalExpenses,transExpenses,storeCommissionPersent,hiestAmount,loestAmount,repayDateType,repayDate,exchangeRate,capital,insurer,purpose} 
+                                                for (let key in this.modify) {
+                                                    if(key!=='compositeServicePersent'){
+                                                        this.modify[key] = detailProduct[key];
+                                                    }
+                                                }
                                                 this.picUrl = params.row.bannerPicValue;
                                                 if(this.modify.repayDateType=='2'){
                                                    this.modify.repayDate = '';
@@ -373,15 +384,15 @@ export default {
                     width: 80,
                     align: 'center'
                 },{
-					title: '产品名称',
-					key: 'fullName',
-					minWidth: 160,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.fullName)
-						]);
-					}
-				},{
+                    title: '产品名称',
+                    key: 'fullName',
+                    minWidth: 160,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.fullName)
+                        ]);
+                    }
+                },{
                     title: '简称',
                     key: 'shortName',
                     minWidth: 160,
@@ -428,44 +439,44 @@ export default {
                         ]);
                     }
                 }, {
-					title: '状态',
-					key: 'statusValue',
-					minWidth: 120,
-					render: (h, params) => {
-						return h('div', [
-							h('strong', params.row.statusValue)
-						]);
-					}
-				}
-			]
-		}
-	},
+                    title: '状态',
+                    key: 'statusValue',
+                    minWidth: 120,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('strong', params.row.statusValue)
+                        ]);
+                    }
+                }
+            ]
+        }
+    },
     components:{
         CommonTipModal,
         ImgUpload,
         ModalPic
     }, 
-	computed:{
+    computed:{
         ...mapState(['adjustHeight']) 
     },
-	activated(){
+    activated(){
         this.getInitialList(this.search);
         this.getInitialList2();
         this.getDetailProduct();
-	},
-	methods: {
-		getInitialList(formData){ 
+    },
+    methods: {
+        getInitialList(formData){ 
             this.table_loading = true;
-		    this.$axios.get('/fx?api=gate.list.product.admin',{params:formData}).then(res => {
-		    	if(res!=500){
-		    		this.certifyList = res.list;
-			        this.totalCount = res.page.totalCount;
-			        this.search.pageNum = res.page.currentPage;
-			        this.$store.commit('change_height');
-		    	}
-		    	this.table_loading = false;
-			})
-		},
+            this.$axios.get('/fx?api=gate.list.product.admin',{params:formData}).then(res => {
+                if(res!=500){
+                    this.certifyList = res.list;
+                    this.totalCount = res.page.totalCount;
+                    this.search.pageNum = res.page.currentPage;
+                    this.$store.commit('change_height');
+                }
+                this.table_loading = false;
+            })
+        },
         getInitialList2(){ 
             this.table_loading = true;
             this.$axios.post('/fx?api=gate.admin.store.all').then(res => {
@@ -488,13 +499,13 @@ export default {
             this.picUrl = myUrl;
         },
         pageChange(page){
-			this.search.pageNum = page;
+            this.search.pageNum = page;
             this.getInitialList(this.search);
         },
         searchList() {
-        	this.search.pageNum = 1;
-			this.getInitialList(this.search);
-		},
+            this.search.pageNum = 1;
+            this.getInitialList(this.search);
+        },
         bindBtn(){
             this.commGetIds('产品');
             this.getInitialList2();
@@ -603,8 +614,10 @@ export default {
             })
         },
         confirmBtn(){
-            if(!this.modify.label || !this.modify.bannerPic || !this.modify.fullName|| !this.modify.shortName || !this.modify.repayment || !this.modify.zfperiods || !this.modify.zfmonthRate || !this.modify.zdperiods || !this.modify.zdmonthRate || !this.modify.debtType || !this.modify.annualRate || !this.modify.repaymentChannel || !this.modify.insurePersent || !this.modify.intermediateServicePersent || !this.modify.accountServicePersent || !this.modify.platformServicePersent || !this.modify.compositeServicePersent || !this.modify.cashDepositPersent || !this.modify.gpsInstallExpenses || !this.modify.flowExpenses || !this.modify.plateMortgageExpenses || !this.modify.homeVisitExpenses || !this.modify.incidentalExpenses || !this.modify.transExpenses || !this.modify.storeCommissionPersent || !this.modify.hiestAmount || !this.modify.loestAmount || !this.modify.exchangeRate || !this.modify.accountStrategy || !this.modify.insurer){
-                return this.$Message.error("带 * 为必填项"); 
+            for (let key in this.modify) {
+                if((key!=='capital' && key!=='repayDate') && !this.modify[key]){
+                    return this.$Message.error("带 * 为必填项"); 
+                }
             }
             if(this.modify.repayDateType=='1' && !this.modify.repayDate){
                 return this.$Message.error("贷款还款日期不能为空"); 
@@ -641,7 +654,7 @@ export default {
                 this.getInitialList(this.search);
             }
         }
-	}
+    }
 }
 </script>
 <style lang="less" scoped>
