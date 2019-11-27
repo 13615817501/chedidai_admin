@@ -170,6 +170,7 @@ export default {
                                 },
                                 on: {
                                     click: () => {
+                                        this.msg='';
                                         this.backModal = true;
                                         this.orderId = params.row.orderId;
                                     }
