@@ -42,6 +42,10 @@
                     <Option :value="1">已完成</Option>
                 </Select>
             </span>
+            <span>
+                &nbsp;&nbsp;放款时间: 
+                <DatePicker type="daterange" v-model='search.timeInterval' placeholder="请选择" style="width: 200px"></DatePicker>
+            </span>
             <Button type="primary" icon="ios-search" style="margin-left:10px;" @click="searchList">搜索</Button>
             <Button type="primary" icon="md-download" style="margin-left:10px;" @click="downLoad">导出</Button>
         </div> 
@@ -91,8 +95,8 @@ export default {
             remark:'',
             mat: localStorage.getItem('mat'),
             search: {
-                // timeType: 16,
-                // timeInterval: '',
+                timeType: 11,
+                timeInterval: '',
                 orderNumber: '',
                 mobile: '',
                 name: '',
@@ -278,7 +282,7 @@ export default {
         ...mapState(['adjustHeight','host']) 
     },
     activated(){
-        this.getInitialList(this.search);
+        this.getInitialList(util.searchList(this.search,'timeInterval'));
     },
     methods: {
         getInitialList(formData){ 
@@ -295,11 +299,11 @@ export default {
         },
         pageChange(page){
             this.search.pageNum = page;
-            this.getInitialList(this.search);
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         searchList() {
             this.search.pageNum = 1;
-            this.getInitialList(this.search);
+            this.getInitialList(util.searchList(this.search,'timeInterval'));
         },
         cancel(){
             this.tipModal = false;
@@ -309,7 +313,7 @@ export default {
             this.tipModal = false;
             if (num != 500) {
                 this.$Message.success('操作成功');
-                this.getInitialList(this.search);
+                this.getInitialList(util.searchList(this.search,'timeInterval'));
             }
         },
         addConfirmBtn(){
@@ -320,14 +324,14 @@ export default {
             this.$axios.post('/fx?api=gate.order.admin.remark',{orderRemarkType:'1',orderId:this.item.orderId,remark:this.remark}).then(res => {
                 if(res!=500){
                     this.$Message.success("操作成功"); 
-                    this.getInitialList(this.search);
+                    this.getInitialList(util.searchList(this.search,'timeInterval'));
                 }
                 this.modal_loading = false;
                 this.addModal = false;
             })
         },
         downLoad(){
-            window.open(`${this.host}/file/download?api=gate.order.admin.docsRebackList.export&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(this.search))}`);
+            window.open(`${this.host}/file/download?api=gate.order.admin.docsRebackList.export&v=1.0&ttid=1002&did=1&ts=1480929340486&lng=39.98871&lat=116.43234&mat=${this.mat}&sign=inm&data=${encodeURIComponent(JSON.stringify(util.searchList(this.search,'timeInterval')))}`);
         }
     }
 }
