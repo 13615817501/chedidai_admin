@@ -11,7 +11,7 @@
             row-key="id"
             ref="table1"
             border
-            :max-height="adjustHeight+150"
+            :max-height="adjustHeight+100"
             :highlight-current-row="true"
             :header-row-style="{color:'#666'}"
             :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
